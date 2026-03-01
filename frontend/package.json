@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "biome check --write ./src",
-    "preview": "vite preview"
+    "format": "biome format --write ./src",
+    "lint": "biome check ./src",
+    "lint-format": "biome check --write ./src",
+    "preview": "vite preview",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
@@ -25,6 +28,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "globals": "^16.5.0",
+    "husky": "^9.1.7",
     "typescript": "~5.9.3",
     "vite": "^7.3.1"
   }
