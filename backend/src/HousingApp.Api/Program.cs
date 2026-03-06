@@ -1,3 +1,11 @@
+using HousingApp.Application.Auth.UseCases;
+using HousingApp.Application.Roles;
+using HousingApp.Domain.Repositories;
+using HousingApp.Infrastructure.Persistence.Context;
+using HousingApp.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +13,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddDbContext<HousingApplicationDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddIdentityCore<IdentityUser>(options =>
+    {
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 6;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<HousingApplicationDbContext>();
+
+builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
@@ -12,9 +36,24 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    
+    IServiceScope scope = app.Services.CreateScope();
+    HousingApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<HousingApplicationDbContext>();
+    dbContext.Database.Migrate();
+
+    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    
+    if(!await roleManager.RoleExistsAsync(RolesDescription.Admin))
+        await roleManager.CreateAsync(new IdentityRole(RolesDescription.Admin));
+    
+    if(!await roleManager.RoleExistsAsync(RolesDescription.Student))
+        await roleManager.CreateAsync(new IdentityRole(RolesDescription.Student));
+    
+    if(!await roleManager.RoleExistsAsync(RolesDescription.Householder))
+        await roleManager.CreateAsync(new IdentityRole(RolesDescription.Householder));
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
