@@ -1,8 +1,4 @@
-import axios, {
-	type AxiosError,
-	type AxiosRequestConfig,
-	type AxiosResponse,
-} from "axios";
+import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
 
 const AxiosInstance = axios.create({
 	baseURL: "http://localhost:8080",
