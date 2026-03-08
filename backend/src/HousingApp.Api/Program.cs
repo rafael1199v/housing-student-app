@@ -31,6 +31,7 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
 
 builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
 
 var app = builder.Build();

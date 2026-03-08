@@ -26,7 +26,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 Nationality = person.Nationality,
                 Age = person.Age,
                 Gender = person.Gender,
-                ImageUrl = person.ImageUrl,
+                ImageUrl = string.IsNullOrEmpty(person.ImageUrl) ? null : person.ImageUrl,
             };
         }
     }

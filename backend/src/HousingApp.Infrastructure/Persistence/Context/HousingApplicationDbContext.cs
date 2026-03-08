@@ -8,7 +8,7 @@ namespace HousingApp.Infrastructure.Persistence.Context
     {
         public HousingApplicationDbContext(DbContextOptions<HousingApplicationDbContext> options) : base(options){}
         
-        public DbSet<PersonModel> Persons => Set<PersonModel>();
+        public DbSet<PersonModel> Persons { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

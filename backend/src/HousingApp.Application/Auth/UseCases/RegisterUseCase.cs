@@ -1,10 +1,12 @@
 using HousingApp.Application.Auth.DTOs;
+using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Repositories;
+using System.Globalization;
 
 namespace HousingApp.Application.Auth.UseCases
 {
-    public class RegisterUseCase(IUserRepository userRepository) : IRegisterUseCase
+    public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
     {
         public async Task<string> ExecuteAsync(RegisterDto registerDto)
         {
@@ -17,9 +19,38 @@ namespace HousingApp.Application.Auth.UseCases
             }
             
             User user = User.CreateUser(registerDto.Email, registerDto.Password);
-            string userId = await userRepository.RegisterUser(user, role);
 
-            return userId;
+            try
+            {
+                await unitOfWork.BeginTransactionAsync();
+
+                string userId = await unitOfWork.UserRepository.RegisterUser(user, role);
+
+                Person person = Person.CreatePerson(
+                    id: userId,
+                    firstName: registerDto.FirstName,
+                    lastName: registerDto.LastName,
+                    email: registerDto.Email,
+                    phoneNumber: registerDto.PhoneNumber,
+                    nationality: registerDto.Nationality,
+                    gender: registerDto.Gender,
+                    imageUrl: registerDto.ImageUrl,
+                    birthDate: DateOnly.ParseExact(registerDto.BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                    age: registerDto.Age,
+                    user: user
+                );
+
+                await unitOfWork.PersonRepository.CreatePerson(person);
+
+                await unitOfWork.CommitTransactionAsync();
+
+                return userId;
+            }
+            catch (Exception ex)
+            {
+                await unitOfWork.RollbackTransactionAsync();
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

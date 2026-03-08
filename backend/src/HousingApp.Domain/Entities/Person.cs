@@ -15,7 +15,7 @@ namespace HousingApp.Domain.Entities
         
         public User? User { get; set; }
         
-        private static Person CreatePerson(
+        public static Person CreatePerson(
             string firstName,
             string lastName,
             string email,
@@ -40,7 +40,7 @@ namespace HousingApp.Domain.Entities
             };
         }
         
-        private static Person CreatePerson(
+        public static Person CreatePerson(
             string id,
             string firstName,
             string lastName,

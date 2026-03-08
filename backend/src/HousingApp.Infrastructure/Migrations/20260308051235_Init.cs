@@ -157,6 +157,36 @@ namespace HousingApp.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "persons",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Nationality = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Age = table.Column<int>(type: "integer", nullable: false),
+                    Gender = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    ImageUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    BirthDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_persons", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_persons_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -212,6 +242,9 @@ namespace HousingApp.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "persons");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

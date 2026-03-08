@@ -9,6 +9,8 @@ namespace HousingApp.Infrastructure.Persistence.Models
     {
         [Key, MaxLength(450)]
         public string UserId { get; set; } = string.Empty;
+        
+        [ForeignKey("UserId")]
         public IdentityUser User { get; set; } = null!;
         
         [Required, MaxLength(150)]
@@ -31,8 +33,8 @@ namespace HousingApp.Infrastructure.Persistence.Models
         [Required, MaxLength(30)]
         public string Gender { get; set; } = string.Empty;
         
-        [Required, MaxLength(500)]
-        public string ImageUrl { get; set; } = string.Empty;
+        [MaxLength(500)]
+        public string? ImageUrl { get; set; }
         
         public DateOnly BirthDate { get; set; }
         

@@ -29,7 +29,7 @@ namespace HousingApp.Infrastructure.Persistence.UnitOfWork
             {
                 throw new NullReferenceException("There is no active transaction");
             }
-            
+            await this.SaveChangesAsync();
             await _transaction.CommitAsync();
         }
 

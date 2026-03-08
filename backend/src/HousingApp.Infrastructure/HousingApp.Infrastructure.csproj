@@ -13,5 +13,9 @@
     <ProjectReference Include="../HousingApp.Application/HousingApp.Application.csproj" />
     <ProjectReference Include="../HousingApp.Domain/HousingApp.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\" />
+    <Folder Include="obj\" />
+  </ItemGroup>
 
 </Project>
