@@ -1,8 +1,10 @@
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Roles;
+using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Repositories;
+using HousingApp.Infrastructure.Persistence.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +31,7 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
 
 builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
 
 var app = builder.Build();
 

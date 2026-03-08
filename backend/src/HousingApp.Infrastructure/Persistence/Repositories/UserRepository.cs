@@ -14,7 +14,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         {
             IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email, };
 
-            await using IDbContextTransaction transaction = await context.Database.BeginTransactionAsync();
+            //await using IDbContextTransaction transaction = await context.Database.BeginTransactionAsync();
             
             IdentityResult identityResult = await userManager.CreateAsync(user,  newUser.Password);
 
@@ -24,15 +24,10 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             }
             
             IdentityResult addToRolResult = await userManager.AddToRoleAsync(user, role.ToString());
-
-            if (!addToRolResult.Succeeded)
-            {
-                throw new Exception("Error al crear el rol");
-            }
-
-            await transaction.CommitAsync();
-
-            return user.Id;
+    
+            //await transaction.CommitAsync();
+            
+            return !addToRolResult.Succeeded ? throw new Exception("Error al crear el rol") : user.Id;
         }
     }
 }

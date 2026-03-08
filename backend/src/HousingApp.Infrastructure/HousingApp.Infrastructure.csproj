@@ -14,8 +14,4 @@
     <ProjectReference Include="../HousingApp.Domain/HousingApp.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Persistence\Models\" />
-  </ItemGroup>
-
 </Project>
