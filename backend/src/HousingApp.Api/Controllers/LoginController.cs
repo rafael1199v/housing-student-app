@@ -1,3 +1,4 @@
+using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +16,13 @@ namespace HousingApp.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto user)
         {
-            try
-            {
-                UserDto userDto = await loginUseCase.Login(user);
-                return Ok(new { token = GenerateToken(userDto) });
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            Result<UserDto> result = await loginUseCase.Login(user);
+
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+               
+            CredentialsDto credentials = new(AccessToken: GenerateToken(result.Value!));
+            return Ok(credentials);
         }
 
         private string GenerateToken(UserDto user)

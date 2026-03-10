@@ -4,6 +4,6 @@ namespace HousingApp.Application.Auth.UseCases
 {
     public interface ILoginUseCase
     {
-        Task<UserDto> Login(LoginDto user);
+        Task<Result<UserDto>> Login(LoginDto user);
     }
 }

@@ -25,9 +25,13 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             return !addToRolResult.Succeeded ? throw new Exception("Error al crear el rol") : user.Id;
         }
 
-        public async Task<User> FindUserByEmailAsync(string email)
+        public async Task<User?> FindUserByEmailAsync(string email)
         {
-            IdentityUser? user = await userManager.FindByEmailAsync(email) ?? throw new NullReferenceException("Credenciales invalidas");
+            IdentityUser? user = await userManager.FindByEmailAsync(email);
+            
+            if (user == null)
+                return null;
+            
             List<string> roles = [..(await userManager.GetRolesAsync(user))];
             return ToDomain(user, roles);
         }
