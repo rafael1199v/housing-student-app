@@ -4,10 +4,10 @@ import AxiosInstance from "../apiService";
 import type { RegisterDto } from "../features/auth/types/registerDto";
 
 const authService = {
-	login: async (username: string, password: string) => {
+	login: async (email: string, password: string) => {
 		try {
-			const response = await AxiosInstance.post("/auth/login", {
-				username,
+			const response = await AxiosInstance.post("/api/login", {
+				email,
 				password,
 			});
 			return response.data;
@@ -18,7 +18,7 @@ const authService = {
 	},
 	register: async (user: RegisterDto) => {
 		try {
-			const response = await AxiosInstance.post("/auth/register", user);
+			const response = await AxiosInstance.post("/api/register", user);
 			return response.data;
 		} catch (error) {
 			console.error("Error during register:", error);

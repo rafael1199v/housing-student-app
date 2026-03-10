@@ -54,7 +54,7 @@ function Register() {
 	}, [formState, reset]);
 
 	return (
-		<div className="h-screen w-screen flex justify-center">
+		<div className="h-max w-screen flex justify-center">
 			<div className="w-full h-95/100 p-12 flex-col flex justify-around">
 				<div className="flex justify-center">
 					<a href="https://vite.dev" target="_blank">
@@ -81,7 +81,7 @@ function Register() {
 							className="rounded-md bg-gray-300 h-10 text-xl"
 							{...register("lastName")}
 						/>
-						<div className="flex flex-row justify-between">
+						<div className="flex flex-wrap flex-row justify-between">
 							<div className="flex flex-col">
 								<label className="">Nacionalidad</label>
 								<select
@@ -121,7 +121,7 @@ function Register() {
 								</div>
 							</div>
 						</div>
-						<div className="flex flex-row justify-between">
+						<div className="flex flex-wrap flex-row justify-between">
 							<div className="flex flex-col">
 								<label>Género</label>
 								<select
@@ -195,9 +195,9 @@ function Register() {
 						>
 							Enviar
 						</button>
-						<p className="m-2 text-center">No account?</p>
-						<a className="m-2 text-center text-blue-700" href="register">
-							Sign Up
+						<p className="m-2 text-center">Ya tienes una cuenta?</p>
+						<a className="m-2 text-center text-blue-700" href="login">
+							Inicia sesión
 						</a>
 					</div>
 				</form>

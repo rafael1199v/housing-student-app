@@ -36,6 +36,19 @@ builder.Services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
 
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options => {
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+    policy =>
+    {
+        policy.WithOrigins(builder.Configuration.GetValue<string>("Frontend:Origin")!)
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    }
+    );
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -60,6 +73,8 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 

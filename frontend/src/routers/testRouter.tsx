@@ -25,6 +25,10 @@ export const router = createBrowserRouter([
 				path: "register",
 				Component: Register,
 			},
+			{
+				path: "index",
+				// Component: Index,
+			},
 		],
 	},
 ]);
