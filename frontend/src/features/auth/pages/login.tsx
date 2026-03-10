@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { NavLink } from "react-router";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
-import authService from "../../../services/authService";
+import { useSignIn } from "../store/authStore";
 
 interface IFormInput {
 	email: string;
@@ -12,9 +11,10 @@ interface IFormInput {
 
 function Login() {
 	const { register, handleSubmit, reset, formState } = useForm<IFormInput>();
+	const signIn = useSignIn();
+
 	const onSubmit: SubmitHandler<IFormInput> = (data) => {
-		authService.login(data.email, data.password);
-		console.log(data);
+		signIn({ email: data.email, password: data.password });
 	};
 
 	useEffect(() => {

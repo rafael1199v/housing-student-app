@@ -1,14 +1,14 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import ReactDOM from "react-dom/client";
-import { createBrowserRouter, NavLink, Outlet } from "react-router";
+import { createBrowserRouter, Outlet } from "react-router";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
 
 function Root() {
 	return (
-		<>
+		<QueryClientProvider client={new QueryClient()}>
 			<Outlet />
-		</>
+		</QueryClientProvider>
 	);
 }
 
