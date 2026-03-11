@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
 import { useSignIn } from "../store/authStore";
+import { toast } from "sonner";
 
 interface IFormInput {
 	email: string;
@@ -16,8 +17,16 @@ function Login() {
 	const navigate = useNavigate();
 
 	const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-		await signIn({ email: data.email, password: data.password });
-		navigate("/index");
+
+		try {
+			await signIn({ email: data.email, password: data.password });
+			toast.success("Bienvenido");
+			navigate("/index");
+		}
+		catch {
+			toast.error("Credenciales invalidas");
+		}
+		
 	};
 
 	useEffect(() => {

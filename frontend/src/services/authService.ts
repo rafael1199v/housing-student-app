@@ -11,7 +11,7 @@ const authService = {
 			const response = await AxiosInstance.post("/api/login", data);
 			return response.data;
 		} catch (error) {
-			console.error("Error during login:", error);
+			console.error("Error during login: ", error);
 			throw error;
 		}
 	},

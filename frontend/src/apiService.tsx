@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
+import axios from "axios";
 
 const AxiosInstance = axios.create({
 	baseURL: "http://localhost:5065",
@@ -7,6 +7,8 @@ const AxiosInstance = axios.create({
 });
 
 AxiosInstance.interceptors.response.use(undefined, async (error) => {
+
+	console.log(error.response);
 	if (error.response?.status === 401) {
 		return AxiosInstance(error.config); // Retry original request
 	}
