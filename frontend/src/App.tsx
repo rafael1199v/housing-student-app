@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 function App() {
 	return (
 		<QueryClientProvider client={new QueryClient()}>
-			<Toaster position="top-center" duration={3000}/>
+			<Toaster position="top-center" duration={3000} />
 			<Outlet />
 		</QueryClientProvider>
 	);

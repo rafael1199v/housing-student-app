@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
 import { useSignIn } from "../store/authStore";
-import { toast } from "sonner";
 
 interface IFormInput {
 	email: string;
@@ -17,16 +17,13 @@ function Login() {
 	const navigate = useNavigate();
 
 	const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-
 		try {
 			await signIn({ email: data.email, password: data.password });
 			toast.success("Bienvenido");
 			navigate("/index");
-		}
-		catch {
+		} catch {
 			toast.error("Credenciales invalidas");
 		}
-		
 	};
 
 	useEffect(() => {
