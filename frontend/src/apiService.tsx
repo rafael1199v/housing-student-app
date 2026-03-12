@@ -15,4 +15,4 @@ AxiosInstance.interceptors.response.use(undefined, async (error) => {
 	throw error;
 });
 
-export default AxiosInstance;
+export default AxiosInstance; //TODO: Cambiar y mover a ./services

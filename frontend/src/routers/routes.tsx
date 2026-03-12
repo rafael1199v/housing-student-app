@@ -9,7 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
 	{
-		path: "/",
+		path: "/", //TODO: Redirigir cualquier otra dirección a la principal?
 		Component: App,
 		children: [
 			// Guest-only routes (redirect to /index if already logged in)

@@ -6,7 +6,7 @@ import { useAccessToken } from "../features/auth/store/authStore";
  * Redirects to /login when there is no access token.
  */
 export default function ProtectedRoute() {
-	const accessToken = useAccessToken();
+	const accessToken = useAccessToken(); //TODO: Validar payload y rol de hacer falta
 
 	if (!accessToken) {
 		return <Navigate to="/login" replace />;

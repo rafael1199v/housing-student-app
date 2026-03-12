@@ -2,11 +2,9 @@
 
 set -e
 
-DIM='\033[1;30m'
-NC='\033[0m'
+DIM=''
+NC=''
 
-# We remove the -z and xargs here to make the string expansion 
-# easier to handle in a simple shell script.
 get_staged_files() {
     # Get the prefix (e.g., "frontend/")
     prefix=$(git rev-parse --show-prefix)
@@ -27,17 +25,24 @@ lint_staged() {
         exit 2
     fi
 
-    local cmd="$1"
-    shift 
+    cmd="$1"
+    shift
 
-    # Get the files as a space-separated list
-    local files=$(get_staged_files "$@")
+    staged_files=$(get_staged_files "$@")
 
-    if [ -n "$files" ]; then
-        # We use 'eval' carefully here. 
-        # This allows the shell to split the $files variable into multiple arguments.
+    set --
+    has_files=0
+    while IFS= read -r file; do
+        [ -n "$file" ] || continue
+        set -- "$@" "$file"
+        has_files=1
+    done <<EOF
+${staged_files}
+EOF
+
+    if [ "$has_files" -eq 1 ]; then
         echo "${DIM}${cmd} [staged files]${NC}"
-        eval "$cmd $files"
+        sh -c "$cmd \"\$@\"" sh "$@"
     else
         echo "${DIM}No staged files matching patterns. Skipping.${NC}"
     fi

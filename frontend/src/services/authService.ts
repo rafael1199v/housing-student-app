@@ -14,7 +14,7 @@ const authService = {
 			console.error("Error during login: ", error);
 			throw error;
 		}
-	},
+	}, //TODO: Usar únicamente TanStack o únicamente Axios, no ambos
 
 	async register(user: RegisterDto): Promise<void> {
 		try {

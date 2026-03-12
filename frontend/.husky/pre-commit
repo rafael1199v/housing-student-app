@@ -1,3 +1,10 @@
-cd frontend 
+#!/usr/bin/env sh
+
+set -e
+
+if [ -d frontend ]; then
+	cd frontend
+fi
+
 chmod +x ./lint-staged.sh
 ./lint-staged.sh "npx @biomejs/biome check --no-errors-on-unmatched" "*.tsx" "*.ts"
