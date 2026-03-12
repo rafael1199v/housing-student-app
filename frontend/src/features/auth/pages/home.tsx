@@ -4,7 +4,7 @@ export default function Home() {
 	const { clearAll } = useAuthActions();
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+		<div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
 			<div className="w-full max-w-lg bg-white rounded-lg shadow-sm border border-slate-200 p-8 text-center">
 				<h1 className="text-3xl font-semibold text-slate-900 mb-2">
 					Bienvenido

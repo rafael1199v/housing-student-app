@@ -9,7 +9,7 @@ export default function GuestRoute() {
 	const accessToken = useAccessToken();
 
 	if (accessToken) {
-		return <Navigate to="/index" replace />;
+		return <Navigate to="/" replace />;
 	}
 
 	return <Outlet />;

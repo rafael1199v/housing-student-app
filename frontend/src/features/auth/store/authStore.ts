@@ -37,7 +37,12 @@ const useAuthStore = create<AuthState>()(
 				},
 			},
 		}),
-		{ name: "authStore" },
+		{
+			name: "authStore",
+			partialize: (state) => ({
+				accessToken: state.accessToken,
+			}),
+		},
 	),
 );
 

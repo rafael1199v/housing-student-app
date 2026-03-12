@@ -14,7 +14,7 @@ const PhoneInput = forwardRef<
 	return (
 		<div ref={ref} className="flex gap-3">
 			{/* Extension Selector */}
-			<div className="flex-shrink-0 w-32">
+			<div className="shrink-0 w-32">
 				<select
 					value={extensionValue}
 					onChange={(e) => onExtensionChange?.(e.target.value)}
