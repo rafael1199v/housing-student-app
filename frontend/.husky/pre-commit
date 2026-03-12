@@ -1,2 +1,2 @@
-cd frontend
-lint-staged.sh "npx biome check"
+cd frontend 
+./lint-staged.sh "npx biome check" "*.tsx" "*.ts"
