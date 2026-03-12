@@ -5,18 +5,17 @@ set -e
 DIM='\033[1;30m'
 NC='\033[0m'
 
+# We remove the -z and xargs here to make the string expansion 
+# easier to handle in a simple shell script.
 get_staged_files() {
-    git diff --staged --name-only --diff-filter ACMR -z -- "$@" | xargs --null
+    git diff --staged --name-only --diff-filter ACMR -- "$@"
 }
 
 usage() {
-    echo "lint-staged.sh" - run linters against Git staged files
+    echo "lint-staged.sh - run linters against Git staged files"
     echo ""
     echo "${DIM}Usage:${NC}   lint-staged.sh \"<command>\" \"<glob>\" [\"<glob>\"]..."
     echo "${DIM}Example:${NC} lint-staged.sh \"echo staged files:\" \"*\""
-    echo ""
-    echo "${DIM}At least one glob is required. They are passed"
-    echo "${DIM}directly to the \"git diff\" command."
 }
 
 lint_staged() {
@@ -25,14 +24,19 @@ lint_staged() {
         exit 2
     fi
 
-    local command="$1"
-    shift # remove first argument
+    local cmd="$1"
+    shift 
 
+    # Get the files as a space-separated list
     local files=$(get_staged_files "$@")
+
     if [ -n "$files" ]; then
-        echo "${DIM}${command} $files${NC}"
-        eval "$command" "$files"
-        echo ""
+        # We use 'eval' carefully here. 
+        # This allows the shell to split the $files variable into multiple arguments.
+        echo "${DIM}${cmd} [staged files]${NC}"
+        eval "$cmd $files"
+    else
+        echo "${DIM}No staged files matching patterns. Skipping.${NC}"
     fi
 
     exit 0

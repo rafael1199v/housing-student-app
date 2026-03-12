@@ -1,2 +1,3 @@
 cd frontend 
-./lint-staged.sh "npx biome check" "*.tsx" "*.ts"
+chmod +x ./lint-staged.sh
+./lint-staged.sh "npx @biomejs/biome check --write --no-errors-on-unmatched" "*.tsx" "*.ts"

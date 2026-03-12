@@ -10,7 +10,10 @@
     "lint": "biome check ./src",
     "lint-format": "biome check --write ./src",
     "preview": "vite preview",
-    "prepare": "cd .. && husky ./frontend/.husky"
+    "prepare": "cd .. && husky ./frontend/.husky",
+    "lint-staged": {
+      "adfad": 1
+    }
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
