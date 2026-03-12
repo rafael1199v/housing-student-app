@@ -8,7 +8,10 @@ NC='\033[0m'
 # We remove the -z and xargs here to make the string expansion 
 # easier to handle in a simple shell script.
 get_staged_files() {
-    git diff --staged --name-only --diff-filter ACMR -- "$@"
+    # Get the prefix (e.g., "frontend/")
+    prefix=$(git rev-parse --show-prefix)
+    # Get staged files and remove the prefix from the path
+    git diff --staged --name-only --diff-filter ACMR -- "$@" | sed "s|^$prefix||"
 }
 
 usage() {
