@@ -1,1 +1,9 @@
-cd frontend && npm run lint
+#!/usr/bin/env sh
+
+set -e
+
+if [ -d frontend ]; then
+	cd frontend
+fi
+
+sh ./lint-staged.sh "npx @biomejs/biome check --no-errors-on-unmatched" "*.tsx" "*.ts"

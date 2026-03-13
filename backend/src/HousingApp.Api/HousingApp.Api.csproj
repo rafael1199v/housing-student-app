@@ -6,6 +6,10 @@
 <!--    <ImplicitUsings>enable</ImplicitUsings>-->
 <!--  </PropertyGroup>-->
 
+  <PropertyGroup>
+      <UserSecretsId>8c835046-ab94-4e32-8d99-d97b0ec009fe</UserSecretsId>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
@@ -13,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../HousingApp.Application/HousingApp.Application.csproj" />
+    <ProjectReference Include="..\HousingApp.Infrastructure\HousingApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
