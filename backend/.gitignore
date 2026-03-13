@@ -1,0 +1,7 @@
+obj
+bin
+
+.idea
+bin/Debug/
+
+bin\\Debug
