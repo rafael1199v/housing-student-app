@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace HousingApp.Infrastructure.Persistence.Models
 {
+    [Table("bookings")]
     public class BookingModel
     {
         public int Id { get; set; }
