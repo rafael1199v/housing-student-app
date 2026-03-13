@@ -3,16 +3,17 @@ import App from "../App";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
 import { HomePage } from "../features/home/pages";
+import { NotFoundPage } from "../features/not-found/pages";
 import { MainLayout } from "../layout/layout";
 import GuestRoute from "./GuestRoute";
 import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
 	{
-		path: "/", //TODO: Redirigir cualquier otra dirección a la principal?
+		path: "/",
 		Component: App,
 		children: [
-			// Guest-only routes (redirect to /index if already logged in)
+			// Guest-only routes (redirect to / if already logged in)
 			{
 				Component: GuestRoute,
 				children: [
@@ -37,6 +38,8 @@ export const router = createBrowserRouter([
 					},
 				],
 			},
+			// 404 wildcard (any unmatched routes redirect here)
+			{ path: "*", Component: NotFoundPage },
 		],
 	},
 ]);

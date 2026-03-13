@@ -26,14 +26,6 @@ export function HomePage() {
 		averagePrice,
 	);
 
-	if (isError) {
-		return (
-			<div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-				No pudimos cargar los alojamientos. Inténtalo de nuevo más tarde.
-			</div>
-		);
-	}
-
 	return (
 		<div className="space-y-8">
 			<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
