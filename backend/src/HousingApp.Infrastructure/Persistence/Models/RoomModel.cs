@@ -19,8 +19,9 @@ namespace HousingApp.Infrastructure.Persistence.Models
         
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Price { get; set; }
-        
-        public int PersonId { get; set; }
+
+        [Required, MaxLength(450)]
+        public string PersonId { get; set; } = string.Empty;
         public PersonModel Person { get; set; } = null!;
         
         public int RoomStatusId { get; set; }
@@ -31,5 +32,6 @@ namespace HousingApp.Infrastructure.Persistence.Models
         public DateTime? DeletedAt { get; set; }
         public bool IsDeleted { get; set; } = false;
 
+        public ICollection<RoomImagesModel> RoomImages { get; set; } = [];
     }
 }
