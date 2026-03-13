@@ -1,6 +1,0 @@
-{
-  "rooms": [
-    { "id": "1", "name": "Room 1", "price": 3000, "description": "Room description 1", "imageUrl": "" },
-    { "id": "2", "name": "Room 2", "price": 3000, "description": "Somewhat long description, i guess??? idk what to do", "imageUrl": "" }
-  ]
-}
