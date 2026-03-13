@@ -18,7 +18,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<HousingApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .UseCamelCaseNamingConvention();
+        .UseSnakeCaseNamingConvention();
 });
 
 builder.Services.AddIdentityCore<IdentityUser>(options =>
