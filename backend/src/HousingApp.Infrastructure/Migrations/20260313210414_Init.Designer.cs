@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HousingApp.Infrastructure.Migrations
 {
     [DbContext(typeof(HousingApplicationDbContext))]
-    [Migration("20260313160746_RoomSchema")]
-    partial class RoomSchema
+    [Migration("20260313210414_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,14 +281,11 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<int>("PersonId")
-                        .HasColumnType("integer")
-                        .HasColumnName("person_id");
-
-                    b.Property<string>("PersonUserId")
+                    b.Property<string>("PersonId")
                         .IsRequired()
+                        .HasMaxLength(450)
                         .HasColumnType("character varying(450)")
-                        .HasColumnName("person_user_id");
+                        .HasColumnName("person_id");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10, 2)")
@@ -305,8 +302,8 @@ namespace HousingApp.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_rooms");
 
-                    b.HasIndex("PersonUserId")
-                        .HasDatabaseName("ix_rooms_person_user_id");
+                    b.HasIndex("PersonId")
+                        .HasDatabaseName("ix_rooms_person_id");
 
                     b.HasIndex("RoomStatusId")
                         .HasDatabaseName("ix_rooms_room_status_id");
@@ -653,10 +650,10 @@ namespace HousingApp.Infrastructure.Migrations
                 {
                     b.HasOne("HousingApp.Infrastructure.Persistence.Models.PersonModel", "Person")
                         .WithMany()
-                        .HasForeignKey("PersonUserId")
+                        .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_rooms_persons_person_user_id");
+                        .HasConstraintName("fk_rooms_persons_person_id");
 
                     b.HasOne("HousingApp.Infrastructure.Persistence.Models.RoomStatusModel", "RoomStatus")
                         .WithMany()

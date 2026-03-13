@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HousingApp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class RoomSchema : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -232,8 +232,7 @@ namespace HousingApp.Infrastructure.Migrations
                     longitude = table.Column<double>(type: "double precision", nullable: false),
                     description = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
                     price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
-                    person_id = table.Column<int>(type: "integer", nullable: false),
-                    person_user_id = table.Column<string>(type: "character varying(450)", nullable: false),
+                    person_id = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
                     room_status_id = table.Column<int>(type: "integer", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -244,8 +243,8 @@ namespace HousingApp.Infrastructure.Migrations
                 {
                     table.PrimaryKey("pk_rooms", x => x.id);
                     table.ForeignKey(
-                        name: "fk_rooms_persons_person_user_id",
-                        column: x => x.person_user_id,
+                        name: "fk_rooms_persons_person_id",
+                        column: x => x.person_id,
                         principalTable: "persons",
                         principalColumn: "user_id",
                         onDelete: ReferentialAction.Cascade);
@@ -377,9 +376,9 @@ namespace HousingApp.Infrastructure.Migrations
                 column: "room_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_rooms_person_user_id",
+                name: "ix_rooms_person_id",
                 table: "rooms",
-                column: "person_user_id");
+                column: "person_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_rooms_room_status_id",

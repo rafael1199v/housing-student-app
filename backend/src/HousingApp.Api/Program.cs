@@ -1,5 +1,6 @@
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Roles;
+using HousingApp.Application.Room.UseCases;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
@@ -33,7 +34,9 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
 builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+builder.Services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
 builder.Services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
 
