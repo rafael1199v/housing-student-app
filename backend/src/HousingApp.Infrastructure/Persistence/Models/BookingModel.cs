@@ -1,16 +1,17 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace HousingApp.Infrastructure.Persistence.Models
 {
-    [Table("room_images")]
-    public class RoomImagesModel
+    public class BookingModel
     {
         public int Id { get; set; }
         
-        public string ImageUrl { get; set; } = string.Empty;
-        
+        public int BookerId { get; set; }
+        public PersonModel Booker { get; set; } = null!;
+    
         public int RoomId { get; set; }
         public RoomModel Room { get; set; } = null!;
+        
+        public int BookingStatusId { get; set; }
+        public BookingStatusModel BookingStatus { get; set; } = null!;
         
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

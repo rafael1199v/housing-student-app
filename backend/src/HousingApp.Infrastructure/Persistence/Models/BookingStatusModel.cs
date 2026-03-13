@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HousingApp.Infrastructure.Persistence.Models
 {
-    [Table("rooms_statuses")]
-    public class RoomStatusModel
+    [Table("booking_statuses")]
+    public class BookingStatusModel
     {
         public int Id { get; set; }
-        
+
         [Required, MaxLength(50)]
         public string Name { get; set; } = string.Empty;
         
