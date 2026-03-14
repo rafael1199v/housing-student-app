@@ -4,6 +4,6 @@ namespace HousingApp.Application.Room.UseCases
 {
     public interface IGetRoomsUseCase
     {
-        Task<List<RoomDto>> ExecuteAsync();
+        Task<Result<List<RoomDto>>> ExecuteAsync(SearchRoomsFiltersDto filters);
     }
 }

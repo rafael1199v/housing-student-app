@@ -1,20 +1,34 @@
 using HousingApp.Application.Room.DTO;
+using HousingApp.Domain.Error;
+using HousingApp.Domain.Entities;
 using HousingApp.Domain.Repositories;
 
 namespace HousingApp.Application.Room.UseCases
 {
     public class GetRoomsUseCase(IRoomRepository roomRepository): IGetRoomsUseCase
     {
-        public async Task<List<RoomDto>> ExecuteAsync()
+        public async Task<Result<List<RoomDto>>> ExecuteAsync(SearchRoomsFiltersDto filters)
         {
-            List<Domain.Entities.Room> rooms = await roomRepository.GetRoomsAsync(3);
+            if (filters.MinPrice is < 0 || filters.MaxPrice is < 0)
+                return Result<List<RoomDto>>.Failure(RoomError.InvalidFilterValue("price"));
 
-            return [.. rooms.Select(r => new RoomDto
+            if (filters.MinPrice.HasValue && filters.MaxPrice.HasValue && filters.MinPrice > filters.MaxPrice)
+                return Result<List<RoomDto>>.Failure(RoomError.InvalidPriceRange);
+
+            RoomSearchFilters roomSearchFilters = new(
+                Name: filters.Name,
+                MinPrice: filters.MinPrice,
+                MaxPrice: filters.MaxPrice
+            );
+
+            List<Domain.Entities.Room> rooms = await roomRepository.GetRoomsAsync(roomSearchFilters);
+
+            List<RoomDto> roomDtos = [.. rooms.Select(r => new RoomDto
             (
                 Id: r.Id,
                 Name: r.Name,
                 Latitude: r.Latitude,
-                Longitude: r.Latitude,
+                Longitude: r.Longitude,
                 Description: r.Description,
                 Price: r.Price,
                 PersonId: r.PersonId,
@@ -26,9 +40,11 @@ namespace HousingApp.Application.Room.UseCases
                 Nationality: r.Person!.Nationality,
                 Age: r.Person!.Age,
                 Gender: r.Person!.Gender,
-                ImageUrl: r.Person?.ImageUrl ?? "",
+                ImageUrl: r.Person!.ImageUrl ?? "",
                 ImageRoomUrls: r.ImageUrls
             ))];
+
+            return Result<List<RoomDto>>.Success(roomDtos);
         }
     }
 }
