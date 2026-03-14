@@ -78,13 +78,13 @@ export function HomePage() {
 
 				{isLoading ? (
 					<CardSkeleton quantity={3} />
-				) : rooms.length === 0 ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-						No hay resultados para tu búsqueda. Prueba con otros términos.
-					</div>
 				) : isError ? (
 					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
 						No pudimos cargar los alojamientos. Inténtalo de nuevo más tarde.
+					</div>
+				) : rooms.length === 0 ? (
+					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+						No hay resultados para tu búsqueda. Prueba con otros términos.
 					</div>
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
