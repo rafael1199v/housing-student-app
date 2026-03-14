@@ -1,13 +1,13 @@
+import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
 import authService from "../../../services/authService";
 import { LATIN_AMERICAN_COUNTRIES } from "../components/NationalitySelector";
 import type { RegisterDto } from "../types/registerDto";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
 
 interface IFormInput {
 	email: string;
@@ -42,9 +42,8 @@ function Register() {
 		},
 		onError: (error: Error) => {
 			toast.error(error.message);
-		}
-	})
-
+		},
+	});
 
 	const onSubmit: SubmitHandler<IFormInput> = (data) => {
 		const newRegister: RegisterDto = {
