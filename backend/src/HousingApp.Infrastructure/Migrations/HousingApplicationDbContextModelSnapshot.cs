@@ -31,14 +31,11 @@ namespace HousingApp.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BookerId")
-                        .HasColumnType("integer")
-                        .HasColumnName("booker_id");
-
-                    b.Property<string>("BookerUserId")
+                    b.Property<string>("BookerId")
                         .IsRequired()
+                        .HasMaxLength(450)
                         .HasColumnType("character varying(450)")
-                        .HasColumnName("booker_user_id");
+                        .HasColumnName("booker_id");
 
                     b.Property<int>("BookingStatusId")
                         .HasColumnType("integer")
@@ -67,8 +64,8 @@ namespace HousingApp.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_bookings");
 
-                    b.HasIndex("BookerUserId")
-                        .HasDatabaseName("ix_bookings_booker_user_id");
+                    b.HasIndex("BookerId")
+                        .HasDatabaseName("ix_bookings_booker_id");
 
                     b.HasIndex("BookingStatusId")
                         .HasDatabaseName("ix_bookings_booking_status_id");
@@ -593,10 +590,10 @@ namespace HousingApp.Infrastructure.Migrations
                 {
                     b.HasOne("HousingApp.Infrastructure.Persistence.Models.PersonModel", "Booker")
                         .WithMany()
-                        .HasForeignKey("BookerUserId")
+                        .HasForeignKey("BookerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_bookings_persons_booker_user_id");
+                        .HasConstraintName("fk_bookings_persons_booker_id");
 
                     b.HasOne("HousingApp.Infrastructure.Persistence.Models.BookingStatusModel", "BookingStatus")
                         .WithMany()
@@ -634,7 +631,7 @@ namespace HousingApp.Infrastructure.Migrations
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomImagesModel", b =>
                 {
                     b.HasOne("HousingApp.Infrastructure.Persistence.Models.RoomModel", "Room")
-                        .WithMany()
+                        .WithMany("RoomImages")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -719,6 +716,11 @@ namespace HousingApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomModel", b =>
+                {
+                    b.Navigation("RoomImages");
                 });
 #pragma warning restore 612, 618
         }

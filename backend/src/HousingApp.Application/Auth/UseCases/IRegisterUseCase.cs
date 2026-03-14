@@ -4,6 +4,6 @@ namespace HousingApp.Application.Auth.UseCases
 {
     public interface IRegisterUseCase
     {
-        Task<string> ExecuteAsync(RegisterDto registerDto);
+        Task<Result<string>> ExecuteAsync(RegisterDto registerDto);
     }
 }

@@ -15,6 +15,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email, };
             
             IdentityResult identityResult = await userManager.CreateAsync(user,  newUser.Password);
+            
             if (!identityResult.Succeeded)
             {
                 throw new Exception("Error al crear el usuario");

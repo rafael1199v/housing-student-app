@@ -1,5 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
 import authService from "../../../services/authService";
@@ -29,6 +32,18 @@ function Register() {
 	const [role, setRole] = useState("");
 	const [nationality, setNationality] = useState("");
 	const password = watch("password");
+	const nav = useNavigate();
+
+	const { mutate, isPending } = useMutation({
+		mutationFn: authService.register,
+		onSuccess: () => {
+			toast.success("Cuenta creada con éxito");
+			nav("/login");
+		},
+		onError: (error: Error) => {
+			toast.error(error.message);
+		},
+	});
 
 	const onSubmit: SubmitHandler<IFormInput> = (data) => {
 		const newRegister: RegisterDto = {
@@ -44,8 +59,8 @@ function Register() {
 			imageUrl: data.imageUrl,
 			birthdate: data.birthDate,
 		};
-		authService.register(newRegister);
-		console.log(newRegister);
+
+		mutate(newRegister);
 	};
 
 	useEffect(() => {
@@ -369,7 +384,7 @@ function Register() {
 							type="submit"
 							disabled={formState.isSubmitting}
 						>
-							{formState.isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
+							{isPending ? "Creando cuenta..." : "Crear cuenta"}
 						</button>
 					</form>
 
