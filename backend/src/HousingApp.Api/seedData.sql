@@ -71,7 +71,7 @@ VALUES
 -- ============================================
 -- INSERT SAMPLE BOOKINGS -- TODO: REVISAR DIFERENCIA ENTRE booker_id y booker_user_id
 -- ============================================
-INSERT INTO bookings (booker_user_id, room_id, booking_status_id, created_at, is_deleted)
+INSERT INTO bookings (booker_id, room_id, booking_status_id, created_at, is_deleted)
 VALUES 
     ('7d31a992-a28a-47d8-ab4e-5ae4090a7917', 1, 2, NOW() - INTERVAL '30 days', false);
 
