@@ -9,7 +9,7 @@ namespace HousingApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RoomController(IGetRoomsUseCase getRoomsUseCase) : ControllerBase
+    public class RoomController(IGetRoomsUseCase getRoomsUseCase, IGetRoomDetailUseCase getRoomDetailUseCase) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
@@ -62,5 +62,18 @@ namespace HousingApp.Api.Controllers
             result = null;
             return false;
         }
+
+        [HttpGet("{roomId}")]
+        public async Task<IActionResult> GetRoomById(int roomId)
+        {
+            Result<RoomDto> result = await getRoomDetailUseCase.ExecuteAsync(roomId);
+
+            if(!result.IsSuccess) {
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
     }
 }

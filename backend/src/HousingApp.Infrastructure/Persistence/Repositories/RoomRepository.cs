@@ -39,6 +39,15 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             return [.. rooms.Select(ToDomain)];
         }
 
+        public async Task<Room?> GetRoomByIdAsync(int roomId)
+        {
+            RoomModel? roomModel = await context.Rooms
+                .Include(r => r.Person)
+                .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
+    
+            return roomModel is null ? null : ToDomain(roomModel);
+        }
+
         private static Room ToDomain(RoomModel model)
         {
             return new Room
@@ -67,5 +76,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 ImageUrls = [.. model.RoomImages.Select(ri => ri.ImageUrl)]
             };
         }
+
+        
     }
 }
