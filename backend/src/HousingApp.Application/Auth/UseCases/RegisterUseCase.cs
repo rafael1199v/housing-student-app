@@ -1,6 +1,7 @@
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
+using HousingApp.Domain.Error;
 using HousingApp.Domain.Repositories;
 using System.Globalization;
 
@@ -8,15 +9,18 @@ namespace HousingApp.Application.Auth.UseCases
 {
     public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
     {
-        public async Task<string> ExecuteAsync(RegisterDto registerDto)
+        public async Task<Result<string>> ExecuteAsync(RegisterDto registerDto)
         {
             if(registerDto.Role.Equals("admin", StringComparison.CurrentCultureIgnoreCase))
-                throw new Exception("No tienes permisos para crear una cuenta con estos privilegios");
+                return Result<string>.Failure(RegisterError.DeniedAdminCreation);
             
             if (!Enum.TryParse<Domain.Enums.Roles>(registerDto.Role, true, out Domain.Enums.Roles role))
-            {
-                throw new Exception("El rol no existe");
-            }
+                return Result<string>.Failure(RegisterError.RolDoesNotExist);
+            
+            User? userFoundedByEmail = await unitOfWork.UserRepository.FindUserByEmailAsync(registerDto.Email);
+
+            if (userFoundedByEmail is not null)
+                return Result<string>.Failure(RegisterError.EmailAlreadyInUse);
             
             User user = User.CreateUser(registerDto.Email, registerDto.Password);
 
@@ -44,7 +48,7 @@ namespace HousingApp.Application.Auth.UseCases
 
                 await unitOfWork.CommitTransactionAsync();
 
-                return userId;
+                return Result<string>.Success(userId);
             }
             catch (Exception ex)
             {

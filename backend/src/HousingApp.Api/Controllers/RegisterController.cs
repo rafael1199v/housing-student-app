@@ -1,3 +1,4 @@
+using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,18 @@ namespace HousingApp.Api.Controllers
         {
             try
             {
-                return Ok(await registerUseCase.ExecuteAsync(registerDto));
+                Result<string> result = await registerUseCase.ExecuteAsync(registerDto);
+
+                if (!result.IsSuccess)
+                    return BadRequest(result.Error);
+
+                return Ok(new { userId = result.Value });
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = e.Message });
             }
+           
         }
         
     }
