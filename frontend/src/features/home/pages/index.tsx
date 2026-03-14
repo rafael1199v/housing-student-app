@@ -3,8 +3,8 @@ import { type FormEvent, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import roomService from "../../../services/roomService";
 import { useUser } from "../../auth/store/authStore";
+import { Footer } from "../../shared/components/footer";
 import { Card } from "../components/cards";
-import { Footer } from "../components/footer";
 import { CardSkeleton } from "../components/skeleton";
 
 export function HomePage() {
@@ -12,7 +12,7 @@ export function HomePage() {
 	const [searchParams] = useSearchParams();
 	const user = useUser();
 
-	const initialSearch = searchParams.get("q") ?? "";
+	const initialSearch = searchParams.get("name") ?? "";
 	const initialMinPrice = searchParams.get("minPrice") ?? "";
 	const initialMaxPrice = searchParams.get("maxPrice") ?? "";
 
@@ -31,7 +31,7 @@ export function HomePage() {
 		const params = new URLSearchParams();
 
 		if (searchText.trim()) {
-			params.set("q", searchText.trim());
+			params.set("name", searchText.trim());
 		}
 
 		if (minPrice.trim()) {
@@ -150,7 +150,7 @@ export function HomePage() {
 								name={room.name}
 								price={room.price}
 								description={room.description}
-								imageUrl={room.imageUrl}
+								images={room.images}
 								onClick={() => navigate("/details")}
 							/>
 						))}

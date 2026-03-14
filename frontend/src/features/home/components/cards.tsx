@@ -2,18 +2,12 @@ interface CardProps {
 	name: string;
 	price: number;
 	description: string;
-	imageUrl: string;
+	images?: string[];
 	onClick?: () => void;
 }
 
-export function Card({
-	name,
-	price,
-	description,
-	imageUrl,
-	onClick,
-}: CardProps) {
-	const formattedPrice = new Intl.NumberFormat("es-CO").format(price);
+export function Card({ name, price, description, images, onClick }: CardProps) {
+	const formattedPrice = new Intl.NumberFormat("es-BO").format(price);
 	const shortDescription =
 		description.length > 120
 			? `${description.slice(0, 120).trim()}...`
@@ -39,9 +33,9 @@ export function Card({
 			tabIndex={onClick ? 0 : undefined}
 		>
 			<div className="h-44 w-full bg-slate-100">
-				{imageUrl ? (
+				{images ? (
 					<img
-						src={imageUrl}
+						src={images[0]}
 						alt={name}
 						className="h-full w-full object-cover"
 					/>
