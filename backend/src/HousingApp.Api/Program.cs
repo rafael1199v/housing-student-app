@@ -65,15 +65,6 @@ if (app.Environment.IsDevelopment())
     dbContext.Database.Migrate();
 
     RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    
-    if(!await roleManager.RoleExistsAsync(RolesDescription.Admin))
-        await roleManager.CreateAsync(new IdentityRole(RolesDescription.Admin));
-    
-    if(!await roleManager.RoleExistsAsync(RolesDescription.Student))
-        await roleManager.CreateAsync(new IdentityRole(RolesDescription.Student));
-    
-    if(!await roleManager.RoleExistsAsync(RolesDescription.Householder))
-        await roleManager.CreateAsync(new IdentityRole(RolesDescription.Householder));
 }
 
 //app.UseHttpsRedirection();

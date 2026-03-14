@@ -26,6 +26,7 @@ function Register() {
 	const { register, handleSubmit, reset, formState, watch } =
 		useForm<IFormInput>();
 	const [phoneExtension, setPhoneExtension] = useState("");
+	const [role, setRole] = useState("");
 	const [nationality, setNationality] = useState("");
 	const password = watch("password");
 
@@ -33,7 +34,7 @@ function Register() {
 		const newRegister: RegisterDto = {
 			email: data.email,
 			password: data.password,
-			role: "student",
+			role: role,
 			firstName: data.firstName,
 			lastName: data.lastName,
 			phoneNumber: `${phoneExtension}${data.phoneNumber}`,
@@ -276,7 +277,7 @@ function Register() {
 						</div>
 
 						{/* Email */}
-						<div>
+						<div className="sm:grid-cols-2 gap-4">
 							<label className="block text-sm font-medium text-slate-700 mb-2">
 								Correo electrónico
 							</label>
@@ -292,6 +293,23 @@ function Register() {
 									},
 								})}
 							/>
+							{formState.errors.email && (
+								<p className="text-red-500 text-xs mt-1">
+									{formState.errors.email.message}
+								</p>
+							)}
+							<label className="block text-sm font-medium text-slate-700 mb-2">
+								Rol
+							</label>
+							<select
+								value={role}
+								onChange={(e) => setRole(e.target.value)}
+								className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shrink-0"
+							>
+								<option value="">...</option>
+								<option value="student">Estudiante</option>
+								<option value="householder">Arrendador</option>
+							</select>
 							{formState.errors.email && (
 								<p className="text-red-500 text-xs mt-1">
 									{formState.errors.email.message}
