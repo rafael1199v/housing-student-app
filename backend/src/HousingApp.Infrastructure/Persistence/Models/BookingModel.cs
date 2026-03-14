@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HousingApp.Infrastructure.Persistence.Models
@@ -6,8 +7,9 @@ namespace HousingApp.Infrastructure.Persistence.Models
     public class BookingModel
     {
         public int Id { get; set; }
-        
-        public int BookerId { get; set; }
+
+        [Required, MaxLength(450)]
+        public string BookerId { get; set; } = string.Empty;
         public PersonModel Booker { get; set; } = null!;
     
         public int RoomId { get; set; }

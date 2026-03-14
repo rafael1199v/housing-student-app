@@ -262,8 +262,7 @@ namespace HousingApp.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    booker_id = table.Column<int>(type: "integer", nullable: false),
-                    booker_user_id = table.Column<string>(type: "character varying(450)", nullable: false),
+                    booker_id = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
                     room_id = table.Column<int>(type: "integer", nullable: false),
                     booking_status_id = table.Column<int>(type: "integer", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -281,8 +280,8 @@ namespace HousingApp.Infrastructure.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_bookings_persons_booker_user_id",
-                        column: x => x.booker_user_id,
+                        name: "fk_bookings_persons_booker_id",
+                        column: x => x.booker_id,
                         principalTable: "persons",
                         principalColumn: "user_id",
                         onDelete: ReferentialAction.Cascade);
@@ -356,9 +355,9 @@ namespace HousingApp.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_bookings_booker_user_id",
+                name: "ix_bookings_booker_id",
                 table: "bookings",
-                column: "booker_user_id");
+                column: "booker_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_bookings_booking_status_id",
