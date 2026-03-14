@@ -3,9 +3,16 @@ interface CardProps {
 	price: number;
 	description: string;
 	imageUrl: string;
+	onClick?: () => void;
 }
 
-export function Card({ name, price, description, imageUrl }: CardProps) {
+export function Card({
+	name,
+	price,
+	description,
+	imageUrl,
+	onClick,
+}: CardProps) {
 	const formattedPrice = new Intl.NumberFormat("es-CO").format(price);
 	const shortDescription =
 		description.length > 120
@@ -13,7 +20,24 @@ export function Card({ name, price, description, imageUrl }: CardProps) {
 			: description;
 
 	return (
-		<div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+		<div
+			className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${
+				onClick ? "cursor-pointer transition hover:-translate-y-0.5" : ""
+			}`}
+			onClick={onClick}
+			onKeyDown={(event) => {
+				if (!onClick) {
+					return;
+				}
+
+				if (event.key === "Enter" || event.key === " ") {
+					event.preventDefault();
+					onClick();
+				}
+			}}
+			role={onClick ? "button" : undefined}
+			tabIndex={onClick ? 0 : undefined}
+		>
 			<div className="h-44 w-full bg-slate-100">
 				{imageUrl ? (
 					<img
