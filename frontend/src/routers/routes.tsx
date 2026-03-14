@@ -4,6 +4,7 @@ import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
 import { HomePage } from "../features/home/pages";
 import { NotFoundPage } from "../features/not-found/pages";
+import { RoomDetails } from "../features/room-details/pages";
 import { MainLayout } from "../layout/layout";
 import GuestRoute from "./GuestRoute";
 import ProtectedRoute from "./ProtectedRoute";
@@ -33,6 +34,16 @@ export const router = createBrowserRouter([
 							{
 								index: true,
 								Component: HomePage,
+							},
+						],
+					},
+					{
+						path: "details",
+						Component: MainLayout,
+						children: [
+							{
+								index: true,
+								Component: RoomDetails,
 							},
 						],
 					},
