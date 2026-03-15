@@ -1,4 +1,5 @@
 import type { RoomData } from "../features/home/types/roomDataDto";
+import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
 import { apiFetch } from "./apiService";
 
@@ -22,6 +23,9 @@ const roomService = {
 	},
 	getRoomById: async (id: string) => {
 		return apiFetch<RoomDto>(`/api/room/${id}`);
+	},
+	getHouseholderRooms: async () => {
+		return apiFetch<RoomHouseholderDto[]>("/api/room/householder");
 	},
 	createBooking: async (roomId: string) => {
 		return apiFetch<void>("/api/booking", {

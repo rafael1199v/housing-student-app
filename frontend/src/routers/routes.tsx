@@ -2,13 +2,27 @@ import { createBrowserRouter } from "react-router";
 import App from "../App";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
+import { useAccessToken } from "../features/auth/store/authStore";
+import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { HomePage } from "../features/home/pages";
 import { NotFoundPage } from "../features/not-found/pages";
+import { OwnerHomePage } from "../features/owner-home/pages";
 import { RoomDetails } from "../features/room-details/pages";
 import { RoomsPage } from "../features/rooms/pages";
 import { MainLayout } from "../layout/layout";
 import GuestRoute from "./GuestRoute";
 import ProtectedRoute from "./ProtectedRoute";
+
+function HomeRoutePage() {
+	const accessToken = useAccessToken();
+	const role = getRoleFromAccessToken(accessToken);
+
+	if (role === "Householder") {
+		return <OwnerHomePage />;
+	}
+
+	return <HomePage />;
+}
 
 export const router = createBrowserRouter([
 	{
@@ -34,7 +48,7 @@ export const router = createBrowserRouter([
 						children: [
 							{
 								index: true,
-								Component: HomePage,
+								Component: HomeRoutePage,
 							},
 							{
 								path: "rooms",
