@@ -33,5 +33,6 @@ namespace HousingApp.Infrastructure.Persistence.Models
         public bool IsDeleted { get; set; } = false;
 
         public ICollection<RoomImagesModel> RoomImages { get; set; } = [];
+        public ICollection<BookingModel> Bookings { get; set; } = [];
     }
 }

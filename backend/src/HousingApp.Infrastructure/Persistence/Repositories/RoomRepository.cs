@@ -4,6 +4,7 @@ using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories
 {
@@ -70,6 +71,15 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             return true;
         }
 
+        public async Task<List<RoomHouseholder>> GetHouseholderRoomsAsync(string userId)
+        {
+            List<RoomModel> householderRooms = await context.Rooms
+                .Include(r => r.Bookings)
+                .Include(r => r.RoomImages)
+                .Where(r => r.PersonId == userId && !r.IsDeleted).ToListAsync();
+            return [.. householderRooms.Select(ToHouseholderDomain)];
+        }
+
         private static Room ToDomain(RoomModel model)
         {
             return new Room
@@ -96,6 +106,22 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                     BirthDate = model.Person.BirthDate
                 },
                 ImageUrls = [.. model.RoomImages.Select(ri => ri.ImageUrl)]
+            };
+        }
+
+        private static RoomHouseholder ToHouseholderDomain(RoomModel model)
+        {
+            return new RoomHouseholder
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude,
+                Description = model.Description,
+                Price = (double)model.Price,
+                Status = (RoomStatus)model.RoomStatusId,
+                BookingRequests = model.Bookings.Count(b => !b.IsDeleted),
+                ImageRoomUrls =  [.. model.RoomImages.Select(ri => ri.ImageUrl)]
             };
         }
 
