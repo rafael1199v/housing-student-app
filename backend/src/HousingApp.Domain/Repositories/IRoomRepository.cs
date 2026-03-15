@@ -6,5 +6,7 @@ namespace HousingApp.Domain.Repositories
     {
         Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20);
         Task<Room?> GetRoomByIdAsync(int roomId);
+        Task<bool> TryMarkAsBookedAsync(int roomId);
+        Task<bool> IsRoomAvailable(int roomId);
     }
 }
