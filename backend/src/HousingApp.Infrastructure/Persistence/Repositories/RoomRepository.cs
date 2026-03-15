@@ -48,6 +48,28 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             return roomModel is null ? null : ToDomain(roomModel);
         }
 
+        public async Task<bool> TryMarkAsBookedAsync(int roomId)
+        {
+            int affectedRows = await context.Rooms
+                .Where(room => room.Id == roomId && !room.IsDeleted)
+                .Where(room => room.RoomStatusId == (int)RoomStatus.Available)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(room => room.RoomStatusId, (int)RoomStatus.Booked)
+                    .SetProperty(room => room.UpdatedAt, DateTime.UtcNow));
+
+            return affectedRows == 1;
+        }
+
+        public async Task<bool> IsRoomAvailable(int roomId)
+        {
+            RoomModel? room = await context.Rooms.FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
+
+            if(room is null || room.RoomStatusId != (int)RoomStatus.Available)
+                return false;
+
+            return true;
+        }
+
         private static Room ToDomain(RoomModel model)
         {
             return new Room
@@ -77,6 +99,5 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             };
         }
 
-        
     }
 }
