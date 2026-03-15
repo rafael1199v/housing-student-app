@@ -9,13 +9,30 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
 {
     public class RoomRepository(HousingApplicationDbContext context) : IRoomRepository
     {
-        public async Task<List<Room>> GetRoomsAsync(int quantity = 3)
+        public async Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 3)
         {
-            List<RoomModel> rooms = await context.Rooms
+            IQueryable<RoomModel> query = context.Rooms
+                .AsNoTracking()
                 .Include(r =>r.Person)
                 .Include(r => r.RoomStatus)
                 .Include(r => r.RoomImages)
-                .Where(r => r.RoomStatusId != (int)RoomStatus.Available)
+                .Where(r => !r.IsDeleted)
+                .Where(r => r.RoomStatusId == (int)RoomStatus.Available);
+
+            if (!string.IsNullOrWhiteSpace(filters.Name))
+            {
+                string name = filters.Name.Trim();
+                query = query.Where(r => EF.Functions.ILike(r.Name, $"%{name}%"));
+            }
+
+            if (filters.MinPrice.HasValue)
+                query = query.Where(r => r.Price >= (decimal)filters.MinPrice.Value);
+
+            if (filters.MaxPrice.HasValue)
+                query = query.Where(r => r.Price <= (decimal)filters.MaxPrice.Value);
+
+            List<RoomModel> rooms = await query
+                .OrderByDescending(r => r.CreatedAt)
                 .Take(quantity)
                 .ToListAsync();
 

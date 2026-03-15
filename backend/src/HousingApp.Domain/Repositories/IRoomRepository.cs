@@ -4,6 +4,6 @@ namespace HousingApp.Domain.Repositories
 {
     public interface IRoomRepository
     {
-        Task<List<Room>> GetRoomsAsync(int quantity);
+        Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20);
     }
 }
