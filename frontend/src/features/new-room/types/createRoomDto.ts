@@ -5,5 +5,5 @@ export interface CreateRoomDto {
 	description: string;
 	price: number;
 	roomStatus: number;
-	imageRoomUrls: string[];
+	imageRoomFiles: File[];
 }

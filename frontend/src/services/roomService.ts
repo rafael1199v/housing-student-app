@@ -35,9 +35,21 @@ const roomService = {
 		});
 	},
 	createRoom: async (dto: CreateRoomDto) => {
+		const formData = new FormData();
+		formData.append("name", dto.name);
+		formData.append("latitude", String(dto.latitude));
+		formData.append("longitude", String(dto.longitude));
+		formData.append("description", dto.description);
+		formData.append("price", String(dto.price));
+		formData.append("roomStatus", String(dto.roomStatus));
+
+		for (const imageFile of dto.imageRoomFiles) {
+			formData.append("images", imageFile);
+		}
+
 		return apiFetch<void>("/api/rooms/create", {
 			method: "POST",
-			body: JSON.stringify(dto),
+			body: formData,
 		});
 	},
 };

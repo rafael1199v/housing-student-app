@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import type { DragEvent } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -35,15 +36,6 @@ const createRoomSchema = z.object({
 
 type CreateRoomFormValues = z.input<typeof createRoomSchema>;
 type CreateRoomFormOutput = z.output<typeof createRoomSchema>;
-
-function fileToBase64(file: File): Promise<string> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = () => resolve(reader.result as string);
-		reader.onerror = reject;
-		reader.readAsDataURL(file);
-	});
-}
 
 export function NewRoomPage() {
 	const navigate = useNavigate();
@@ -81,12 +73,12 @@ export function NewRoomPage() {
 		});
 	};
 
-	const handleDragOver = (e: React.DragEvent) => {
+	const handleDragOver = (e: DragEvent) => {
 		e.preventDefault();
 		setIsDragging(true);
 	};
 	const handleDragLeave = () => setIsDragging(false);
-	const handleDrop = (e: React.DragEvent) => {
+	const handleDrop = (e: DragEvent) => {
 		e.preventDefault();
 		setIsDragging(false);
 		addFiles(e.dataTransfer.files);
@@ -103,8 +95,7 @@ export function NewRoomPage() {
 		},
 	});
 
-	const onSubmit = async (values: CreateRoomFormOutput) => {
-		const imageRoomUrls = await Promise.all(imageFiles.map(fileToBase64));
+	const onSubmit = (values: CreateRoomFormOutput) => {
 		const dto: CreateRoomDto = {
 			name: values.name,
 			description: values.description,
@@ -112,7 +103,7 @@ export function NewRoomPage() {
 			roomStatus: values.roomStatus,
 			latitude: values.latitude,
 			longitude: values.longitude,
-			imageRoomUrls,
+			imageRoomFiles: imageFiles,
 		};
 		mutation.mutate(dto);
 	};

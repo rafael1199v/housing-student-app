@@ -22,10 +22,12 @@ export async function apiFetch<T>(
 ): Promise<T> {
 	const authHeaders: HeadersInit =
 		requiresAuth && getToken() ? { Authorization: `Bearer ${getToken()}` } : {};
+	const contentTypeHeaders: HeadersInit =
+		rest.body instanceof FormData ? {} : { "Content-Type": "application/json" };
 
 	const response = await fetch(`${baseURL}${endpoint}`, {
 		headers: {
-			"Content-Type": "application/json",
+			...contentTypeHeaders,
 			...authHeaders,
 			...headers,
 		},
