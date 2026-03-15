@@ -1,4 +1,5 @@
 import type { RoomData } from "../features/home/types/roomDataDto";
+import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
 import { apiFetch } from "./apiService";
@@ -31,6 +32,12 @@ const roomService = {
 		return apiFetch<void>("/api/booking", {
 			method: "POST",
 			body: JSON.stringify({ roomId }),
+		});
+	},
+	createRoom: async (dto: CreateRoomDto) => {
+		return apiFetch<void>("/api/rooms/create", {
+			method: "POST",
+			body: JSON.stringify(dto),
 		});
 	},
 };
