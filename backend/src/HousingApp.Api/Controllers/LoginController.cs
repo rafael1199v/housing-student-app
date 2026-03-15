@@ -36,7 +36,7 @@ namespace HousingApp.Api.Controllers
             [
                 new(JwtRegisteredClaimNames.Sub, user.Id),
                 new(JwtRegisteredClaimNames.Email, user.Email),
-                ..user.Roles.Select(r => new Claim(ClaimTypes.Role, r))
+                ..user.Roles.Select(r => new Claim("role", r))
             ];
 
             SecurityTokenDescriptor tokenDescriptor = new()
