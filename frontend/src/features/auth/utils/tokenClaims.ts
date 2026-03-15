@@ -1,7 +1,7 @@
 type UserRole = "Student" | "Householder";
 
 interface JwtPayload {
-	role?: unknown;
+	role?: string;
 }
 
 function decodeBase64Url(value: string) {
