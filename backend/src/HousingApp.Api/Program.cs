@@ -10,6 +10,7 @@ using HousingApp.Infrastructure.Persistence.Repositories;
 using HousingApp.Infrastructure.Persistence.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Build.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -68,6 +69,7 @@ builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
 builder.Services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
 builder.Services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
 builder.Services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();
+builder.Services.AddScoped<IGetHouseholderRoomsUseCase, GetHouseholderRoomsUseCase>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -88,10 +90,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-
-    IServiceScope scope = app.Services.CreateScope();
-    HousingApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<HousingApplicationDbContext>();
-    dbContext.Database.Migrate();
 }
 
 //app.UseHttpsRedirection();

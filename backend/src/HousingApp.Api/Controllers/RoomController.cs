@@ -1,15 +1,21 @@
 using System.Globalization;
 using HousingApp.Application;
+using HousingApp.Application.Roles;
 using HousingApp.Application.Room.DTO;
 using HousingApp.Application.Room.UseCases;
 using HousingApp.Domain.Error;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace HousingApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RoomController(IGetRoomsUseCase getRoomsUseCase, IGetRoomDetailUseCase getRoomDetailUseCase) : ControllerBase
+    public class RoomController(IGetRoomsUseCase getRoomsUseCase,
+        IGetRoomDetailUseCase getRoomDetailUseCase,
+        IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
@@ -73,6 +79,30 @@ namespace HousingApp.Api.Controllers
             }
 
             return Ok(result.Value);
+        }
+
+
+        [HttpGet("householder")]
+        [Authorize(Roles = RolesDescription.Householder)]
+        public async Task<IActionResult> GetHouseholderRooms()
+        {
+            string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+            
+            try
+            {
+                Result<List<RoomHouseholderDto>> result = await getHouseholderRoomsUseCase.ExecuteAsync(userId);
+                
+                if (!result.IsSuccess)
+                    return BadRequest(result.Error);
+                
+                return Ok(result.Value);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
     }
