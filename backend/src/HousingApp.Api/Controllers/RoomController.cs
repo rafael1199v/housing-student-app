@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using HousingApp.Api.Requests;
+using HousingApp.Api.Constants;
 
 namespace HousingApp.Api.Controllers
 {
@@ -15,7 +17,8 @@ namespace HousingApp.Api.Controllers
     [Route("api/[controller]")]
     public class RoomController(IGetRoomsUseCase getRoomsUseCase,
         IGetRoomDetailUseCase getRoomDetailUseCase,
-        IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase) : ControllerBase
+        IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase,
+        ICreateRoomUseCase createRoomUseCase) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
@@ -51,6 +54,39 @@ namespace HousingApp.Api.Controllers
             return Ok(result.Value);
         }
 
+        [HttpPost]
+        [Authorize(Roles = RolesDescription.Householder)]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> CreateRoom([FromForm] CreateRoomRequest request)
+        {
+            string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+
+            if (request.Images.Count > Images.MaxImagesAllowed)
+                return BadRequest(RoomError.MaxImagesExceeded(Images.MaxImagesAllowed));
+
+            if (HasNonImageFiles(request.Images))
+                return BadRequest(RoomError.InvalidImageType);
+
+            
+            CreateRoomDto createRoomDto = GetCreateRoomDto(request);
+
+            try
+            {
+                Result<CreatedRoomDto> result = await createRoomUseCase.ExecuteAsync(userId, createRoomDto);
+
+                if (!result.IsSuccess)
+                    return BadRequest(result.Error);
+
+                return Ok(result.Value);
+            }
+            catch
+            {
+                return BadRequest(new { message = "Hubo un error al crear el alojamiento. Intentalo otra vez" });
+            }
+        }
+
         private static bool TryParseNullableDouble(string? value, out double? result)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -68,6 +104,8 @@ namespace HousingApp.Api.Controllers
             result = null;
             return false;
         }
+    
+    
 
         [HttpGet("{roomId}")]
         public async Task<IActionResult> GetRoomById(int roomId)
@@ -105,5 +143,27 @@ namespace HousingApp.Api.Controllers
             }
         }
 
+        private static bool HasNonImageFiles(List<IFormFile> images)
+        {
+            return images.Any(image =>
+                image.Length > 0
+                && (string.IsNullOrWhiteSpace(image.ContentType)
+                    || !image.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private static CreateRoomDto GetCreateRoomDto(CreateRoomRequest request)
+        {
+            CreateRoomDto createRoomDto = new(
+                Name: request.Name,
+                Description: request.Description,
+                Latitude: request.Latitude,
+                Longitude: request.Longitude,
+                Price: request.Price,
+                RoomStatusId: request.RoomStatusId,
+                Images: [.. request.Images.Select(image => $"uploaded://{Guid.NewGuid():N}/{Path.GetFileName(image.FileName)}")]
+            );
+
+            return createRoomDto;
+        }
     }
 }

@@ -10,7 +10,6 @@ using HousingApp.Infrastructure.Persistence.Repositories;
 using HousingApp.Infrastructure.Persistence.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -63,6 +62,7 @@ builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 builder.Services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
 builder.Services.AddScoped<IBookingUnitOfWork, BookingUnitOfWork>();
+builder.Services.AddScoped<IRoomUnitOfWork, RoomUnitOfWork>();
 
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
 builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
@@ -70,6 +70,7 @@ builder.Services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
 builder.Services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
 builder.Services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();
 builder.Services.AddScoped<IGetHouseholderRoomsUseCase, GetHouseholderRoomsUseCase>();
+builder.Services.AddScoped<ICreateRoomUseCase, CreateRoomUseCase>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
