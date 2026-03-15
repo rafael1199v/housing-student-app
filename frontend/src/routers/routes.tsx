@@ -5,6 +5,7 @@ import Register from "../features/auth/pages/register";
 import { useAccessToken } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { HomePage } from "../features/home/pages";
+import { NewRoomPage } from "../features/new-room/pages";
 import { NotFoundPage } from "../features/not-found/pages";
 import { OwnerHomePage } from "../features/owner-home/pages";
 import { RoomDetails } from "../features/room-details/pages";
@@ -63,6 +64,16 @@ export const router = createBrowserRouter([
 							{
 								index: true,
 								Component: RoomDetails,
+							},
+						],
+					},
+					{
+						path: "owner/rooms/new",
+						Component: MainLayout,
+						children: [
+							{
+								index: true,
+								Component: NewRoomPage,
 							},
 						],
 					},
