@@ -2,6 +2,7 @@ using HousingApp.Domain.Entities;
 using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories
 {
@@ -11,6 +12,13 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         {
             PersonModel model = ToModel(person);
             await context.Persons.AddAsync(model);
+        }
+
+        public async Task<bool> ExistsByUserIdAsync(string userId)
+        {
+            return await context.Persons
+                .AsNoTracking()
+                .AnyAsync(person => person.UserId == userId && !person.IsDeleted);
         }
         
         private static PersonModel ToModel(Person person)
