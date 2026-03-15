@@ -47,7 +47,7 @@ const roomService = {
 			formData.append("images", imageFile);
 		}
 
-		return apiFetch<void>("/api/rooms/create", {
+		return apiFetch<void>("/api/rooms", {
 			method: "POST",
 			body: formData,
 		});
