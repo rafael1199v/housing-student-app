@@ -31,14 +31,16 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<HousingApplicationDbContext>();
 
-builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
-builder.Services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
 builder.Services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
+builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
+builder.Services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
+builder.Services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
