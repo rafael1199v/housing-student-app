@@ -4,12 +4,38 @@ using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories
 {
     public class RoomRepository(HousingApplicationDbContext context) : IRoomRepository
     {
+        public async Task CreateRoomAsync(Room room)
+        {
+            RoomModel roomModel = new()
+            {
+                Name = room.Name,
+                Latitude = room.Latitude,
+                Longitude = room.Longitude,
+                Description = room.Description,
+                Price = (decimal)room.Price,
+                PersonId = room.PersonId,
+                RoomStatusId = (int)room.RoomStatus,
+            };
+
+            await context.Rooms.AddAsync(roomModel);
+
+            if (room.ImageUrls.Count == 0)
+                return;
+
+            List<RoomImagesModel> roomImages = [.. room.ImageUrls.Select(image => new RoomImagesModel
+            {
+                ImageUrl = image,
+                Room = roomModel
+            })];
+
+            await context.RoomImages.AddRangeAsync(roomImages);
+        }
+
         public async Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 3)
         {
             IQueryable<RoomModel> query = context.Rooms

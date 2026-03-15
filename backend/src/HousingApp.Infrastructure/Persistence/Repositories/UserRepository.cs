@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories
 {
-    public class UserRepository(UserManager<IdentityUser> userManager, HousingApplicationDbContext context) : IUserRepository
+    public class UserRepository(UserManager<IdentityUser> userManager) : IUserRepository
     {
         public async Task<string> RegisterUser(User newUser, Roles role)
         {
