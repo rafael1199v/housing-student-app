@@ -63,10 +63,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     
     IServiceScope scope = app.Services.CreateScope();
-    HousingApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<HousingApplicationDbContext>();
-    dbContext.Database.Migrate();
+    // HousingApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<HousingApplicationDbContext>();
+    // dbContext.Database.Migrate();
 
-    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    // RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 }
 
 //app.UseHttpsRedirection();

@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
 						],
 					},
 					{
-						path: "details",
+						path: "details/:id",
 						Component: MainLayout,
 						children: [
 							{

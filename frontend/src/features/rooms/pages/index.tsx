@@ -184,7 +184,7 @@ export function RoomsPage() {
 								price={room.price}
 								description={room.description}
 								images={room.images}
-								onClick={() => navigate("/details")}
+								onClick={() => navigate(`/details/${room.id}`)}
 							/>
 						))}
 					</div>

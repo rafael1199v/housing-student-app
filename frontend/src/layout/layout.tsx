@@ -18,10 +18,18 @@ export function MainLayout() {
 			<nav className="border-b border-slate-200 bg-white/90 backdrop-blur">
 				<div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
 					<div className="flex items-center gap-3">
-						<div className="rounded-md border border-slate-300 px-2 py-1 text-sm font-semibold text-slate-900">
+						<div
+							className="rounded-md border border-slate-300 px-2 py-1 text-sm font-semibold text-slate-900 cursor-pointer"
+							onClick={() => navigate("/")}
+						>
 							Logo
 						</div>
-						<p className="text-lg font-semibold text-slate-900">App navbar</p>
+						<p
+							className="text-lg font-semibold text-slate-900 cursor-pointer"
+							onClick={() => navigate("/")}
+						>
+							App navbar
+						</p>
 					</div>
 
 					<div className="flex items-center gap-3">
