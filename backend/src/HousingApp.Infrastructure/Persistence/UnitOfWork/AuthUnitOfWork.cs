@@ -10,7 +10,7 @@ namespace HousingApp.Infrastructure.Persistence.UnitOfWork
     public class AuthUnitOfWork(HousingApplicationDbContext context, UserManager<IdentityUser> userManager): IAuthUnitOfWork
     {
         public IPersonRepository PersonRepository { get; } = new PersonRepository(context);
-        public IUserRepository UserRepository { get; } = new UserRepository(userManager, context);
+        public IUserRepository UserRepository { get; } = new UserRepository(userManager);
         private IDbContextTransaction? _transaction = null;
         
         public async Task<int> SaveChangesAsync()
