@@ -1,55 +1,58 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-
-export interface Room {
-	id: string;
-	name: string;
-	latitude: number;
-	longitude: number;
-	description: string;
-	price: number;
-	personId: string;
-	roomStatus: string;
-	firstName: string;
-	lastName: string;
-	email: string;
-	phoneNumber: string;
-	imageUrls: Array<string>;
-}
-
-// Mock data - Replace with actual API call using useQuery
-const mockRoomData: Room = {
-	id: "1",
-	name: "Hermosa Habitación Céntrica",
-	latitude: 40.4168,
-	longitude: -3.7038,
-	description:
-		"Espaciosa habitación completamente amueblada con acceso a sala común, cocina compartida y baño privado. Ubicada en zona céntrica con fácil acceso al transporte público.",
-	price: 2500,
-	personId: "119f044e-4651-4e1f-b54d-d95f9f0fe426",
-	roomStatus: "1",
-	firstName: "Juan",
-	lastName: "Peres",
-	email: "juan.perez@example16.com",
-	phoneNumber: "+541122334455",
-	imageUrls: [
-		"https://images.unsplash.com/photo-1540932239986-310128078ceb?w=800&h=600&fit=crop",
-		"https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
-		"https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
-	],
-};
+import { useParams } from "react-router";
+import { toast } from "sonner";
+import roomService from "../../../services/roomService";
+import { Footer } from "../../shared/components/footer";
 
 export function RoomDetails() {
+	const { id } = useParams<{ id: string }>();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-	const room = mockRoomData;
+
+	const {
+		data: room,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: ["room", id],
+		queryFn: () => roomService.getRoomById(id!),
+		enabled: !!id,
+	});
+
+	const bookingMutation = useMutation({
+		mutationFn: () => roomService.createBooking(String(room!.id)),
+		onSuccess: () => {
+			toast.success("Reserva realizada con éxito.");
+		},
+		onError: () => {
+			toast.error("Error al realizar la reserva. Por favor, intenta de nuevo.");
+		},
+	});
+
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center py-24 text-slate-500 text-sm">
+				Cargando habitación...
+			</div>
+		);
+	}
+
+	if (isError || !room) {
+		return (
+			<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
+				No se pudo cargar la habitación. Por favor, intenta de nuevo más tarde.
+			</div>
+		);
+	}
+
+	const images = room.imageRoomUrls ?? [];
 
 	const nextImage = () => {
-		setSelectedImageIndex((prev) => (prev + 1) % room.imageUrls.length);
+		setSelectedImageIndex((prev) => (prev + 1) % images.length);
 	};
 
 	const prevImage = () => {
-		setSelectedImageIndex(
-			(prev) => (prev - 1 + room.imageUrls.length) % room.imageUrls.length,
-		);
+		setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
 	};
 
 	const formattedPrice = new Intl.NumberFormat("es-BO", {
@@ -61,13 +64,19 @@ export function RoomDetails() {
 		<div className="space-y-8">
 			<section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
 				<div className="relative bg-slate-100">
-					<img
-						src={room.imageUrls[selectedImageIndex]}
-						alt={`${room.name} - Image ${selectedImageIndex + 1}`}
-						className="w-full h-96 object-cover"
-					/>
+					{images.length > 0 ? (
+						<img
+							src={images[selectedImageIndex]}
+							alt={`${room.name} - Image ${selectedImageIndex + 1}`}
+							className="w-full h-96 object-cover"
+						/>
+					) : (
+						<div className="w-full h-96 flex items-center justify-center text-sm text-slate-400">
+							Sin imágenes disponibles
+						</div>
+					)}
 
-					{room.imageUrls.length > 1 && (
+					{images.length > 1 && (
 						<>
 							<button
 								onClick={prevImage}
@@ -110,7 +119,7 @@ export function RoomDetails() {
 							</button>
 
 							<div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-								{room.imageUrls.map((_, index) => (
+								{images.map((_, index) => (
 									<button
 										key={index}
 										onClick={() => setSelectedImageIndex(index)}
@@ -130,7 +139,7 @@ export function RoomDetails() {
 				<div className="p-8 space-y-6">
 					<div className="space-y-3">
 						<h1 className="text-4xl font-bold text-slate-900">{room.name}</h1>
-						<div className="inline-block bg-gradient-to from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-lg">
+						<div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-lg">
 							{formattedPrice}/mes
 						</div>
 					</div>
@@ -144,30 +153,45 @@ export function RoomDetails() {
 
 					<div className="border-t border-slate-200 pt-6">
 						<div className="flex items-center gap-4">
-							<div className="w-14 h-14"></div>
+							{room.imageUrl ? (
+								<img
+									src={room.imageUrl}
+									alt={`${room.firstName} ${room.lastName}`}
+									className="w-14 h-14 rounded-full object-cover border border-slate-200"
+								/>
+							) : (
+								<div className="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-lg font-semibold">
+									{room.firstName.charAt(0)}
+								</div>
+							)}
 							<div>
 								<p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
 									Dueño de la propiedad
 								</p>
 								<p className="text-lg font-semibold text-slate-900">
-									{room.firstName + " " + room.lastName}
+									{room.firstName} {room.lastName}
 								</p>
+								<p className="text-sm text-slate-500">{room.email}</p>
+								<p className="text-sm text-slate-500">{room.phoneNumber}</p>
 							</div>
 						</div>
 					</div>
 
 					<div className="border-t border-slate-200 pt-6 flex gap-3">
 						<button
-							className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-							onClick={() => {
-								console.log(room.phoneNumber, room.email);
-							}}
+							type="button"
+							disabled={bookingMutation.isPending}
+							className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+							onClick={() => bookingMutation.mutate()}
 						>
-							Contactar propietario
+							{bookingMutation.isPending
+								? "Reservando..."
+								: "Reservar habitación"}
 						</button>
 					</div>
 				</div>
 			</section>
+			<Footer />
 		</div>
 	);
 }
