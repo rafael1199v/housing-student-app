@@ -1,18 +1,32 @@
-import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { z } from "zod";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
 import { useSignIn } from "../store/authStore";
 
-interface IFormInput {
-	email: string;
-	password: string;
-}
+const loginSchema = z.object({
+	email: z
+		.string()
+		.trim()
+		.min(1, "El email es requerido")
+		.email("Por favor ingresa un email válido"),
+	password: z
+		.string()
+		.min(1, "La contraseña es requerida")
+		.min(8, "La contraseña debe tener al menos 8 caracteres"),
+});
+
+type IFormInput = z.infer<typeof loginSchema>;
 
 function Login() {
-	const { register, handleSubmit, reset, formState } = useForm<IFormInput>();
+	const [showPassword, setShowPassword] = useState(false);
+	const { register, handleSubmit, formState } = useForm<IFormInput>({
+		resolver: zodResolver(loginSchema),
+	});
 	const signIn = useSignIn();
 	const navigate = useNavigate();
 
@@ -25,12 +39,6 @@ function Login() {
 			toast.error("Credenciales invalidas");
 		}
 	};
-
-	useEffect(() => {
-		if (formState.isSubmitted) {
-			reset({ password: "" });
-		}
-	}, [formState, reset]);
 
 	return (
 		<div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -96,14 +104,26 @@ function Login() {
 							<label className="block text-sm font-medium text-slate-700 mb-2">
 								Contraseña
 							</label>
-							<input
-								className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-								type="password"
-								placeholder="••••••••"
-								{...register("password", {
-									required: "La contraseña es requerida",
-								})}
-							/>
+							<div className="relative">
+								<input
+									className="w-full px-4 py-2.5 pr-16 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									type={showPassword ? "text" : "password"}
+									placeholder="••••••••"
+									{...register("password")}
+								/>
+								<button
+									type="button"
+									onClick={() =>
+										setShowPassword((currentValue) => !currentValue)
+									}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 hover:text-slate-800"
+									aria-label={
+										showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+									}
+								>
+									{showPassword ? "🙈" : "👁️"}
+								</button>
+							</div>
 							{formState.errors.password && (
 								<p className="text-red-500 text-xs mt-1">
 									{formState.errors.password.message}

@@ -1,37 +1,107 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { z } from "zod";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
 import authService from "../../../services/authService";
 import { LATIN_AMERICAN_COUNTRIES } from "../components/NationalitySelector";
 import type { RegisterDto } from "../types/registerDto";
 
-interface IFormInput {
-	email: string;
-	password: string;
-	confirmPassword: string;
-	role: string;
-	firstName: string;
-	lastName: string;
-	phoneNumber: string;
-	phoneExtension: string;
-	nationality: string;
-	age: number;
-	gender: string;
-	imageUrl: string;
-	birthDate: string;
-}
+const registerSchema = z
+	.object({
+		email: z
+			.string()
+			.trim()
+			.min(1, "El email es requerido")
+			.email("Por favor ingresa un email válido"),
+		password: z
+			.string()
+			.min(1, "La contraseña es requerida")
+			.min(8, "La contraseña debe tener al menos 8 caracteres")
+			.regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/, {
+				message:
+					"La contraseña debe contener letras, números y un carácter especial",
+			}),
+		confirmPassword: z.string().min(1, "Debe confirmar la contraseña"),
+		role: z.string().min(1, "El rol es requerido"),
+		firstName: z.string().trim().min(1, "El nombre es requerido"),
+		lastName: z.string().trim().min(1, "El apellido es requerido"),
+		phoneNumber: z
+			.string()
+			.trim()
+			.min(1, "El teléfono es requerido")
+			.regex(/^\d+$/, "El teléfono solo debe contener números")
+			.min(7, "El teléfono debe tener al menos 7 dígitos"),
+		phoneExtension: z.string().min(1, "La extensión es requerida"),
+		nationality: z.string().min(1, "La nacionalidad es requerida"),
+		age: z.coerce
+			.number({ message: "La edad es requerida" })
+			.int("La edad debe ser un número entero")
+			.min(1, "La edad debe ser mayor que 0"),
+		gender: z.string().min(1, "El género es requerido"),
+		imageUrl: z.union([
+			z.literal(""),
+			z.string().url("La foto de perfil debe ser una URL válida"),
+		]),
+		birthDate: z.string().min(1, "La fecha de nacimiento es requerida"),
+	})
+	.superRefine((data, context) => {
+		if (data.password !== data.confirmPassword) {
+			context.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Las contraseñas no coinciden",
+				path: ["confirmPassword"],
+			});
+		}
+
+		const birthDate = new Date(data.birthDate);
+		if (Number.isNaN(birthDate.getTime())) {
+			return;
+		}
+
+		const today = new Date();
+		let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+		const hasNotHadBirthdayThisYear =
+			today.getMonth() < birthDate.getMonth() ||
+			(today.getMonth() === birthDate.getMonth() &&
+				today.getDate() < birthDate.getDate());
+
+		if (hasNotHadBirthdayThisYear) {
+			calculatedAge -= 1;
+		}
+
+		if (calculatedAge !== data.age) {
+			context.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "La edad no coincide con la fecha de nacimiento",
+				path: ["age"],
+			});
+		}
+	});
+
+type RegisterFormInput = z.input<typeof registerSchema>;
+type RegisterFormOutput = z.output<typeof registerSchema>;
 
 function Register() {
-	const { register, handleSubmit, reset, formState, watch } =
-		useForm<IFormInput>();
-	const [phoneExtension, setPhoneExtension] = useState("");
-	const [role, setRole] = useState("");
-	const [nationality, setNationality] = useState("");
-	const password = watch("password");
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const { register, handleSubmit, formState } = useForm<
+		RegisterFormInput,
+		unknown,
+		RegisterFormOutput
+	>({
+		resolver: zodResolver(registerSchema),
+		defaultValues: {
+			phoneExtension: "",
+			nationality: "",
+			role: "",
+			imageUrl: "",
+		},
+	});
 	const nav = useNavigate();
 
 	const { mutate, isPending } = useMutation({
@@ -45,15 +115,15 @@ function Register() {
 		},
 	});
 
-	const onSubmit: SubmitHandler<IFormInput> = (data) => {
+	const onSubmit: SubmitHandler<RegisterFormOutput> = (data) => {
 		const newRegister: RegisterDto = {
 			email: data.email,
 			password: data.password,
-			role: role,
+			role: data.role,
 			firstName: data.firstName,
 			lastName: data.lastName,
-			phoneNumber: `${phoneExtension}${data.phoneNumber}`,
-			nationality: nationality,
+			phoneNumber: `${data.phoneExtension}${data.phoneNumber}`,
+			nationality: data.nationality,
 			age: data.age,
 			gender: data.gender,
 			imageUrl: data.imageUrl,
@@ -62,12 +132,6 @@ function Register() {
 
 		mutate(newRegister);
 	};
-
-	useEffect(() => {
-		if (formState.isSubmitted) {
-			reset({ password: "", confirmPassword: "" });
-		}
-	}, [formState, reset]);
 
 	return (
 		<div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -121,9 +185,7 @@ function Register() {
 								<input
 									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
 									placeholder="Juan"
-									{...register("firstName", {
-										required: "El nombre es requerido",
-									})}
+									{...register("firstName")}
 								/>
 								{formState.errors.firstName && (
 									<p className="text-red-500 text-xs mt-1">
@@ -138,9 +200,7 @@ function Register() {
 								<input
 									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
 									placeholder="Pérez"
-									{...register("lastName", {
-										required: "El apellido es requerido",
-									})}
+									{...register("lastName")}
 								/>
 								{formState.errors.lastName && (
 									<p className="text-red-500 text-xs mt-1">
@@ -158,9 +218,7 @@ function Register() {
 								</label>
 								<select
 									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-									{...register("gender", {
-										required: "El género es requerido",
-									})}
+									{...register("gender")}
 								>
 									<option value="">Seleccionar</option>
 									<option value="Masculino">Masculino</option>
@@ -180,9 +238,7 @@ function Register() {
 								<input
 									type="date"
 									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-									{...register("birthDate", {
-										required: "La fecha de nacimiento es requerida",
-									})}
+									{...register("birthDate")}
 								/>
 								{formState.errors.birthDate && (
 									<p className="text-red-500 text-xs mt-1">
@@ -198,7 +254,7 @@ function Register() {
 									type="number"
 									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
 									placeholder="18"
-									{...register("age", { required: "La edad es requerida" })}
+									{...register("age")}
 								/>
 								{formState.errors.age && (
 									<p className="text-red-500 text-xs mt-1">
@@ -215,8 +271,7 @@ function Register() {
 									Nacionalidad
 								</label>
 								<select
-									value={nationality}
-									onChange={(e) => setNationality(e.target.value)}
+									{...register("nationality")}
 									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
 								>
 									<option value="">Selecciona tu país</option>
@@ -226,9 +281,9 @@ function Register() {
 										</option>
 									))}
 								</select>
-								{!nationality && formState.isSubmitted && (
+								{formState.errors.nationality && (
 									<p className="text-red-500 text-xs mt-1">
-										La nacionalidad es requerida
+										{formState.errors.nationality.message}
 									</p>
 								)}
 							</div>
@@ -238,8 +293,7 @@ function Register() {
 								</label>
 								<div className="flex gap-2">
 									<select
-										value={phoneExtension}
-										onChange={(e) => setPhoneExtension(e.target.value)}
+										{...register("phoneExtension")}
 										className="w-24 px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shrink-0"
 									>
 										<option value="">Ext</option>
@@ -253,11 +307,14 @@ function Register() {
 										className="flex-1 px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
 										type="tel"
 										placeholder="1234567"
-										{...register("phoneNumber", {
-											required: "El teléfono es requerido",
-										})}
+										{...register("phoneNumber")}
 									/>
 								</div>
+								{formState.errors.phoneExtension && (
+									<p className="text-red-500 text-xs mt-1">
+										{formState.errors.phoneExtension.message}
+									</p>
+								)}
 								{formState.errors.phoneNumber && (
 									<p className="text-red-500 text-xs mt-1">
 										{formState.errors.phoneNumber.message}
@@ -277,6 +334,11 @@ function Register() {
 								placeholder="https://ejemplo.com/foto.jpg"
 								{...register("imageUrl")}
 							/>
+							{formState.errors.imageUrl && (
+								<p className="text-red-500 text-xs mt-1">
+									{formState.errors.imageUrl.message}
+								</p>
+							)}
 						</div>
 
 						{/* Divider */}
@@ -291,45 +353,42 @@ function Register() {
 							</div>
 						</div>
 
-						{/* Email */}
-						<div className="sm:grid-cols-2 gap-4">
-							<label className="block text-sm font-medium text-slate-700 mb-2">
-								Correo electrónico
-							</label>
-							<input
-								className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-								type="email"
-								placeholder="tu@email.com"
-								{...register("email", {
-									required: "El email es requerido",
-									pattern: {
-										value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-										message: "Por favor ingresa un email válido",
-									},
-								})}
-							/>
-							{formState.errors.email && (
-								<p className="text-red-500 text-xs mt-1">
-									{formState.errors.email.message}
-								</p>
-							)}
-							<label className="block text-sm font-medium text-slate-700 mb-2">
-								Rol
-							</label>
-							<select
-								value={role}
-								onChange={(e) => setRole(e.target.value)}
-								className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shrink-0"
-							>
-								<option value="">...</option>
-								<option value="student">Estudiante</option>
-								<option value="householder">Arrendador</option>
-							</select>
-							{formState.errors.email && (
-								<p className="text-red-500 text-xs mt-1">
-									{formState.errors.email.message}
-								</p>
-							)}
+						{/* Email & Role */}
+						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+							<div className="sm:col-span-2">
+								<label className="block text-sm font-medium text-slate-700 mb-2">
+									Correo electrónico
+								</label>
+								<input
+									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									type="email"
+									placeholder="tu@email.com"
+									{...register("email")}
+								/>
+								{formState.errors.email && (
+									<p className="text-red-500 text-xs mt-1">
+										{formState.errors.email.message}
+									</p>
+								)}
+							</div>
+							<div className="sm:col-span-1">
+								<label className="block text-sm font-medium text-slate-700 mb-2">
+									Rol
+								</label>
+								<select
+									{...register("role")}
+									className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shrink-0"
+								>
+									<option value="">...</option>
+									<option value="student">Estudiante</option>
+									<option value="householder">Arrendador</option>
+								</select>
+								{formState.errors.role && (
+									<p className="text-red-500 text-xs mt-1">
+										{formState.errors.role.message}
+									</p>
+								)}
+							</div>
 						</div>
 
 						{/* Passwords */}
@@ -338,18 +397,26 @@ function Register() {
 								<label className="block text-sm font-medium text-slate-700 mb-2">
 									Contraseña
 								</label>
-								<input
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-									type="password"
-									placeholder="••••••••"
-									{...register("password", {
-										required: "La contraseña es requerida",
-										minLength: {
-											value: 8,
-											message: "La contraseña debe tener al menos 8 caracteres",
-										},
-									})}
-								/>
+								<div className="relative">
+									<input
+										className="w-full px-4 py-2.5 pr-16 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+										type={showPassword ? "text" : "password"}
+										placeholder="••••••••"
+										{...register("password")}
+									/>
+									<button
+										type="button"
+										onClick={() =>
+											setShowPassword((currentValue) => !currentValue)
+										}
+										className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 hover:text-slate-800"
+										aria-label={
+											showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+										}
+									>
+										{showPassword ? "🙈" : "👁️"}
+									</button>
+								</div>
 								{formState.errors.password && (
 									<p className="text-red-500 text-xs mt-1">
 										{formState.errors.password.message}
@@ -360,16 +427,28 @@ function Register() {
 								<label className="block text-sm font-medium text-slate-700 mb-2">
 									Confirmar Contraseña
 								</label>
-								<input
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-									type="password"
-									placeholder="••••••••"
-									{...register("confirmPassword", {
-										required: "Debe confirmar la contraseña",
-										validate: (value) =>
-											value === password || "Las contraseñas no coinciden",
-									})}
-								/>
+								<div className="relative">
+									<input
+										className="w-full px-4 py-2.5 pr-16 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+										type={showConfirmPassword ? "text" : "password"}
+										placeholder="••••••••"
+										{...register("confirmPassword")}
+									/>
+									<button
+										type="button"
+										onClick={() =>
+											setShowConfirmPassword((currentValue) => !currentValue)
+										}
+										className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 hover:text-slate-800"
+										aria-label={
+											showConfirmPassword
+												? "Ocultar contraseña"
+												: "Mostrar contraseña"
+										}
+									>
+										{showConfirmPassword ? "🙈" : "👁️"}
+									</button>
+								</div>
 								{formState.errors.confirmPassword && (
 									<p className="text-red-500 text-xs mt-1">
 										{formState.errors.confirmPassword.message}
@@ -382,7 +461,7 @@ function Register() {
 						<button
 							className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 mt-6"
 							type="submit"
-							disabled={formState.isSubmitting}
+							disabled={formState.isSubmitting || isPending}
 						>
 							{isPending ? "Creando cuenta..." : "Crear cuenta"}
 						</button>
