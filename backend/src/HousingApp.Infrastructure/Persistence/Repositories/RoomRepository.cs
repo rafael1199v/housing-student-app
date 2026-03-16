@@ -27,11 +27,8 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             if (room.ImageUrls.Count == 0)
                 return;
 
-            List<RoomImagesModel> roomImages = [.. room.ImageUrls.Select(image => new RoomImagesModel
-            {
-                ImageUrl = image,
-                Room = roomModel
-            })];
+            List<RoomImagesModel> roomImages =
+                [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image, Room = roomModel })];
 
             await context.RoomImages.AddRangeAsync(roomImages);
         }
@@ -40,7 +37,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         {
             IQueryable<RoomModel> query = context.Rooms
                 .AsNoTracking()
-                .Include(r =>r.Person)
+                .Include(r => r.Person)
                 .Include(r => r.RoomStatus)
                 .Include(r => r.RoomImages)
                 .Where(r => !r.IsDeleted)
@@ -71,7 +68,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             RoomModel? roomModel = await context.Rooms
                 .Include(r => r.Person)
                 .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
-    
+
             return roomModel is null ? null : ToDomain(roomModel);
         }
 
@@ -91,7 +88,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         {
             RoomModel? room = await context.Rooms.FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
 
-            if(room is null || room.RoomStatusId != (int)RoomStatus.Available)
+            if (room is null || room.RoomStatusId != (int)RoomStatus.Available)
                 return false;
 
             return true;
@@ -104,6 +101,18 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 .Include(r => r.RoomImages)
                 .Where(r => r.PersonId == userId && !r.IsDeleted).ToListAsync();
             return [.. householderRooms.Select(ToHouseholderDomain)];
+        }
+
+        public async Task<RoomHouseholderDetail?> GetHouseholderRoomsDetailsAsync(string householderId, int roomId)
+        {
+            RoomModel? room = await context.Rooms
+                .Include(r => r.Bookings)
+                .ThenInclude(b => b.Booker)
+                .Include(r => r.RoomImages)
+                .Where(r => r.Id == roomId && !r.IsDeleted && r.PersonId == householderId)
+                .FirstOrDefaultAsync();
+
+            return room is null ? null : ToRoomHouseholderDetail(room);
         }
 
         private static Room ToDomain(RoomModel model)
@@ -147,9 +156,44 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 Price = (double)model.Price,
                 Status = (RoomStatus)model.RoomStatusId,
                 BookingRequests = model.Bookings.Count(b => !b.IsDeleted),
-                ImageRoomUrls =  [.. model.RoomImages.Select(ri => ri.ImageUrl)]
+                ImageRoomUrls = [.. model.RoomImages.Select(ri => ri.ImageUrl)]
             };
         }
 
+        private static RoomHouseholderDetail? ToRoomHouseholderDetail(RoomModel model)
+        {
+            return new RoomHouseholderDetail
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude,
+                Description = model.Description,
+                Price = (double)model.Price,
+                Status = (RoomStatus)model.RoomStatusId,
+                ImageRoomUrls = [.. model.RoomImages.Select(ri => ri.ImageUrl)],
+                Bookings = [..model.Bookings.Select(b => new Booking
+                {
+                    Id = b.Id,
+                    BookerId = b.BookerId,
+                    RoomId = b.RoomId,
+                    BookingStatus = (BookingStatus)b.BookingStatusId,
+                    Booker = new Person
+                    {
+                        Id = b.BookerId,
+                        FirstName = b.Booker.FirstName,
+                        LastName = b.Booker.LastName,
+                        Email = b.Booker.Email,
+                        PhoneNumber = b.Booker.PhoneNumber,
+                        Nationality = b.Booker.Nationality,
+                        Age = b.Booker.Age,
+                        Gender = b.Booker.Gender,
+                        ImageUrl = b.Booker.ImageUrl,
+                        BirthDate = b.Booker.BirthDate
+                    }
+                    
+                })]
+            };
+        }
     }
 }
