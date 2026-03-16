@@ -1,5 +1,6 @@
+import { toast } from "sonner";
 import { useAuthStore } from "../features/auth/store/authStore";
-
+import { router } from "../routers/routes";
 export interface RequestOptions extends RequestInit {
 	requiresAuth?: boolean;
 	baseURL?: string;
@@ -35,6 +36,18 @@ export async function apiFetch<T>(
 	});
 
 	if (!response.ok) {
+		if (response.status === 401) {
+			useAuthStore.getState().actions.clearAll();
+			router.navigate("/login");
+			toast.error("Sesión expirada. Ingresa tus credenciales nuevamente");
+			throw new Error("Sesión expirada");
+		}
+
+		if (response.status === 403) {
+			router.navigate("/not-found");
+			throw new Error("forbidden.resource");
+		}
+
 		const error = await response
 			.json()
 			.catch(() => ({ message: response.statusText }));
