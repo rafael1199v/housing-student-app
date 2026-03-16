@@ -41,13 +41,13 @@ const roomService = {
 		formData.append("longitude", String(dto.longitude));
 		formData.append("description", dto.description);
 		formData.append("price", String(dto.price));
-		formData.append("roomStatus", String(dto.roomStatus));
+		formData.append("roomStatusId", String(dto.roomStatus));
 
 		for (const imageFile of dto.imageRoomFiles) {
 			formData.append("images", imageFile);
 		}
 
-		return apiFetch<void>("/api/rooms", {
+		return apiFetch<void>("/api/room", {
 			method: "POST",
 			body: formData,
 		});
