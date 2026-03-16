@@ -18,7 +18,8 @@ namespace HousingApp.Api.Controllers
     public class RoomController(IGetRoomsUseCase getRoomsUseCase,
         IGetRoomDetailUseCase getRoomDetailUseCase,
         IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase,
-        ICreateRoomUseCase createRoomUseCase) : ControllerBase
+        ICreateRoomUseCase createRoomUseCase,
+        IGetHouseholderRoomDetailUseCase getHouseholderRoomDetailUseCase) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
@@ -140,6 +141,31 @@ namespace HousingApp.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("householder/{roomId:int}")]
+        [Authorize(Roles = RolesDescription.Householder)]
+        public async Task<IActionResult> GetHouseholderRoomDetail(int roomId)
+        {
+            string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+            
+            try
+            {
+                Result<RoomHouseholderDetailDto> result = await getHouseholderRoomDetailUseCase.ExecuteAsync(roomId: roomId, userId: userId);
+                
+                if(!result.IsSuccess) {
+                    return BadRequest(result.Error);
+                }
+
+                return Ok(result.Value);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
             }
         }
 

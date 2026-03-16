@@ -11,5 +11,6 @@ namespace HousingApp.Domain.Repositories
         Task<bool> IsRoomAvailable(int roomId);
 
         Task<List<RoomHouseholder>> GetHouseholderRoomsAsync(string userId);
+        Task<RoomHouseholderDetail?> GetHouseholderRoomsDetailsAsync(string householderId, int roomId);
     }
 }
