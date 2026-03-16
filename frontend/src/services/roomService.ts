@@ -1,6 +1,7 @@
 import type { RoomData } from "../features/home/types/roomDataDto";
 import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
+import type { RoomHouseholderDetailDto } from "../features/owner-room-details/types/roomHouseholderDetailDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
 import { apiFetch } from "./apiService";
 
@@ -50,6 +51,19 @@ const roomService = {
 		return apiFetch<void>("/api/room", {
 			method: "POST",
 			body: formData,
+		});
+	},
+	getHouseholderRoomDetail: async (id: string) => {
+		return apiFetch<RoomHouseholderDetailDto>(`/api/room/householder/${id}`);
+	},
+	approveBooking: async (bookingId: number, roomId: number) => {
+		// TODO: Update API calls when backend endpoints are ready
+		// PUT /api/room/{roomId} -> update room status to "booked"
+		// PUT /api/booking/{bookingId} -> update booking status to "approved"
+		// PUT /api/booking (bulk) -> reject other bookings for this room
+		return apiFetch<void>(`/api/booking/${bookingId}/approve`, {
+			method: "PUT",
+			body: JSON.stringify({ roomId }),
 		});
 	},
 };
