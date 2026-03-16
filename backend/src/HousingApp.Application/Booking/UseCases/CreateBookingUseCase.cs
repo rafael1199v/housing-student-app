@@ -29,6 +29,7 @@ namespace HousingApp.Application.Booking.UseCases
             
                 Domain.Entities.Booking booking = new()
                 {
+                    Id = 0,
                     BookerId = bookerId,
                     RoomId = createBookingDto.RoomId,
                     BookingStatus = BookingStatus.Pending
