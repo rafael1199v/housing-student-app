@@ -27,7 +27,7 @@ export function OwnerRoomDetailsPage() {
 	});
 
 	const approveMutation = useMutation({
-		mutationFn: () => roomService.approveBooking(selectedBooking!.id, room!.id),
+		mutationFn: () => roomService.approveBooking(selectedBooking!.id),
 		onSuccess: () => {
 			toast.success("Booking approved successfully.");
 			setShowConfirmDialog(false);
