@@ -35,7 +35,6 @@ namespace HousingApp.Application.Booking.UseCases
                 
                 case BookingStatus.Completed:
                 default:
-                    await unitOfWork.RollbackTransactionAsync();
                     return Result<bool>.Failure(BookingError.BookingInvalidStatus);
             }
         }
