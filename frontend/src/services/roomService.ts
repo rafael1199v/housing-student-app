@@ -56,14 +56,9 @@ const roomService = {
 	getHouseholderRoomDetail: async (id: string) => {
 		return apiFetch<RoomHouseholderDetailDto>(`/api/room/householder/${id}`);
 	},
-	approveBooking: async (bookingId: number, roomId: number) => {
-		// TODO: Update API calls when backend endpoints are ready
-		// PUT /api/room/{roomId} -> update room status to "booked"
-		// PUT /api/booking/{bookingId} -> update booking status to "approved"
-		// PUT /api/booking (bulk) -> reject other bookings for this room
-		return apiFetch<void>(`/api/booking/${bookingId}/approve`, {
+	approveBooking: async (bookingId: number) => {
+		return apiFetch<void>(`/api/booking/approve/${bookingId}`, {
 			method: "PUT",
-			body: JSON.stringify({ roomId }),
 		});
 	},
 };
