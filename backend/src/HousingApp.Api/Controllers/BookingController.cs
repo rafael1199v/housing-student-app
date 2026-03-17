@@ -11,9 +11,10 @@ namespace HousingApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BookingController(ICreateBookingUseCase createBookingUseCase) : ControllerBase
+    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase) : ControllerBase
     {
         [HttpPost]
+        [Authorize(Roles = RolesDescription.Student)]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto createBookingDto)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -33,6 +34,25 @@ namespace HousingApp.Api.Controllers
             catch
             {
                 return BadRequest(new { message = "Hubo un error al crear la reservacion. Intentalo otra vez" });
+            }
+        }
+
+        [HttpPut("approve/{bookingId:int}")]
+        [Authorize(Roles = RolesDescription.Householder)]
+        public async Task<IActionResult> ApproveBooking(int bookingId)
+        {
+            try
+            {
+                Result<bool> result = await approveBookingUseCase.ExecuteAsync(bookingId);
+
+                if (!result.IsSuccess)
+                    return BadRequest(result.Error);
+
+                return Ok(result.Value);
+            }
+            catch
+            {
+                return BadRequest(new { message = "Hubo un error al aprobar la reservacion. Intentalo otra vez." });
             }
         }
     }
