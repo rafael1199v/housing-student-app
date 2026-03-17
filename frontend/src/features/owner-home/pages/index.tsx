@@ -61,7 +61,7 @@ export function OwnerHomePage() {
 							<OwnerRoomCard
 								key={room.id}
 								room={room}
-								onClick={() => navigate(`/details/${room.id}`)}
+								onClick={() => navigate(`/owner/rooms/${room.id}`)}
 								onEdit={() => navigate(`/owner/rooms/${room.id}/edit`)}
 							/>
 						))}

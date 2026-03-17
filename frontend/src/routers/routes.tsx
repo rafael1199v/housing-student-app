@@ -8,6 +8,7 @@ import { HomePage } from "../features/home/pages";
 import { NewRoomPage } from "../features/new-room/pages";
 import { NotFoundPage } from "../features/not-found/pages";
 import { OwnerHomePage } from "../features/owner-home/pages";
+import { OwnerRoomDetailsPage } from "../features/owner-room-details/pages";
 import { RoomDetails } from "../features/room-details/pages";
 import { RoomsPage } from "../features/rooms/pages";
 import { MainLayout } from "../layout/layout";
@@ -74,6 +75,16 @@ export const router = createBrowserRouter([
 							{
 								index: true,
 								Component: NewRoomPage,
+							},
+						],
+					},
+					{
+						path: "owner/rooms/:id",
+						Component: MainLayout,
+						children: [
+							{
+								index: true,
+								Component: OwnerRoomDetailsPage,
 							},
 						],
 					},
