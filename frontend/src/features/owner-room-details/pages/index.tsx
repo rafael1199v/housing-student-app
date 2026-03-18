@@ -56,9 +56,7 @@ export function OwnerRoomDetailsPage() {
 	}
 
 	const images = room.imageRoomUrls ?? [];
-	const pendingBookings = room.bookings.filter(
-		(booking) => booking.bookingStatus === "Pending",
-	);
+	const pendingBookings = room.bookings;
 
 	const nextImage = () => {
 		setSelectedImageIndex((prev) => (prev + 1) % images.length);
@@ -204,7 +202,7 @@ export function OwnerRoomDetailsPage() {
 												{booking.bookerEmail}
 											</p>
 											<div className="inline-block mt-1 px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-												Pending
+												{booking.bookingStatus}
 											</div>
 										</div>
 										<button
