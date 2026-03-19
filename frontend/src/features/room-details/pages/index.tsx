@@ -4,7 +4,7 @@ import {
 	Map as GoogleMap,
 	Pin,
 } from "@vis.gl/react-google-maps";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import roomService from "../../../services/roomService";
@@ -14,8 +14,8 @@ export function RoomDetails() {
 	const { id } = useParams<{ id: string }>();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 	const [bookRequestSent, setBookRequestSent] = useState(0);
-	//TODO: hacer un GET para verificar si ya existe una reservación de esta habitación por el mismo estudiante
-	//TODO: Mostrar datos de contacto si el booking fue confirmado!
+	const [booked, setBooked] = useState(false);
+
 	const {
 		data: room,
 		isLoading,
@@ -25,7 +25,14 @@ export function RoomDetails() {
 		queryFn: () => roomService.getRoomById(id!),
 		enabled: !!id,
 	});
-	const [booked] = useState(room?.roomStatus != "Available");
+
+	useEffect(() => {
+		if (room) {
+			setBooked(room.roomStatus !== "Available");
+		}
+	}, [room]);
+	//TODO: hacer un GET para verificar si ya existe una reservación de esta habitación por el mismo estudiante
+	//TODO: Mostrar datos de contacto si el booking fue confirmado!
 
 	const bookingMutation = useMutation({
 		mutationFn: () => roomService.createBooking(String(room!.id)),
