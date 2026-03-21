@@ -12,9 +12,9 @@ namespace HousingApp.Domain.Entities
         public string Gender { get; init; } = string.Empty;
         public string? ImageUrl { get; init; } = string.Empty;
         public DateOnly BirthDate { get; init; }
-        
+
         public User? User { get; init; }
-        
+
         public static Person CreatePerson(
             string firstName,
             string lastName,
@@ -39,7 +39,7 @@ namespace HousingApp.Domain.Entities
                 BirthDate = birthDate
             };
         }
-        
+
         public static Person CreatePerson(
             string id,
             string firstName,
@@ -68,6 +68,6 @@ namespace HousingApp.Domain.Entities
                 User = user
             };
         }
-        
+
     }
 }

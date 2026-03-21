@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories
 {
-    public class PersonRepository(HousingApplicationDbContext context): IPersonRepository
+    public class PersonRepository(HousingApplicationDbContext context) : IPersonRepository
     {
         public async Task CreatePerson(Person person)
         {
@@ -20,7 +20,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .AnyAsync(person => person.UserId == userId && !person.IsDeleted);
         }
-        
+
         private static PersonModel ToModel(Person person)
         {
             return new PersonModel

@@ -11,17 +11,17 @@ namespace HousingApp.Application.Auth.UseCases
     {
         public async Task<Result<string>> ExecuteAsync(RegisterDto registerDto)
         {
-            if(registerDto.Role.Equals("admin", StringComparison.CurrentCultureIgnoreCase))
+            if (registerDto.Role.Equals("admin", StringComparison.CurrentCultureIgnoreCase))
                 return Result<string>.Failure(RegisterError.DeniedAdminCreation);
-            
+
             if (!Enum.TryParse<Domain.Enums.Roles>(registerDto.Role, true, out Domain.Enums.Roles role))
                 return Result<string>.Failure(RegisterError.RolDoesNotExist);
-            
+
             User? userFoundedByEmail = await unitOfWork.UserRepository.FindUserByEmailAsync(registerDto.Email);
 
             if (userFoundedByEmail is not null)
                 return Result<string>.Failure(RegisterError.EmailAlreadyInUse);
-            
+
             User user = User.CreateUser(registerDto.Email, registerDto.Password);
 
             try

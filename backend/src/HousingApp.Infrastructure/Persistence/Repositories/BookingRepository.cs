@@ -40,7 +40,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
 
         public async Task<Booking?> GetBookingByIdAsync(int bookingId)
         {
-            BookingModel? booking = await context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId && !b.IsDeleted); 
+            BookingModel? booking = await context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId && !b.IsDeleted);
             return booking is null ? null : ToDomain(booking);
         }
 

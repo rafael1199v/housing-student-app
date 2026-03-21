@@ -191,7 +191,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                         ImageUrl = b.Booker.ImageUrl,
                         BirthDate = b.Booker.BirthDate
                     }
-                    
+
                 })]
             };
         }

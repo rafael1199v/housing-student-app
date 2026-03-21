@@ -8,7 +8,7 @@ namespace HousingApp.Domain.Entities
         public required string BookerId { get; init; }
         public required int RoomId { get; init; }
         public required BookingStatus BookingStatus { get; init; }
-        
+
         public Person? Booker { get; init; }
     }
 }

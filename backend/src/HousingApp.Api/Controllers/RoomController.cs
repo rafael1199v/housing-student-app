@@ -1,4 +1,5 @@
-using System.Globalization;
+using HousingApp.Api.Constants;
+using HousingApp.Api.Requests;
 using HousingApp.Application;
 using HousingApp.Application.Roles;
 using HousingApp.Application.Room.DTO;
@@ -6,10 +7,9 @@ using HousingApp.Application.Room.UseCases;
 using HousingApp.Domain.Error;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using HousingApp.Api.Requests;
-using HousingApp.Api.Constants;
 
 namespace HousingApp.Api.Controllers
 {
@@ -70,7 +70,7 @@ namespace HousingApp.Api.Controllers
             if (HasNonImageFiles(request.Images))
                 return BadRequest(RoomError.InvalidImageType);
 
-            
+
             CreateRoomDto createRoomDto = GetCreateRoomDto(request);
 
             try
@@ -105,15 +105,16 @@ namespace HousingApp.Api.Controllers
             result = null;
             return false;
         }
-    
-    
+
+
 
         [HttpGet("{roomId}")]
         public async Task<IActionResult> GetRoomById(int roomId)
         {
             Result<RoomDto> result = await getRoomDetailUseCase.ExecuteAsync(roomId);
 
-            if(!result.IsSuccess) {
+            if (!result.IsSuccess)
+            {
                 return BadRequest(result.Error);
             }
 
@@ -128,14 +129,14 @@ namespace HousingApp.Api.Controllers
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
-            
+
             try
             {
                 Result<List<RoomHouseholderDto>> result = await getHouseholderRoomsUseCase.ExecuteAsync(userId);
-                
+
                 if (!result.IsSuccess)
                     return BadRequest(result.Error);
-                
+
                 return Ok(result.Value);
             }
             catch (Exception ex)
@@ -149,15 +150,16 @@ namespace HousingApp.Api.Controllers
         public async Task<IActionResult> GetHouseholderRoomDetail(int roomId)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            
+
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
-            
+
             try
             {
                 Result<RoomHouseholderDetailDto> result = await getHouseholderRoomDetailUseCase.ExecuteAsync(roomId: roomId, userId: userId);
-                
-                if(!result.IsSuccess) {
+
+                if (!result.IsSuccess)
+                {
                     return BadRequest(result.Error);
                 }
 

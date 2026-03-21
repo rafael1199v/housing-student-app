@@ -11,7 +11,7 @@ namespace HousingApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration): ControllerBase
+    public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration) : ControllerBase
     {
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto user)
@@ -20,7 +20,7 @@ namespace HousingApp.Api.Controllers
 
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
-               
+
             CredentialsDto credentials = new(AccessToken: GenerateToken(result.Value!));
             return Ok(credentials);
         }
@@ -29,7 +29,7 @@ namespace HousingApp.Api.Controllers
         {
             SymmetricSecurityKey signInKey =
                 new(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]!));
-            
+
             SigningCredentials credentials = new(signInKey, SecurityAlgorithms.HmacSha256);
 
             List<Claim> claims =
@@ -41,13 +41,13 @@ namespace HousingApp.Api.Controllers
 
             SecurityTokenDescriptor tokenDescriptor = new()
             {
-                Subject =  new ClaimsIdentity(claims),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
                 SigningCredentials = credentials,
                 Audience = configuration["Jwt:Audience"],
                 Issuer = configuration["Jwt:Issuer"],
             };
-            
+
             JsonWebTokenHandler tokenHandler = new();
             string accessToken = tokenHandler.CreateToken(tokenDescriptor);
 

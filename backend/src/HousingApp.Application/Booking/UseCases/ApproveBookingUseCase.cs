@@ -10,7 +10,7 @@ namespace HousingApp.Application.Booking.UseCases
     {
         public async Task<Result<bool>> ExecuteAsync(int bookingId)
         {
-           
+
             Domain.Entities.Booking? booking = await unitOfWork.BookingRepository.GetBookingByIdAsync(bookingId);
 
             if (booking is null)
@@ -30,9 +30,9 @@ namespace HousingApp.Application.Booking.UseCases
                     await unitOfWork.BeginTransactionAsync();
                     bool result = await unitOfWork.BookingRepository.ChangeStatus(bookingId, BookingStatus.Confirmed);
                     await unitOfWork.CommitTransactionAsync();
-                    
+
                     return !result ? Result<bool>.Failure(BookingError.BookingCouldNotChangeStatus) : Result<bool>.Success(result);
-                
+
                 case BookingStatus.Completed:
                 default:
                     return Result<bool>.Failure(BookingError.BookingInvalidStatus);

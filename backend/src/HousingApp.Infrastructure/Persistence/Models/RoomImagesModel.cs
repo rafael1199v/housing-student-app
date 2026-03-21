@@ -6,12 +6,12 @@ namespace HousingApp.Infrastructure.Persistence.Models
     public class RoomImagesModel
     {
         public int Id { get; set; }
-        
+
         public string ImageUrl { get; set; } = string.Empty;
-        
+
         public int RoomId { get; set; }
         public RoomModel Room { get; set; } = null!;
-        
+
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DeletedAt { get; set; }

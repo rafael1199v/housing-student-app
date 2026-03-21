@@ -12,8 +12,8 @@ namespace HousingApp.Domain.Entities
         public required double Price { get; init; }
         public required string PersonId { get; init; }
         public required RoomStatus RoomStatus { get; init; }
-        
+
         public required List<string> ImageUrls { get; init; }
-        public Person? Person { get; init; } 
+        public Person? Person { get; init; }
     }
 }

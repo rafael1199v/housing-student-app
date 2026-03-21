@@ -15,7 +15,7 @@ namespace HousingApp.Application.Auth.UseCases
             {
                 return Result<UserDto>.Failure(AuthError.InvalidCredentials);
             }
-            
+
             UserDto userDto = new(
                 Id: user.Id, Email: user.Email, PasswordHash: user.Password, Roles: user.Roles);
 
@@ -23,7 +23,7 @@ namespace HousingApp.Application.Auth.UseCases
             {
                 return Result<UserDto>.Failure(AuthError.InvalidCredentials);
             }
-            
+
             return Result<UserDto>.Success(userDto);
         }
     }

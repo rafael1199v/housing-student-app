@@ -13,27 +13,27 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         public async Task<string> RegisterUser(User newUser, Roles role)
         {
             IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email, };
-            
-            IdentityResult identityResult = await userManager.CreateAsync(user,  newUser.Password);
-            
+
+            IdentityResult identityResult = await userManager.CreateAsync(user, newUser.Password);
+
             if (!identityResult.Succeeded)
             {
                 throw new Exception("Error al crear el usuario");
             }
-            
+
             IdentityResult addToRolResult = await userManager.AddToRoleAsync(user, role.ToString());
-            
+
             return !addToRolResult.Succeeded ? throw new Exception("Error al crear el rol") : user.Id;
         }
 
         public async Task<User?> FindUserByEmailAsync(string email)
         {
             IdentityUser? user = await userManager.FindByEmailAsync(email);
-            
+
             if (user == null)
                 return null;
-            
-            List<string> roles = [..(await userManager.GetRolesAsync(user))];
+
+            List<string> roles = [.. (await userManager.GetRolesAsync(user))];
             return ToDomain(user, roles);
         }
 

@@ -13,20 +13,21 @@ namespace HousingApp.Application.Booking.UseCases
             if (!await unitOfWork.PersonRepository.ExistsByUserIdAsync(bookerId))
                 return Result<CreatedBookingDto>.Failure(BookingError.BookerNotFound);
 
-            if(await unitOfWork.BookingRepository.UserHasAlreadyBooked(bookerId, createBookingDto.RoomId))
+            if (await unitOfWork.BookingRepository.UserHasAlreadyBooked(bookerId, createBookingDto.RoomId))
                 return Result<CreatedBookingDto>.Failure(BookingError.RoomAlreadyBooked);
-            
-            
+
+
             await unitOfWork.BeginTransactionAsync();
-            
+
             try
             {
                 bool isRoomAvailable = await unitOfWork.RoomRepository.IsRoomAvailable(createBookingDto.RoomId);
 
-                if(!isRoomAvailable) {
+                if (!isRoomAvailable)
+                {
                     return Result<CreatedBookingDto>.Failure(BookingError.RoomNotAvailable);
                 }
-            
+
                 Domain.Entities.Booking booking = new()
                 {
                     Id = 0,
