@@ -2,6 +2,7 @@ using HousingApp.Application;
 using HousingApp.Application.Booking.DTO;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Roles;
+using HousingApp.Application.Room.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -10,8 +11,8 @@ using System.Security.Claims;
 namespace HousingApp.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase) : ControllerBase
+    [Route("api/bookings")]
+    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase, IRoomAlreadyBookedUseCase roomAlreadyBookedUseCase) : ControllerBase
     {
         [HttpPost]
         [Authorize(Roles = RolesDescription.Student)]
@@ -54,6 +55,19 @@ namespace HousingApp.Api.Controllers
             {
                 return BadRequest(new { message = "Hubo un error al aprobar la reservacion. Intentalo otra vez." });
             }
+        }
+
+
+        [HttpGet("{roomId:int}")]
+        [Authorize(Roles = RolesDescription.Student)]
+        public async Task<IActionResult> GetUserHasAlreadyBooked(int roomId)
+        {
+            string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+
+            return Ok(await roomAlreadyBookedUseCase.ExecuteAsync(roomId, userId));
         }
     }
 }

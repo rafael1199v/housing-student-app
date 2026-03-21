@@ -12,21 +12,21 @@ export interface RoomSearchParams {
 }
 
 const roomService = {
-	getRooms: async () => api.get<RoomData[]>("/api/room"),
+	getRooms: async () => api.get<RoomData[]>("/api/rooms"),
 	searchRooms: async (params: RoomSearchParams) => {
 		const query = new URLSearchParams();
 		if (params.name) query.set("name", params.name);
 		if (params.minPrice) query.set("minPrice", params.minPrice);
 		if (params.maxPrice) query.set("maxPrice", params.maxPrice);
 		const qs = query.size > 0 ? `?${query.toString()}` : "";
-		return api.get<RoomData[]>(`/api/room${qs}`);
+		return api.get<RoomData[]>(`/api/rooms${qs}`);
 	},
-	getRoomById: async (id: string) => api.get<RoomDto>(`/api/room/${id}`),
+	getRoomById: async (id: string) => api.get<RoomDto>(`/api/rooms/${id}`),
 	getHouseholderRooms: async () => {
-		return api.get<RoomHouseholderDto[]>("/api/room/householder");
+		return api.get<RoomHouseholderDto[]>("/api/rooms/householder");
 	},
 	createBooking: async (roomId: string) =>
-		api.post<void>("/api/booking", JSON.stringify({ roomId })),
+		api.post<void>("/api/bookings", JSON.stringify({ roomId })),
 	createRoom: async (dto: CreateRoomDto) => {
 		const formData = new FormData();
 		formData.append("name", dto.name);
@@ -40,12 +40,12 @@ const roomService = {
 			formData.append("images", imageFile);
 		}
 
-		return api.post<void>("/api/room", formData);
+		return api.post<void>("/api/rooms", formData);
 	},
 	getHouseholderRoomDetail: async (id: string) =>
-		api.get<RoomHouseholderDetailDto>(`/api/room/householder/${id}`),
+		api.get<RoomHouseholderDetailDto>(`/api/rooms/householder/${id}`),
 	approveBooking: async (bookingId: number) =>
-		api.put<void>(`/api/booking/approve/${bookingId}`, bookingId),
+		api.put<void>(`/api/bookings/approve/${bookingId}`, bookingId),
 };
 
 export default roomService;
