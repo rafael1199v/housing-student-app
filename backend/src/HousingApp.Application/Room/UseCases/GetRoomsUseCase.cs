@@ -1,11 +1,11 @@
 using HousingApp.Application.Room.DTO;
-using HousingApp.Domain.Error;
 using HousingApp.Domain.Entities;
+using HousingApp.Domain.Error;
 using HousingApp.Domain.Repositories;
 
 namespace HousingApp.Application.Room.UseCases
 {
-    public class GetRoomsUseCase(IRoomRepository roomRepository): IGetRoomsUseCase
+    public class GetRoomsUseCase(IRoomRepository roomRepository) : IGetRoomsUseCase
     {
         public async Task<Result<List<RoomDto>>> ExecuteAsync(SearchRoomsFiltersDto filters)
         {

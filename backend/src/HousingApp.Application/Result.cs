@@ -8,7 +8,7 @@ namespace HousingApp.Application
         public T? Value { get; private set; }
         public bool IsSuccess { get; private set; }
         public Error Error { get; private set; }
-        
+
         private Result(T value)
         {
             IsSuccess = true;

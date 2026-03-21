@@ -8,6 +8,6 @@ namespace HousingApp.Domain.Error
             "No tienes permisos para crear una cuenta con estos privilegios");
 
         public static readonly Error EmailAlreadyInUse = new("email.in.use", "El email ya está en uso");
-        
+
     }
 }

@@ -18,17 +18,17 @@ namespace HousingApp.Api.Controllers
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto createBookingDto)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            
+
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
-            
+
             try
             {
                 Result<CreatedBookingDto> result = await createBookingUseCase.ExecuteAsync(userId, createBookingDto);
-            
+
                 if (!result.IsSuccess)
                     return BadRequest(result.Error);
-            
+
                 return Ok(result.Value);
             }
             catch

@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Text;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Room.UseCases;
@@ -14,12 +12,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
+using System.Security.Claims;
+using System.Text;
 
-var culture = new CultureInfo("en-US");
+CultureInfo culture = new("en-US");
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -79,10 +79,11 @@ builder.Services.AddScoped<ICreateRoomUseCase, CreateRoomUseCase>();
 builder.Services.AddScoped<IGetHouseholderRoomDetailUseCase, GetHouseholderRoomDetailUseCase>();
 builder.Services.AddScoped<IApproveBookingUseCase, ApproveBookingUseCase>();
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-builder.Services.AddCors(options => {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
     policy =>
     {
         policy.WithOrigins(builder.Configuration.GetValue<string>("Frontend:Origin")!)
@@ -102,7 +103,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();

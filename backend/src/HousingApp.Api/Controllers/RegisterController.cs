@@ -25,8 +25,8 @@ namespace HousingApp.Api.Controllers
             {
                 return BadRequest(new { message = e.Message });
             }
-           
+
         }
-        
+
     }
 }

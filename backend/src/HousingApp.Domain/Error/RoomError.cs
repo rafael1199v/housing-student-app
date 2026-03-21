@@ -13,7 +13,7 @@ namespace HousingApp.Domain.Error
         public static readonly Error InvalidPrice = new("room.invalid.price", "El precio del alojamiento es inválido");
         public static readonly Error InvalidRoomStatus = new("room.invalid.status", "El estado del alojamiento es inválido");
         public static readonly Error InvalidImageType = new("room.invalid.image.type", "Solo se permiten archivos de imagen");
-            
+
         public static Error FilterDoesNotExist(string filter)
             => new("room.filter.not.exist", $"El filtro '{filter}' no existe");
 

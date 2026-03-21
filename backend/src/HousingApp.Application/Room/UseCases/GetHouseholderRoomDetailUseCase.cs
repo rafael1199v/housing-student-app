@@ -10,7 +10,7 @@ namespace HousingApp.Application.Room.UseCases
         public async Task<Result<RoomHouseholderDetailDto>> ExecuteAsync(int roomId, string userId)
         {
             RoomHouseholderDetail? roomDetail = await roomRepository.GetHouseholderRoomsDetailsAsync(userId, roomId);
-            
+
             if (roomDetail == null)
             {
                 return Result<RoomHouseholderDetailDto>.Failure(RoomError.RoomNotFound);
