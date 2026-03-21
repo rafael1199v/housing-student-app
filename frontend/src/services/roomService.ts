@@ -3,7 +3,7 @@ import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
 import type { RoomHouseholderDetailDto } from "../features/owner-room-details/types/roomHouseholderDetailDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
-import { apiFetch } from "./apiService";
+import { api } from "./apiService";
 
 export interface RoomSearchParams {
 	name?: string;
@@ -12,29 +12,21 @@ export interface RoomSearchParams {
 }
 
 const roomService = {
-	getRooms: async () => {
-		return apiFetch<RoomData[]>("/api/room");
-	},
+	getRooms: async () => api.get<RoomData[]>("/api/room"),
 	searchRooms: async (params: RoomSearchParams) => {
 		const query = new URLSearchParams();
 		if (params.name) query.set("name", params.name);
 		if (params.minPrice) query.set("minPrice", params.minPrice);
 		if (params.maxPrice) query.set("maxPrice", params.maxPrice);
 		const qs = query.size > 0 ? `?${query.toString()}` : "";
-		return apiFetch<RoomData[]>(`/api/room${qs}`);
+		return api.get<RoomData[]>(`/api/room${qs}`);
 	},
-	getRoomById: async (id: string) => {
-		return apiFetch<RoomDto>(`/api/room/${id}`);
-	},
+	getRoomById: async (id: string) => api.get<RoomDto>(`/api/room/${id}`),
 	getHouseholderRooms: async () => {
-		return apiFetch<RoomHouseholderDto[]>("/api/room/householder");
+		return api.get<RoomHouseholderDto[]>("/api/room/householder");
 	},
-	createBooking: async (roomId: string) => {
-		return apiFetch<void>("/api/booking", {
-			method: "POST",
-			body: JSON.stringify({ roomId }),
-		});
-	},
+	createBooking: async (roomId: string) =>
+		api.post<void>("/api/booking", JSON.stringify({ roomId })),
 	createRoom: async (dto: CreateRoomDto) => {
 		const formData = new FormData();
 		formData.append("name", dto.name);
@@ -48,19 +40,12 @@ const roomService = {
 			formData.append("images", imageFile);
 		}
 
-		return apiFetch<void>("/api/room", {
-			method: "POST",
-			body: formData,
-		});
+		return api.post<void>("/api/room", formData);
 	},
-	getHouseholderRoomDetail: async (id: string) => {
-		return apiFetch<RoomHouseholderDetailDto>(`/api/room/householder/${id}`);
-	},
-	approveBooking: async (bookingId: number) => {
-		return apiFetch<void>(`/api/booking/approve/${bookingId}`, {
-			method: "PUT",
-		});
-	},
+	getHouseholderRoomDetail: async (id: string) =>
+		api.get<RoomHouseholderDetailDto>(`/api/room/householder/${id}`),
+	approveBooking: async (bookingId: number) =>
+		api.put<void>(`/api/booking/approve/${bookingId}`, bookingId),
 };
 
 export default roomService;

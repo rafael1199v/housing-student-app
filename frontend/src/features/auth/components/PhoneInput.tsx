@@ -18,7 +18,7 @@ const PhoneInput = forwardRef<
 				<select
 					value={extensionValue}
 					onChange={(e) => onExtensionChange?.(e.target.value)}
-					className="rounded-md bg-gray-300 h-10 text-xl px-2 w-full"
+					className="h-10 w-full rounded-md border border-outline-variant/25 bg-surface-container-high px-2 text-xl"
 				>
 					<option value="">Extensión</option>
 					{LATIN_AMERICAN_COUNTRIES.map((country) => (
@@ -34,7 +34,7 @@ const PhoneInput = forwardRef<
 				type="tel"
 				placeholder="Teléfono"
 				value={phoneValue}
-				className="rounded-md bg-gray-300 h-10 text-xl px-3 flex-1"
+				className="h-10 flex-1 rounded-md border border-outline-variant/25 bg-surface-container-high px-3 text-xl"
 			/>
 		</div>
 	);

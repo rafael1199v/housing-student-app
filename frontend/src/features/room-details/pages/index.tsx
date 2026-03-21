@@ -55,7 +55,7 @@ export function RoomDetails() {
 
 	if (isError || !room) {
 		return (
-			<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
+			<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
 				No se pudo cargar la habitación. Por favor, intenta de nuevo más tarde.
 			</div>
 		);
@@ -78,8 +78,8 @@ export function RoomDetails() {
 
 	return (
 		<div className="space-y-8">
-			<section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-				<div className="relative bg-slate-100">
+			<section className="surface-card overflow-hidden rounded-2xl">
+				<div className="relative bg-surface-container-low">
 					{images.length > 0 ? (
 						<img
 							src={images[selectedImageIndex]}
@@ -96,7 +96,7 @@ export function RoomDetails() {
 						<>
 							<button
 								onClick={prevImage}
-								className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+								className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
 								aria-label="Imagen anterior"
 							>
 								<svg
@@ -116,7 +116,7 @@ export function RoomDetails() {
 
 							<button
 								onClick={nextImage}
-								className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+								className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
 								aria-label="Siguiente imagen"
 							>
 								<svg
@@ -139,10 +139,10 @@ export function RoomDetails() {
 									<button
 										key={index}
 										onClick={() => setSelectedImageIndex(index)}
-										className={`w-3 h-3 rounded-full transition-all ${
+										className={`h-2 w-2 rounded-full transition-all ${
 											index === selectedImageIndex
-												? "bg-white w-8"
-												: "bg-white/60 hover:bg-white/80"
+												? "w-7 bg-surface-container-lowest"
+												: "bg-surface-container-lowest/50 hover:bg-surface-container-lowest/80"
 										}`}
 										aria-label={`Ver imagen ${index + 1}`}
 									/>
@@ -155,7 +155,7 @@ export function RoomDetails() {
 				<div className="p-8 space-y-6">
 					<div className="space-y-3">
 						<h1 className="text-4xl font-bold text-slate-900">{room.name}</h1>
-						<div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-lg">
+						<div className="inline-block rounded-full bg-primary px-4 py-2 text-lg font-semibold text-on-primary">
 							{formattedPrice}/mes
 						</div>
 					</div>
@@ -187,13 +187,13 @@ export function RoomDetails() {
 						</GoogleMap>
 					</div>
 
-					<div className="border-t border-slate-200 pt-6">
+					<div className="pt-6">
 						<div className="flex items-center gap-4">
 							{room.imageUrl ? (
 								<img
 									src={room.imageUrl}
 									alt={`${room.firstName} ${room.lastName}`}
-									className="w-14 h-14 rounded-full object-cover border border-slate-200"
+									className="h-14 w-14 rounded-full object-cover"
 								/>
 							) : (
 								<div className="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-lg font-semibold">
@@ -214,12 +214,12 @@ export function RoomDetails() {
 						</div>
 					</div>
 
-					<div className="border-t border-slate-200 pt-6 flex gap-3">
+					<div className="pt-6 flex gap-3">
 						{booked ? (
 							<button
 								type="button"
 								disabled={true}
-								className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+								className="flex-1 rounded-full bg-primary py-3 font-semibold text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 							>
 								Reserva no disponible, prueba a buscar otra habitación.
 							</button>
@@ -227,7 +227,7 @@ export function RoomDetails() {
 							<button
 								type="button"
 								disabled={true}
-								className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+								className="flex-1 rounded-full bg-primary py-3 font-semibold text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 							>
 								Reservación solicitada!
 							</button>
@@ -235,7 +235,7 @@ export function RoomDetails() {
 							<button
 								type="button"
 								disabled={bookingMutation.isPending}
-								className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+								className="flex-1 rounded-full bg-primary py-3 font-semibold text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 								onClick={() => bookingMutation.mutate()}
 							>
 								{bookingMutation.isPending

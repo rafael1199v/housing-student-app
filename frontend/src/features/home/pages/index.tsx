@@ -58,7 +58,7 @@ export function HomePage() {
 
 	return (
 		<div className="space-y-8">
-			<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">
 					Welcome, {welcomeName}!
 				</h1>
@@ -67,7 +67,7 @@ export function HomePage() {
 				</p>
 
 				<form className="mt-6 space-y-4" onSubmit={handleSearchSubmit}>
-					<div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-200">
+					<div className="flex items-center gap-2 rounded-lg border border-outline-variant/25 bg-surface-container-high px-3 py-2 focus-within:ring-2 focus-within:ring-primary/40">
 						<input
 							type="search"
 							value={searchText}
@@ -77,7 +77,7 @@ export function HomePage() {
 						/>
 						<button
 							type="submit"
-							className="rounded-md p-1 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+							className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
 							aria-label="Search rooms"
 						>
 							<svg
@@ -106,7 +106,7 @@ export function HomePage() {
 								value={minPrice}
 								onChange={(event) => setMinPrice(event.target.value)}
 								placeholder="Min price"
-								className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+								className="field-filled"
 							/>
 							<input
 								type="number"
@@ -115,7 +115,7 @@ export function HomePage() {
 								value={maxPrice}
 								onChange={(event) => setMaxPrice(event.target.value)}
 								placeholder="Max price"
-								className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+								className="field-filled"
 							/>
 						</div>
 					</div>
@@ -135,11 +135,11 @@ export function HomePage() {
 				{isLoading ? (
 					<CardSkeleton quantity={3} />
 				) : isError ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
 						Could not load rooms. Please try again later.
 					</div>
 				) : rooms.length === 0 ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
 						No rooms match the current search filters.
 					</div>
 				) : (
@@ -160,7 +160,7 @@ export function HomePage() {
 				<button
 					type="button"
 					onClick={() => navigate("/rooms")}
-					className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+					className="w-full rounded-full bg-secondary-fixed px-4 py-3 text-sm font-medium text-on-secondary-fixed transition hover:brightness-95"
 				>
 					Show more rooms
 				</button>

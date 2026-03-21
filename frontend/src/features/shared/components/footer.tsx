@@ -11,7 +11,7 @@ export function Footer() {
 		navigate("/login");
 	};
 	return (
-		<footer className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+		<footer className="rounded-2xl bg-surface-container-low p-6 shadow-sm">
 			<h3 className="text-lg font-semibold text-slate-900">Footer</h3>
 			<div className="mt-4 grid gap-6 md:grid-cols-2">
 				<div>
@@ -29,21 +29,21 @@ export function Footer() {
 						<button
 							type="button"
 							onClick={() => navigate("/")}
-							className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100"
+							className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
 						>
 							Home
 						</button>
 						<button
 							type="button"
 							onClick={() => navigate("/rooms")}
-							className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100"
+							className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
 						>
 							Rooms
 						</button>
 						<button
 							type="button"
 							onClick={handleLogout}
-							className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100"
+							className="rounded-full bg-secondary-fixed px-3 py-1.5 text-sm text-on-secondary-fixed transition hover:brightness-95"
 						>
 							Log out
 						</button>

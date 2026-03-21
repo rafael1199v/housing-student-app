@@ -67,14 +67,14 @@ export function RoomsPage() {
 
 	return (
 		<div className="space-y-8">
-			<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">Search rooms</h1>
 				<p className="mt-2 text-sm text-slate-600">
 					Filter by name, price range, and sorting preference.
 				</p>
 
 				<form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-					<div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-200">
+					<div className="flex items-center gap-2 rounded-lg border border-outline-variant/25 bg-surface-container-high px-3 py-2 focus-within:ring-2 focus-within:ring-primary/40">
 						<input
 							type="search"
 							value={searchText}
@@ -84,7 +84,7 @@ export function RoomsPage() {
 						/>
 						<button
 							type="submit"
-							className="rounded-md p-1 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+							className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
 							aria-label="Search rooms"
 						>
 							<svg
@@ -114,7 +114,7 @@ export function RoomsPage() {
 									value={minPrice}
 									onChange={(event) => setMinPrice(event.target.value)}
 									placeholder="Min price"
-									className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+									className="field-filled"
 								/>
 								<input
 									type="number"
@@ -123,7 +123,7 @@ export function RoomsPage() {
 									value={maxPrice}
 									onChange={(event) => setMaxPrice(event.target.value)}
 									placeholder="Max price"
-									className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+									className="field-filled"
 								/>
 							</div>
 						</div>
@@ -133,7 +133,7 @@ export function RoomsPage() {
 							<select
 								value={orderBy}
 								onChange={(event) => setOrderBy(event.target.value as OrderBy)}
-								className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+								className="field-filled w-full"
 							>
 								<option value="price-asc">Price (ascending)</option>
 								<option value="price-desc">Price (descending)</option>
@@ -143,10 +143,7 @@ export function RoomsPage() {
 						</div>
 					</div>
 
-					<button
-						type="submit"
-						className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-					>
+					<button type="submit" className="btn-primary w-full">
 						Search
 					</button>
 				</form>
@@ -167,11 +164,11 @@ export function RoomsPage() {
 				{isLoading ? (
 					<CardSkeleton quantity={6} />
 				) : isError ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
 						Could not load rooms. Please try again later.
 					</div>
 				) : sortedRooms.length === 0 ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
 						No rooms match the current search filters. Try adjusting your
 						search.
 					</div>
@@ -192,7 +189,7 @@ export function RoomsPage() {
 			</section>
 
 			{!isLoading && !isError && rooms.length >= 20 && (
-				<div className="rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-600">
+				<div className="rounded-xl bg-surface-container-low p-5 text-sm text-slate-600 shadow-sm">
 					<p className="font-medium text-slate-800">
 						Showing up to 20 results.
 					</p>

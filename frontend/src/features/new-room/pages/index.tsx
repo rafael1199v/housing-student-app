@@ -143,7 +143,7 @@ export function NewRoomPage() {
 
 			<form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
 				{/* Section: Room Details */}
-				<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
+				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
 						Room details
 					</h2>
@@ -161,7 +161,7 @@ export function NewRoomPage() {
 							type="text"
 							placeholder="e.g. Cozy single room near campus"
 							{...register("name")}
-							className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+							className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 						/>
 						{errors.name && (
 							<p className="text-xs text-red-600">{errors.name.message}</p>
@@ -181,7 +181,7 @@ export function NewRoomPage() {
 							rows={4}
 							placeholder="Describe the room, amenities, rules, nearby places…"
 							{...register("description")}
-							className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+							className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 						/>
 						{errors.description && (
 							<p className="text-xs text-red-600">
@@ -192,7 +192,7 @@ export function NewRoomPage() {
 				</section>
 
 				{/* Section: Pricing & Availability */}
-				<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
+				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
 						Pricing & availability
 					</h2>
@@ -217,7 +217,7 @@ export function NewRoomPage() {
 									step="0.01"
 									placeholder="0.00"
 									{...register("price")}
-									className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+									className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 								/>
 							</div>
 							{errors.price && (
@@ -236,7 +236,7 @@ export function NewRoomPage() {
 							<select
 								id="roomStatus"
 								{...register("roomStatus")}
-								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 							>
 								{ROOM_STATUS_OPTIONS.map((opt) => (
 									<option key={opt.value} value={opt.value}>
@@ -254,7 +254,7 @@ export function NewRoomPage() {
 				</section>
 
 				{/* Section: Location */}
-				<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
+				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
 						Location
 					</h2>
@@ -280,7 +280,7 @@ export function NewRoomPage() {
 								max="90.000000"
 								placeholder="e.g. -17.3835"
 								{...register("latitude")}
-								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 							/>
 							{errors.latitude && (
 								<p className="text-xs text-red-600">
@@ -305,7 +305,7 @@ export function NewRoomPage() {
 								max="180.000000"
 								placeholder="e.g. -66.1568"
 								{...register("longitude")}
-								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 							/>
 							{errors.longitude && (
 								<p className="text-xs text-red-600">
@@ -317,7 +317,7 @@ export function NewRoomPage() {
 				</section>
 
 				{/* Section: Images */}
-				<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
+				<section className="surface-section space-y-5">
 					<div>
 						<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
 							Images
@@ -335,10 +335,10 @@ export function NewRoomPage() {
 							onDragOver={handleDragOver}
 							onDragLeave={handleDragLeave}
 							onDrop={handleDrop}
-							className={`w-full rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+							className={`w-full rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 ${
 								isDragging
-									? "border-blue-400 bg-blue-50"
-									: "border-slate-300 bg-slate-50 hover:border-blue-400 hover:bg-blue-50/50"
+									? "border-primary/40 bg-surface-container"
+									: "border-outline-variant/35 bg-surface-container-low hover:border-primary/40 hover:bg-surface-container"
 							}`}
 						>
 							<svg
@@ -363,7 +363,7 @@ export function NewRoomPage() {
 							</p>
 							<p className="mt-1 text-xs text-slate-500">
 								or{" "}
-								<span className="text-blue-600 underline underline-offset-2">
+								<span className="text-primary underline underline-offset-2">
 									click to browse
 								</span>
 							</p>
@@ -391,7 +391,7 @@ export function NewRoomPage() {
 							{previews.map((src, index) => (
 								<div
 									key={imageFiles[index]?.name ?? index}
-									className="group relative aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
+									className="group relative aspect-video overflow-hidden rounded-xl bg-surface-container-low"
 								>
 									<img
 										src={src}
@@ -431,14 +431,14 @@ export function NewRoomPage() {
 					<button
 						type="button"
 						onClick={() => navigate("/")}
-						className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+						className="rounded-full bg-surface-container-high px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-surface-container"
 					>
 						Cancel
 					</button>
 					<button
 						type="submit"
 						disabled={mutation.isPending}
-						className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+						className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
 					>
 						{mutation.isPending ? "Creating…" : "Create room"}
 					</button>
