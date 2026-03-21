@@ -1,5 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import {
+	AdvancedMarker,
+	Map as GoogleMap,
+	Pin,
+} from "@vis.gl/react-google-maps";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import roomService from "../../../services/roomService";
@@ -8,6 +13,8 @@ import { Footer } from "../../shared/components/footer";
 export function RoomDetails() {
 	const { id } = useParams<{ id: string }>();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+	const [bookRequestSent, setBookRequestSent] = useState(0);
+	const [booked, setBooked] = useState(false);
 
 	const {
 		data: room,
@@ -19,10 +26,19 @@ export function RoomDetails() {
 		enabled: !!id,
 	});
 
+	useEffect(() => {
+		if (room) {
+			setBooked(room.roomStatus !== "Available");
+		}
+	}, [room]);
+	//TODO: hacer un GET para verificar si ya existe una reservación de esta habitación por el mismo estudiante
+	//TODO: Mostrar datos de contacto si el booking fue confirmado!
+
 	const bookingMutation = useMutation({
 		mutationFn: () => roomService.createBooking(String(room!.id)),
 		onSuccess: () => {
 			toast.success("Reserva realizada con éxito.");
+			setBookRequestSent(1);
 		},
 		onError: () => {
 			toast.error("Error al realizar la reserva. Por favor, intenta de nuevo.");
@@ -151,6 +167,26 @@ export function RoomDetails() {
 						<p className="text-slate-600 leading-relaxed">{room.description}</p>
 					</div>
 
+					<div>
+						<GoogleMap
+							mapId={"ede7684c941ba061c27c52d4"}
+							style={{ height: "400px", width: "100%" }}
+							defaultCenter={{ lat: room.latitude, lng: room.longitude }}
+							defaultZoom={15}
+							gestureHandling="greedy"
+						>
+							<AdvancedMarker
+								position={{ lat: room.latitude, lng: room.longitude }}
+							>
+								<Pin
+									background={"#0f9d58"}
+									borderColor={"#006425"}
+									glyphColor={"#60d98f"}
+								/>
+							</AdvancedMarker>
+						</GoogleMap>
+					</div>
+
 					<div className="border-t border-slate-200 pt-6">
 						<div className="flex items-center gap-4">
 							{room.imageUrl ? (
@@ -164,6 +200,7 @@ export function RoomDetails() {
 									{room.firstName.charAt(0)}
 								</div>
 							)}
+
 							<div>
 								<p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
 									Dueño de la propiedad
@@ -178,16 +215,34 @@ export function RoomDetails() {
 					</div>
 
 					<div className="border-t border-slate-200 pt-6 flex gap-3">
-						<button
-							type="button"
-							disabled={bookingMutation.isPending}
-							className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
-							onClick={() => bookingMutation.mutate()}
-						>
-							{bookingMutation.isPending
-								? "Reservando..."
-								: "Reservar habitación"}
-						</button>
+						{booked ? (
+							<button
+								type="button"
+								disabled={true}
+								className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+							>
+								Reserva no disponible, prueba a buscar otra habitación.
+							</button>
+						) : bookRequestSent ? (
+							<button
+								type="button"
+								disabled={true}
+								className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+							>
+								Reservación solicitada!
+							</button>
+						) : (
+							<button
+								type="button"
+								disabled={bookingMutation.isPending}
+								className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+								onClick={() => bookingMutation.mutate()}
+							>
+								{bookingMutation.isPending
+									? "Reservando..."
+									: "Reservar habitación"}
+							</button>
+						)}
 					</div>
 				</div>
 			</section>
