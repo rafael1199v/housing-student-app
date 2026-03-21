@@ -15,7 +15,7 @@ export function Card({ name, price, description, images, onClick }: CardProps) {
 
 	return (
 		<div
-			className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${
+			className={`surface-card overflow-hidden ${
 				onClick ? "cursor-pointer transition hover:-translate-y-0.5" : ""
 			}`}
 			onClick={onClick}
@@ -32,7 +32,7 @@ export function Card({ name, price, description, images, onClick }: CardProps) {
 			role={onClick ? "button" : undefined}
 			tabIndex={onClick ? 0 : undefined}
 		>
-			<div className="h-44 w-full bg-slate-100">
+			<div className="h-44 w-full bg-surface-container-low">
 				{images ? (
 					<img
 						src={images[0]}
@@ -52,7 +52,7 @@ export function Card({ name, price, description, images, onClick }: CardProps) {
 					<p className="text-sm text-slate-500">Habitación para estudiantes</p>
 				</div>
 
-				<p className="text-2xl font-bold text-blue-600">${formattedPrice}</p>
+				<p className="text-2xl font-bold text-primary">${formattedPrice}</p>
 				<p className="-mt-2 text-xs text-slate-500">por mes</p>
 
 				<p className="text-sm leading-relaxed text-slate-600">

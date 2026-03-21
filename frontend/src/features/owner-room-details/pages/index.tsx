@@ -49,7 +49,7 @@ export function OwnerRoomDetailsPage() {
 
 	if (isError || !room) {
 		return (
-			<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
+			<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
 				Could not load room details. Please try again later.
 			</div>
 		);
@@ -82,9 +82,9 @@ export function OwnerRoomDetailsPage() {
 
 	return (
 		<div className="space-y-8">
-			<section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+			<section className="surface-card overflow-hidden rounded-2xl">
 				{/* Image carousel */}
-				<div className="relative bg-slate-100">
+				<div className="relative bg-surface-container-low">
 					{images.length > 0 ? (
 						<img
 							src={images[selectedImageIndex]}
@@ -101,7 +101,7 @@ export function OwnerRoomDetailsPage() {
 						<>
 							<button
 								onClick={prevImage}
-								className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+								className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
 								aria-label="Previous image"
 							>
 								<svg
@@ -121,7 +121,7 @@ export function OwnerRoomDetailsPage() {
 
 							<button
 								onClick={nextImage}
-								className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+								className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
 								aria-label="Next image"
 							>
 								<svg
@@ -144,10 +144,10 @@ export function OwnerRoomDetailsPage() {
 									<button
 										key={index}
 										onClick={() => setSelectedImageIndex(index)}
-										className={`w-3 h-3 rounded-full transition-all ${
+										className={`h-2 w-2 rounded-full transition-all ${
 											index === selectedImageIndex
-												? "bg-white w-8"
-												: "bg-white/60 hover:bg-white/80"
+												? "w-7 bg-surface-container-lowest"
+												: "bg-surface-container-lowest/50 hover:bg-surface-container-lowest/80"
 										}`}
 										aria-label={`View image ${index + 1}`}
 									/>
@@ -161,10 +161,10 @@ export function OwnerRoomDetailsPage() {
 					{/* Room info */}
 					<div className="space-y-3">
 						<h1 className="text-4xl font-bold text-slate-900">{room.name}</h1>
-						<div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-lg">
+						<div className="inline-block rounded-full bg-primary px-4 py-2 text-lg font-semibold text-on-primary">
 							{formattedPrice}/month
 						</div>
-						<div className="inline-block ml-3 px-4 py-2 rounded-lg font-semibold text-sm bg-slate-100 text-slate-700">
+						<div className="ml-3 inline-block rounded-full bg-surface-container-low px-4 py-2 text-sm font-semibold text-slate-700">
 							Status: {room.roomStatus}
 						</div>
 					</div>
@@ -178,13 +178,13 @@ export function OwnerRoomDetailsPage() {
 					</div>
 
 					{/* Pending bookings section */}
-					<div className="border-t border-slate-200 pt-6">
+					<div className="pt-6">
 						<h2 className="text-lg font-semibold text-slate-900 mb-4">
 							Pending Booking Requests
 						</h2>
 
 						{pendingBookings.length === 0 ? (
-							<div className="bg-slate-50 rounded-lg p-6 text-center text-slate-600">
+							<div className="rounded-lg bg-surface-container-low p-6 text-center text-slate-600">
 								<p>No pending booking requests at this time.</p>
 							</div>
 						) : (
@@ -192,7 +192,7 @@ export function OwnerRoomDetailsPage() {
 								{pendingBookings.map((booking) => (
 									<div
 										key={booking.id}
-										className="flex items-start justify-between gap-4 p-4 border border-slate-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition"
+										className="flex items-start justify-between gap-4 rounded-lg bg-surface-container-low p-4 transition hover:bg-surface-container"
 									>
 										<div className="flex-1 space-y-2">
 											<h3 className="font-semibold text-slate-900">
@@ -201,7 +201,7 @@ export function OwnerRoomDetailsPage() {
 											<p className="text-sm text-slate-600">
 												{booking.bookerEmail}
 											</p>
-											<div className="inline-block mt-1 px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+											<div className="mt-1 inline-block rounded-full bg-secondary-fixed px-2 py-1 text-xs font-medium text-on-secondary-fixed">
 												{booking.bookingStatus}
 											</div>
 										</div>
@@ -209,7 +209,7 @@ export function OwnerRoomDetailsPage() {
 											type="button"
 											onClick={() => handleApproveClick(booking)}
 											disabled={approveMutation.isPending}
-											className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors whitespace-nowrap"
+											className="whitespace-nowrap rounded-full bg-primary px-4 py-2 font-medium text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 										>
 											Approve
 										</button>
@@ -220,11 +220,11 @@ export function OwnerRoomDetailsPage() {
 					</div>
 
 					{/* Back button */}
-					<div className="border-t border-slate-200 pt-6 flex gap-3">
+					<div className="pt-6 flex gap-3">
 						<button
 							type="button"
 							onClick={() => navigate("/")}
-							className="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-900 font-semibold py-3 rounded-lg transition-colors"
+							className="flex-1 rounded-full bg-secondary-fixed py-3 font-semibold text-on-secondary-fixed transition hover:brightness-95"
 						>
 							Back to My Rooms
 						</button>

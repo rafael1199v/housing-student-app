@@ -14,18 +14,18 @@ export function MainLayout() {
 	};
 
 	return (
-		<div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100">
-			<nav className="border-b border-slate-200 bg-white/90 backdrop-blur">
+		<div className="min-h-screen bg-surface">
+			<nav className="glass-surface sticky top-0 z-30">
 				<div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
 					<div className="flex items-center gap-3">
 						<div
-							className="rounded-md border border-slate-300 px-2 py-1 text-sm font-semibold text-slate-900 cursor-pointer"
+							className="cursor-pointer rounded-full bg-surface-container-high px-3 py-1 text-sm font-semibold text-slate-900"
 							onClick={() => navigate("/")}
 						>
 							Logo
 						</div>
 						<p
-							className="text-lg font-semibold text-slate-900 cursor-pointer"
+							className="cursor-pointer text-lg font-semibold text-slate-900"
 							onClick={() => navigate("/")}
 						>
 							App navbar
@@ -36,10 +36,10 @@ export function MainLayout() {
 						<button
 							type="button"
 							onClick={() => navigate("/rooms")}
-							className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
+							className={`rounded-full px-4 py-2 text-sm font-medium transition ${
 								location.pathname === "/rooms"
-									? "border-blue-200 bg-blue-50 text-blue-700"
-									: "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+									? "bg-primary text-on-primary"
+									: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
 							}`}
 						>
 							Rooms
@@ -47,7 +47,7 @@ export function MainLayout() {
 						<button
 							type="button"
 							onClick={handleLogout}
-							className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+							className="rounded-full bg-secondary-fixed px-4 py-2 text-sm font-medium text-on-secondary-fixed transition hover:brightness-95"
 						>
 							Log out
 						</button>

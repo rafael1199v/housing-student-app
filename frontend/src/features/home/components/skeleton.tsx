@@ -7,10 +7,7 @@ export function CardSkeleton({ quantity }: CardSkeletonProps) {
 		<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
 			{Array.from(Array(quantity), (_, i) => {
 				return (
-					<div
-						key={i}
-						className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm animate-pulse"
-					>
+					<div key={i} className="surface-card overflow-hidden animate-pulse">
 						<div className="h-44 w-full bg-slate-200"></div>
 
 						<div className="space-y-3 p-5">

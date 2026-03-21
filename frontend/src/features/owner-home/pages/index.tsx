@@ -20,7 +20,7 @@ export function OwnerHomePage() {
 
 	return (
 		<div className="space-y-8">
-			<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">
 					Welcome, {welcomeName}!
 				</h1>
@@ -31,7 +31,7 @@ export function OwnerHomePage() {
 				<button
 					type="button"
 					onClick={() => navigate("/owner/rooms/new")}
-					className="mt-6 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+					className="btn-primary mt-6"
 				>
 					Create new room
 				</button>
@@ -48,11 +48,11 @@ export function OwnerHomePage() {
 				{isLoading ? (
 					<CardSkeleton quantity={3} />
 				) : isError ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
 						Could not load your rooms. Please try again later.
 					</div>
 				) : rooms.length === 0 ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
 						You haven't created any rooms yet.
 					</div>
 				) : (

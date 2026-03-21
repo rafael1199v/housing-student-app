@@ -134,7 +134,7 @@ function Register() {
 	};
 
 	return (
-		<div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+		<div className="editorial-hero min-h-screen px-4 py-12 sm:px-6 lg:px-8">
 			<div className="max-w-2xl mx-auto">
 				{/* Logo Section */}
 				<div className="flex justify-center gap-4 mb-8">
@@ -163,7 +163,7 @@ function Register() {
 				</div>
 
 				{/* Card */}
-				<div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 sm:p-10">
+				<div className="rounded-2xl bg-surface-container-lowest p-8 sm:p-10 shadow-2xl">
 					{/* Header */}
 					<div className="mb-8">
 						<h1 className="text-3xl font-semibold text-slate-900 mb-2">
@@ -183,7 +183,7 @@ function Register() {
 									Nombre
 								</label>
 								<input
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5"
 									placeholder="Juan"
 									{...register("firstName")}
 								/>
@@ -198,7 +198,7 @@ function Register() {
 									Apellido
 								</label>
 								<input
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5"
 									placeholder="Pérez"
 									{...register("lastName")}
 								/>
@@ -217,7 +217,7 @@ function Register() {
 									Género
 								</label>
 								<select
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5"
 									{...register("gender")}
 								>
 									<option value="">Seleccionar</option>
@@ -237,7 +237,7 @@ function Register() {
 								</label>
 								<input
 									type="date"
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5"
 									{...register("birthDate")}
 								/>
 								{formState.errors.birthDate && (
@@ -252,7 +252,7 @@ function Register() {
 								</label>
 								<input
 									type="number"
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5"
 									placeholder="18"
 									{...register("age")}
 								/>
@@ -272,7 +272,7 @@ function Register() {
 								</label>
 								<select
 									{...register("nationality")}
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5"
 								>
 									<option value="">Selecciona tu país</option>
 									{LATIN_AMERICAN_COUNTRIES.map((country) => (
@@ -291,35 +291,37 @@ function Register() {
 								<label className="block text-sm font-medium text-slate-700 mb-2">
 									Teléfono
 								</label>
-								<div className="flex gap-2">
-									<select
-										{...register("phoneExtension")}
-										className="w-24 px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shrink-0"
-									>
-										<option value="">Ext</option>
-										{LATIN_AMERICAN_COUNTRIES.map((country) => (
-											<option key={country.code} value={country.extension}>
-												{country.flag} {country.extension}
-											</option>
-										))}
-									</select>
-									<input
-										className="flex-1 px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-										type="tel"
-										placeholder="1234567"
-										{...register("phoneNumber")}
-									/>
+								<div>
+									<div className="flex gap-2">
+										<select
+											{...register("phoneExtension")}
+											className="field-filled px-3 py-2.5 shrink-0"
+										>
+											<option value="">Ext</option>
+											{LATIN_AMERICAN_COUNTRIES.map((country) => (
+												<option key={country.code} value={country.extension}>
+													{country.flag} {country.extension}
+												</option>
+											))}
+										</select>
+										<input
+											className="field-filled w-3 flex-1 px-4 py-2.5"
+											type="tel"
+											placeholder="1234567"
+											{...register("phoneNumber")}
+										/>
+									</div>
+									{formState.errors.phoneExtension && (
+										<p className="text-red-500 text-xs mt-1">
+											{formState.errors.phoneExtension.message}
+										</p>
+									)}
+									{formState.errors.phoneNumber && (
+										<p className="text-red-500 text-xs mt-1">
+											{formState.errors.phoneNumber.message}
+										</p>
+									)}
 								</div>
-								{formState.errors.phoneExtension && (
-									<p className="text-red-500 text-xs mt-1">
-										{formState.errors.phoneExtension.message}
-									</p>
-								)}
-								{formState.errors.phoneNumber && (
-									<p className="text-red-500 text-xs mt-1">
-										{formState.errors.phoneNumber.message}
-									</p>
-								)}
 							</div>
 						</div>
 
@@ -329,7 +331,7 @@ function Register() {
 								Foto de perfil (URL)
 							</label>
 							<input
-								className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+								className="field-filled w-full px-4 py-2.5"
 								type="url"
 								placeholder="https://ejemplo.com/foto.jpg"
 								{...register("imageUrl")}
@@ -344,10 +346,10 @@ function Register() {
 						{/* Divider */}
 						<div className="relative py-2">
 							<div className="absolute inset-0 flex items-center">
-								<div className="w-full border-t border-slate-300"></div>
+								<div className="w-full border-t border-outline-variant/15"></div>
 							</div>
 							<div className="relative flex justify-center text-sm">
-								<span className="px-2 bg-white text-slate-500">
+								<span className="px-2 bg-surface-container-lowest text-slate-500">
 									Credenciales
 								</span>
 							</div>
@@ -360,7 +362,7 @@ function Register() {
 									Correo electrónico
 								</label>
 								<input
-									className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5"
 									type="email"
 									placeholder="tu@email.com"
 									{...register("email")}
@@ -377,7 +379,7 @@ function Register() {
 								</label>
 								<select
 									{...register("role")}
-									className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shrink-0"
+									className="field-filled w-full px-3 py-2.5 shrink-0"
 								>
 									<option value="">...</option>
 									<option value="student">Estudiante</option>
@@ -399,7 +401,7 @@ function Register() {
 								</label>
 								<div className="relative">
 									<input
-										className="w-full px-4 py-2.5 pr-16 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+										className="field-filled w-full px-4 py-2.5 pr-16"
 										type={showPassword ? "text" : "password"}
 										placeholder="••••••••"
 										{...register("password")}
@@ -429,7 +431,7 @@ function Register() {
 								</label>
 								<div className="relative">
 									<input
-										className="w-full px-4 py-2.5 pr-16 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+										className="field-filled w-full px-4 py-2.5 pr-16"
 										type={showConfirmPassword ? "text" : "password"}
 										placeholder="••••••••"
 										{...register("confirmPassword")}
@@ -459,7 +461,7 @@ function Register() {
 
 						{/* Submit Button */}
 						<button
-							className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 mt-6"
+							className="btn-primary mt-6 w-full"
 							type="submit"
 							disabled={formState.isSubmitting || isPending}
 						>
@@ -473,7 +475,7 @@ function Register() {
 							¿Ya tienes una cuenta?{" "}
 							<a
 								href="/login"
-								className="text-blue-600 hover:text-blue-700 font-medium transition"
+								className="text-primary hover:text-primary-container font-medium transition"
 							>
 								Inicia sesión
 							</a>

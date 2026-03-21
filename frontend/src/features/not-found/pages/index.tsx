@@ -5,7 +5,7 @@ export function NotFoundPage() {
 	return (
 		<div className="space-y-8">
 			<div className="flex flex-wrap justify-center origin-center h-dvh content-center">
-				<section className="rounded-2xl border border-slate-200 bg-white p-3 md:p-6 m-3 md:m-0 shadow-sm text-center h-min space-y-4">
+				<section className="m-3 h-min space-y-4 rounded-2xl bg-surface-container-low p-3 text-center shadow-sm md:m-0 md:p-6">
 					<h1 className="text-7xl font-bold">Oops!🤷‍♂️</h1>
 					<h1 className="text-3xl font-semibold text-slate-900">
 						Página no encontrada (404)
@@ -17,7 +17,7 @@ export function NotFoundPage() {
 					<button
 						type="button"
 						onClick={() => navigate("/")}
-						className="shrink-0 rounded-lg border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-100"
+						className="shrink-0 rounded-full bg-secondary-fixed px-4 py-2 text-sm font-medium text-on-secondary-fixed transition hover:brightness-95"
 					>
 						Volver al inicio
 					</button>

@@ -41,7 +41,7 @@ function Login() {
 	};
 
 	return (
-		<div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+		<div className="editorial-hero min-h-screen flex items-center justify-center p-4">
 			<div className="w-full max-w-md">
 				{/* Logo Section */}
 				<div className="flex justify-center gap-4 mb-8">
@@ -70,7 +70,7 @@ function Login() {
 				</div>
 
 				{/* Card */}
-				<div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8">
+				<div className="rounded-2xl bg-surface-container-lowest p-8 shadow-2xl">
 					{/* Header */}
 					<div className="mb-8">
 						<h1 className="text-3xl font-semibold text-slate-900 mb-2">
@@ -87,7 +87,7 @@ function Login() {
 								Correo electrónico
 							</label>
 							<input
-								className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+								className="field-filled w-full px-4 py-2.5"
 								type="email"
 								placeholder="tu@email.com"
 								{...register("email", { required: "El email es requerido" })}
@@ -106,7 +106,7 @@ function Login() {
 							</label>
 							<div className="relative">
 								<input
-									className="w-full px-4 py-2.5 pr-16 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+									className="field-filled w-full px-4 py-2.5 pr-16"
 									type={showPassword ? "text" : "password"}
 									placeholder="••••••••"
 									{...register("password")}
@@ -133,7 +133,7 @@ function Login() {
 
 						{/* Submit Button */}
 						<button
-							className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 mt-6"
+							className="btn-primary mt-6 w-full"
 							type="submit"
 							disabled={formState.isSubmitting}
 						>
@@ -143,17 +143,17 @@ function Login() {
 
 					{/* Divider */}
 					<div className="my-6 flex items-center">
-						<div className="flex-1 border-t border-slate-200"></div>
+						<div className="flex-1 border-t border-outline-variant/15"></div>
 						<span className="px-3 text-xs text-slate-500">
 							¿No tienes cuenta?
 						</span>
-						<div className="flex-1 border-t border-slate-200"></div>
+						<div className="flex-1 border-t border-outline-variant/15"></div>
 					</div>
 
 					{/* Sign Up Link */}
 					<a
 						href="/register"
-						className="block text-center w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium py-2.5 px-4 rounded-lg transition duration-200 border border-slate-200"
+						className="block w-full rounded-full bg-secondary-fixed px-4 py-2.5 text-center font-medium text-on-secondary-fixed transition hover:brightness-95"
 					>
 						Crea una cuenta
 					</a>

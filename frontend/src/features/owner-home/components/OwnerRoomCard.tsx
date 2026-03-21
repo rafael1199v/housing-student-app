@@ -32,7 +32,7 @@ export function OwnerRoomCard({ room, onClick, onEdit }: OwnerRoomCardProps) {
 
 	return (
 		<div
-			className={`overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${
+			className={`surface-card overflow-hidden ${
 				onClick ? "cursor-pointer transition hover:-translate-y-0.5" : ""
 			}`}
 			onClick={onClick}
@@ -46,7 +46,7 @@ export function OwnerRoomCard({ room, onClick, onEdit }: OwnerRoomCardProps) {
 			role={onClick ? "button" : undefined}
 			tabIndex={onClick ? 0 : undefined}
 		>
-			<div className="relative h-44 w-full bg-slate-100">
+			<div className="relative h-44 w-full bg-surface-container-low">
 				{currentImage ? (
 					<img
 						src={currentImage}
@@ -66,7 +66,7 @@ export function OwnerRoomCard({ room, onClick, onEdit }: OwnerRoomCardProps) {
 							aria-label="Previous image"
 							onClick={handlePrev}
 							disabled={currentIndex === 0}
-							className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+							className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-surface-container-lowest disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							<svg
 								className="h-4 w-4"
@@ -88,7 +88,7 @@ export function OwnerRoomCard({ room, onClick, onEdit }: OwnerRoomCardProps) {
 							aria-label="Next image"
 							onClick={handleNext}
 							disabled={currentIndex === allImages.length - 1}
-							className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+							className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-surface-container-lowest disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							<svg
 								className="h-4 w-4"
@@ -150,10 +150,10 @@ export function OwnerRoomCard({ room, onClick, onEdit }: OwnerRoomCardProps) {
 					</button>
 				</div>
 
-				<p className="text-2xl font-bold text-blue-600">${formattedPrice}</p>
+				<p className="text-2xl font-bold text-primary">${formattedPrice}</p>
 				<p className="-mt-2 text-xs text-slate-500">por mes</p>
 
-				<div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+				<div className="rounded-lg bg-surface-container-low px-3 py-2">
 					<p className="text-xs font-medium uppercase tracking-wide text-slate-500">
 						Booking requests
 					</p>

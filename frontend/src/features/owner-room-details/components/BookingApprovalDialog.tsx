@@ -18,8 +18,8 @@ export function BookingApprovalDialog({
 	if (!isOpen || !booking) return null;
 
 	return (
-		<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-			<div className="bg-white rounded-xl shadow-lg max-w-sm w-full space-y-6 p-6">
+		<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-4 backdrop-blur-sm">
+			<div className="w-full max-w-sm space-y-6 rounded-2xl bg-surface-container-lowest p-6 shadow-2xl">
 				<div className="space-y-2">
 					<h2 className="text-xl font-semibold text-slate-900">
 						Confirm Booking Approval
@@ -29,7 +29,7 @@ export function BookingApprovalDialog({
 					</p>
 				</div>
 
-				<div className="bg-slate-50 rounded-lg p-4 space-y-3">
+				<div className="space-y-3 rounded-lg bg-surface-container-low p-4">
 					<div>
 						<p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
 							Booker Name
@@ -42,7 +42,7 @@ export function BookingApprovalDialog({
 						</p>
 						<p className="text-slate-900">{booking.bookerEmail}</p>
 					</div>
-					<div className="pt-2 border-t border-slate-200">
+					<div className="pt-2">
 						<p className="text-xs text-slate-600">
 							Once approved, this booking will be confirmed and all other
 							pending requests will be rejected.
@@ -55,7 +55,7 @@ export function BookingApprovalDialog({
 						type="button"
 						onClick={onCancel}
 						disabled={isLoading}
-						className="flex-1 px-4 py-2 border border-slate-300 text-slate-900 font-medium rounded-lg hover:bg-slate-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+						className="flex-1 rounded-full bg-surface-container-high px-4 py-2 font-medium text-slate-900 transition hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-60"
 					>
 						Cancel
 					</button>
@@ -63,7 +63,7 @@ export function BookingApprovalDialog({
 						type="button"
 						onClick={onConfirm}
 						disabled={isLoading}
-						className="flex-1 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+						className="flex-1 rounded-full bg-primary px-4 py-2 font-medium text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 					>
 						{isLoading ? "Approving..." : "Approve"}
 					</button>

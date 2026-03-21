@@ -50,7 +50,7 @@ export function BookedRoomsPage() {
 
 	return (
 		<div className="space-y-8">
-			<section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">Booked rooms</h1>
 				<p className="mt-2 text-sm text-slate-600">
 					Take a look at the rooms you requested a reservation for.
@@ -72,11 +72,11 @@ export function BookedRoomsPage() {
 				{isLoading ? (
 					<CardSkeleton quantity={3} />
 				) : isError ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-red-700">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
 						Could not load rooms. Please try again later.
 					</div>
 				) : sortedRooms.length === 0 ? (
-					<div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
 						You didn't book for any room yet...
 					</div>
 				) : (
