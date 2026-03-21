@@ -78,6 +78,7 @@ builder.Services.AddScoped<IGetHouseholderRoomsUseCase, GetHouseholderRoomsUseCa
 builder.Services.AddScoped<ICreateRoomUseCase, CreateRoomUseCase>();
 builder.Services.AddScoped<IGetHouseholderRoomDetailUseCase, GetHouseholderRoomDetailUseCase>();
 builder.Services.AddScoped<IApproveBookingUseCase, ApproveBookingUseCase>();
+builder.Services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 

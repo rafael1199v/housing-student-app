@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HousingApp.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/register")]
     public class RegisterController(IRegisterUseCase registerUseCase) : ControllerBase
     {
         [HttpPost]

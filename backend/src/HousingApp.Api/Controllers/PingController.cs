@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HousingApp.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/ping")]
     [ApiController]
     public class PingController : ControllerBase
     {

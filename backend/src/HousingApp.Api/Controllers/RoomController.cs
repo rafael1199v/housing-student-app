@@ -14,7 +14,7 @@ using System.Security.Claims;
 namespace HousingApp.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/rooms")]
     public class RoomController(IGetRoomsUseCase getRoomsUseCase,
         IGetRoomDetailUseCase getRoomDetailUseCase,
         IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase,

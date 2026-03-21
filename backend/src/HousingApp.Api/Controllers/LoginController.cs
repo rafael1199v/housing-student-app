@@ -10,7 +10,7 @@ using System.Text;
 namespace HousingApp.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/login")]
     public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration) : ControllerBase
     {
         [HttpPost]
