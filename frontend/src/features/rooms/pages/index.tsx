@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import {
+	AdvancedMarker,
+	Map as GoogleMap,
+	type MapMouseEvent,
+	Pin,
+} from "@vis.gl/react-google-maps";
 import { type FormEvent, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import type { RoomSearchParams } from "../../../services/roomService";
 import roomService from "../../../services/roomService";
 import { CardSkeleton } from "../../home/components/skeleton";
 import type { RoomData } from "../../home/types/roomDataDto";
@@ -8,6 +15,8 @@ import { Footer } from "../../shared/components/footer";
 import { RoomSearchCard } from "../components/RoomSearchCard";
 
 type OrderBy = "price-asc" | "price-desc" | "name-asc" | "name-desc";
+type MapPosition = { lat: number; lng: number };
+const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
 
 function sortRooms(rooms: RoomData[], orderBy: OrderBy): RoomData[] {
 	const copy = [...rooms];
@@ -27,20 +36,50 @@ export function RoomsPage() {
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams();
 
-	const initialQ = searchParams.get("q") ?? "";
+	const initialName = searchParams.get("name") ?? searchParams.get("q") ?? "";
 	const initialMinPrice = searchParams.get("minPrice") ?? "";
 	const initialMaxPrice = searchParams.get("maxPrice") ?? "";
+	const initialLatitude = searchParams.get("latitude");
+	const initialLongitude = searchParams.get("longitude");
+	const hasInitialCoordinates =
+		initialLatitude !== null && initialLongitude !== null;
+	const initialPosition = hasInitialCoordinates
+		? {
+				lat: Number(initialLatitude),
+				lng: Number(initialLongitude),
+			}
+		: null;
 
-	const [searchText, setSearchText] = useState(initialQ);
+	const [searchText, setSearchText] = useState(initialName);
 	const [minPrice, setMinPrice] = useState(initialMinPrice);
 	const [maxPrice, setMaxPrice] = useState(initialMaxPrice);
 	const [orderBy, setOrderBy] = useState<OrderBy>("price-asc");
+	const [selectedPosition, setSelectedPosition] = useState<MapPosition | null>(
+		initialPosition &&
+			Number.isFinite(initialPosition.lat) &&
+			Number.isFinite(initialPosition.lng)
+			? initialPosition
+			: null,
+	);
 
-	const [committed, setCommitted] = useState({
-		name: initialQ,
+	const [committed, setCommitted] = useState<RoomSearchParams>({
+		name: initialName,
 		minPrice: initialMinPrice,
 		maxPrice: initialMaxPrice,
+		longitude: initialLongitude ?? undefined,
+		latitude: initialLatitude ?? undefined,
 	});
+
+	const handleMapClick = (event: MapMouseEvent) => {
+		if (!event.detail.latLng) return;
+
+		const position = {
+			lat: event.detail.latLng.lat,
+			lng: event.detail.latLng.lng,
+		};
+
+		setSelectedPosition(position);
+	};
 
 	const { isLoading, isError, data } = useQuery({
 		queryKey: ["rooms", "search", committed],
@@ -52,16 +91,26 @@ export function RoomsPage() {
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const next = {
+		const next: RoomSearchParams = {
 			name: searchText.trim(),
 			minPrice: minPrice.trim(),
 			maxPrice: maxPrice.trim(),
+			longitude: selectedPosition?.lng,
+			latitude: selectedPosition?.lat,
 		};
 		setCommitted(next);
 		const params = new URLSearchParams();
 		if (next.name) params.set("name", next.name);
-		if (next.minPrice) params.set("minPrice", next.minPrice);
-		if (next.maxPrice) params.set("maxPrice", next.maxPrice);
+		if (next.minPrice !== undefined && next.minPrice !== "") {
+			params.set("minPrice", String(next.minPrice));
+		}
+		if (next.maxPrice !== undefined && next.maxPrice !== "") {
+			params.set("maxPrice", String(next.maxPrice));
+		}
+		if (next.latitude !== undefined)
+			params.set("latitude", String(next.latitude));
+		if (next.longitude !== undefined)
+			params.set("longitude", String(next.longitude));
 		setSearchParams(params, { replace: true });
 	};
 
@@ -102,44 +151,95 @@ export function RoomsPage() {
 							</svg>
 						</button>
 					</div>
-
-					<div className="grid gap-4 sm:grid-cols-2">
-						<div className="space-y-2">
-							<p className="text-sm font-medium text-slate-700">Price range</p>
-							<div className="grid gap-2 grid-cols-2">
-								<input
-									type="number"
-									inputMode="numeric"
-									min={0}
-									value={minPrice}
-									onChange={(event) => setMinPrice(event.target.value)}
-									placeholder="Min price"
-									className="field-filled"
-								/>
-								<input
-									type="number"
-									inputMode="numeric"
-									min={0}
-									value={maxPrice}
-									onChange={(event) => setMaxPrice(event.target.value)}
-									placeholder="Max price"
-									className="field-filled"
-								/>
+					<div className="grid gap-2 sm:grid-cols-2">
+						<section className="surface-section space-y-2">
+							<p className="text-sm font-medium text-slate-700">Location</p>
+							<div className="overflow-hidden rounded-xl border border-outline-variant/35">
+								<GoogleMap
+									mapId={"ede7684c941ba061c27c52d4"}
+									style={{ height: "25dvh", width: "100%" }}
+									defaultCenter={DEFAULT_MAP_CENTER}
+									defaultZoom={13}
+									gestureHandling="greedy"
+									onClick={handleMapClick}
+								>
+									{selectedPosition && (
+										<AdvancedMarker position={selectedPosition}>
+											<Pin
+												background={"#0f9d58"}
+												borderColor={"#006425"}
+												glyphColor={"#60d98f"}
+											/>
+										</AdvancedMarker>
+									)}
+								</GoogleMap>
 							</div>
-						</div>
 
-						<div className="space-y-2">
-							<p className="text-sm font-medium text-slate-700">Order by</p>
-							<select
-								value={orderBy}
-								onChange={(event) => setOrderBy(event.target.value as OrderBy)}
-								className="field-filled w-full"
-							>
-								<option value="price-asc">Price (ascending)</option>
-								<option value="price-desc">Price (descending)</option>
-								<option value="name-asc">A-Z</option>
-								<option value="name-desc">Z-A</option>
-							</select>
+							<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+								{selectedPosition ? (
+									<p>
+										Selected location: {selectedPosition.lat.toFixed(6)},
+										{selectedPosition.lng.toFixed(6)}
+									</p>
+								) : (
+									<p>No location selected yet.</p>
+								)}
+
+								{selectedPosition && (
+									<button
+										type="button"
+										onClick={() => {
+											setSelectedPosition(null);
+										}}
+										className="text-primary underline underline-offset-2"
+									>
+										Clear marker
+									</button>
+								)}
+							</div>
+						</section>
+						<div className="flex flex-col justify-around">
+							<div className="space-y-2">
+								<p className="text-sm font-medium text-slate-700">
+									Price range
+								</p>
+								<div className="grid gap-2 sm:grid-cols-2">
+									<input
+										type="number"
+										inputMode="numeric"
+										min={0}
+										value={minPrice}
+										onChange={(event) => setMinPrice(event.target.value)}
+										placeholder="Min price"
+										className="field-filled"
+									/>
+									<input
+										type="number"
+										inputMode="numeric"
+										min={0}
+										value={maxPrice}
+										onChange={(event) => setMaxPrice(event.target.value)}
+										placeholder="Max price"
+										className="field-filled"
+									/>
+								</div>
+							</div>
+
+							<div className="space-y-2">
+								<p className="text-sm font-medium text-slate-700">Order by</p>
+								<select
+									value={orderBy}
+									onChange={(event) =>
+										setOrderBy(event.target.value as OrderBy)
+									}
+									className="field-filled w-full"
+								>
+									<option value="price-asc">Price (ascending)</option>
+									<option value="price-desc">Price (descending)</option>
+									<option value="name-asc">A-Z</option>
+									<option value="name-desc">Z-A</option>
+								</select>
+							</div>
 						</div>
 					</div>
 
