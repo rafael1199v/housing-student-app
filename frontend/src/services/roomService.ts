@@ -3,12 +3,14 @@ import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
 import type { RoomHouseholderDetailDto } from "../features/owner-room-details/types/roomHouseholderDetailDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
-import { api } from "./apiService";
+import { api, apiFetch } from "./apiService";
 
 export interface RoomSearchParams {
 	name?: string;
-	minPrice?: string;
-	maxPrice?: string;
+	minPrice?: string | number;
+	maxPrice?: string | number;
+	longitude?: string | number;
+	latitude?: string | number;
 }
 
 const roomService = {
@@ -16,8 +18,18 @@ const roomService = {
 	searchRooms: async (params: RoomSearchParams) => {
 		const query = new URLSearchParams();
 		if (params.name) query.set("name", params.name);
-		if (params.minPrice) query.set("minPrice", params.minPrice);
-		if (params.maxPrice) query.set("maxPrice", params.maxPrice);
+		if (params.minPrice !== undefined && params.minPrice !== "") {
+			query.set("minPrice", String(params.minPrice));
+		}
+		if (params.maxPrice !== undefined && params.maxPrice !== "") {
+			query.set("maxPrice", String(params.maxPrice));
+		}
+		if (params.latitude !== undefined && params.latitude !== "") {
+			query.set("latitude", String(params.latitude));
+		}
+		if (params.longitude !== undefined && params.longitude !== "") {
+			query.set("longitude", String(params.longitude));
+		}
 		const qs = query.size > 0 ? `?${query.toString()}` : "";
 		return api.get<RoomData[]>(`/api/rooms${qs}`);
 	},
@@ -40,7 +52,7 @@ const roomService = {
 			formData.append("images", imageFile);
 		}
 
-		return api.post<void>("/api/rooms", formData);
+		return apiFetch<void>("/api/rooms", { method: "POST", body: formData });
 	},
 	getHouseholderRoomDetail: async (id: string) =>
 		api.get<RoomHouseholderDetailDto>(`/api/rooms/householder/${id}`),

@@ -1,5 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import {
+	AdvancedMarker,
+	Map as GoogleMap,
+	type MapMouseEvent,
+	Pin,
+} from "@vis.gl/react-google-maps";
 import type { DragEvent } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,6 +16,7 @@ import roomService from "../../../services/roomService";
 import type { CreateRoomDto } from "../types/createRoomDto";
 
 const MAX_IMAGES = 5;
+const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
 
 const ROOM_STATUS_OPTIONS = [
 	{ value: 1, label: "Available" },
@@ -24,18 +31,19 @@ const createRoomSchema = z.object({
 		.number({ error: "Price is required" })
 		.positive("Price must be greater than 0"),
 	roomStatus: z.coerce.number().int().min(1).max(3),
-	latitude: z.coerce
-		.number({ error: "Latitude is required" })
+	latitude: z
+		.number({ error: "Please select a location on the map" })
 		.min(-90, "Latitude must be between -90 and 90")
 		.max(90, "Latitude must be between -90 and 90"),
-	longitude: z.coerce
-		.number({ error: "Longitude is required" })
+	longitude: z
+		.number({ error: "Please select a location on the map" })
 		.min(-180, "Longitude must be between -180 and 180")
 		.max(180, "Longitude must be between -180 and 180"),
 });
 
 type CreateRoomFormValues = z.input<typeof createRoomSchema>;
 type CreateRoomFormOutput = z.output<typeof createRoomSchema>;
+type MapPosition = { lat: number; lng: number };
 
 export function NewRoomPage() {
 	const navigate = useNavigate();
@@ -43,15 +51,41 @@ export function NewRoomPage() {
 	const [imageFiles, setImageFiles] = useState<File[]>([]);
 	const [previews, setPreviews] = useState<string[]>([]);
 	const [isDragging, setIsDragging] = useState(false);
+	const [selectedPosition, setSelectedPosition] = useState<MapPosition | null>(
+		null,
+	);
 
 	const {
 		register,
 		handleSubmit,
+		resetField,
+		setValue,
 		formState: { errors },
 	} = useForm<CreateRoomFormValues, unknown, CreateRoomFormOutput>({
 		resolver: zodResolver(createRoomSchema),
 		defaultValues: { roomStatus: 1 },
 	});
+
+	const locationError = errors.latitude?.message ?? errors.longitude?.message;
+
+	const handleMapClick = (event: MapMouseEvent) => {
+		if (!event.detail.latLng) return;
+
+		const position = {
+			lat: event.detail.latLng.lat,
+			lng: event.detail.latLng.lng,
+		};
+
+		setSelectedPosition(position);
+		setValue("latitude", position.lat, {
+			shouldDirty: true,
+			shouldValidate: true,
+		});
+		setValue("longitude", position.lng, {
+			shouldDirty: true,
+			shouldValidate: true,
+		});
+	};
 
 	const addFiles = (incoming: FileList | File[]) => {
 		const valid = Array.from(incoming).filter((f) =>
@@ -142,6 +176,9 @@ export function NewRoomPage() {
 			</div>
 
 			<form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+				<input type="hidden" {...register("latitude")} />
+				<input type="hidden" {...register("longitude")} />
+
 				{/* Section: Room Details */}
 				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
@@ -259,61 +296,62 @@ export function NewRoomPage() {
 						Location
 					</h2>
 					<p className="text-xs text-slate-500 -mt-2">
-						Enter the GPS coordinates of the room. You can find them using
-						Google Maps or a similar service.
+						Click on the map to place a marker for the room location.
 					</p>
 
-					<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-						{/* Latitude */}
-						<div className="space-y-1.5">
-							<label
-								htmlFor="latitude"
-								className="block text-sm font-medium text-slate-700"
-							>
-								Latitude
-							</label>
-							<input
-								id="latitude"
-								type="number"
-								step="0.000001"
-								min="-90.000000"
-								max="90.000000"
-								placeholder="e.g. -17.3835"
-								{...register("latitude")}
-								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
-							/>
-							{errors.latitude && (
-								<p className="text-xs text-red-600">
-									{errors.latitude.message}
-								</p>
+					<div className="overflow-hidden rounded-xl border border-outline-variant/35">
+						<GoogleMap
+							mapId={"ede7684c941ba061c27c52d4"}
+							style={{ height: "360px", width: "100%" }}
+							defaultCenter={DEFAULT_MAP_CENTER}
+							defaultZoom={13}
+							gestureHandling="greedy"
+							onClick={handleMapClick}
+						>
+							{selectedPosition && (
+								<AdvancedMarker position={selectedPosition}>
+									<Pin
+										background={"#0f9d58"}
+										borderColor={"#006425"}
+										glyphColor={"#60d98f"}
+									/>
+								</AdvancedMarker>
 							)}
-						</div>
-
-						{/* Longitude */}
-						<div className="space-y-1.5">
-							<label
-								htmlFor="longitude"
-								className="block text-sm font-medium text-slate-700"
-							>
-								Longitude
-							</label>
-							<input
-								id="longitude"
-								type="number"
-								step="0.000001"
-								min="-180.000000"
-								max="180.000000"
-								placeholder="e.g. -66.1568"
-								{...register("longitude")}
-								className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
-							/>
-							{errors.longitude && (
-								<p className="text-xs text-red-600">
-									{errors.longitude.message}
-								</p>
-							)}
-						</div>
+						</GoogleMap>
 					</div>
+
+					<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+						{selectedPosition ? (
+							<p>
+								Selected location: {selectedPosition.lat.toFixed(6)},
+								{selectedPosition.lng.toFixed(6)}
+							</p>
+						) : (
+							<p>No location selected yet.</p>
+						)}
+
+						{selectedPosition && (
+							<button
+								type="button"
+								onClick={() => {
+									setSelectedPosition(null);
+									resetField("latitude", {
+										keepDirty: true,
+									});
+									resetField("longitude", {
+										keepDirty: true,
+									});
+								}}
+								className="text-primary underline underline-offset-2"
+							>
+								Clear marker
+							</button>
+						)}
+					</div>
+
+					{locationError && (
+						<p className="text-xs text-red-600">{locationError}</p>
+					)}
 				</section>
 
 				{/* Section: Images */}
