@@ -6,7 +6,7 @@ export interface RequestOptions extends RequestInit {
 	baseURL?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5065";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function getToken(): string {
 	return useAuthStore.getState().accessToken;
