@@ -1,11 +1,15 @@
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.S3;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Room.UseCases;
+using HousingApp.Application.Storage;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Repositories;
 using HousingApp.Infrastructure.Persistence.UnitOfWork;
+using HousingApp.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +61,14 @@ builder.Services
             NameClaimType = JwtRegisteredClaimNames.Sub
         };
     });
+
+AWSOptions? awsOptions = builder.Configuration.GetAWSOptions();
+builder.Services.AddDefaultAWSOptions(awsOptions);
+builder.Services.AddAWSService<IAmazonS3>();
+
+builder.Services.Configure<StorageSettings>(
+    builder.Configuration.GetSection("Storage"));
+builder.Services.AddScoped<IStorageService, S3StorageService>();
 
 builder.Services.AddAuthorization();
 

@@ -44,15 +44,14 @@ namespace HousingApp.Application.Room.UseCases
                 Longitude = createRoomDto.Longitude,
                 Price = createRoomDto.Price,
                 PersonId = userId,
-                RoomStatus = (RoomStatus)createRoomDto.RoomStatusId,
-                ImageUrls = [.. createRoomDto.Images]
+                RoomStatus = (RoomStatus)createRoomDto.RoomStatusId
             };
 
             await unitOfWork.BeginTransactionAsync();
 
             try
             {
-                await unitOfWork.RoomRepository.CreateRoomAsync(room);
+                int roomId = await unitOfWork.RoomRepository.CreateRoomAsync(room);
                 await unitOfWork.CommitTransactionAsync();
 
                 CreatedRoomDto response = new(

@@ -9,7 +9,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
 {
     public class RoomRepository(HousingApplicationDbContext context) : IRoomRepository
     {
-        public async Task CreateRoomAsync(Room room)
+        public async Task<int> CreateRoomAsync(Room room)
         {
             RoomModel roomModel = new()
             {
@@ -23,14 +23,13 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             };
 
             await context.Rooms.AddAsync(roomModel);
-
-            if (room.ImageUrls.Count == 0)
-                return;
-
+            
             List<RoomImagesModel> roomImages =
                 [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image, Room = roomModel })];
 
             await context.RoomImages.AddRangeAsync(roomImages);
+
+            return roomModel.Id;
         }
 
         public async Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 3)
