@@ -151,8 +151,8 @@ export function RoomsPage() {
 							</svg>
 						</button>
 					</div>
-					<div className="grid gap-2 sm:grid-cols-2">
-						<section className="surface-section space-y-2">
+					<div className="grid gap-2 sm:grid-cols-1">
+						<section className="hidden surface-section space-y-2">
 							<p className="text-sm font-medium text-slate-700">Location</p>
 							<div className="overflow-hidden rounded-xl border border-outline-variant/35">
 								<GoogleMap

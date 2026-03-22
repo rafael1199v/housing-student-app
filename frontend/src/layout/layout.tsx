@@ -1,11 +1,17 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useAuthActions } from "../features/auth/store/authStore";
+import {
+	useAccessToken,
+	useAuthActions,
+} from "../features/auth/store/authStore";
+import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 
 export function MainLayout() {
 	const { clearAll } = useAuthActions();
 	const navigate = useNavigate();
 	const location = useLocation();
+	const token = useAccessToken();
+	const role = getRoleFromAccessToken(token);
 
 	const handleLogout = () => {
 		clearAll();
@@ -33,17 +39,31 @@ export function MainLayout() {
 					</div>
 
 					<div className="flex items-center gap-3">
-						<button
-							type="button"
-							onClick={() => navigate("/rooms")}
-							className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-								location.pathname === "/rooms"
-									? "bg-primary text-on-primary"
-									: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
-							}`}
-						>
-							Rooms
-						</button>
+						{role == "Student" ? (
+							<button
+								type="button"
+								onClick={() => navigate("/rooms")}
+								className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+									location.pathname === "/rooms"
+										? "bg-primary text-on-primary"
+										: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
+								}`}
+							>
+								Rooms
+							</button>
+						) : (
+							<button
+								type="button"
+								onClick={() => navigate("/owner/rooms/new")}
+								className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+									location.pathname === "/owner/rooms/new"
+										? "bg-primary text-on-primary"
+										: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
+								}`}
+							>
+								Create new Room
+							</button>
+						)}
 						<button
 							type="button"
 							onClick={handleLogout}

@@ -7,6 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
+import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
 import roomService from "../../../services/roomService";
 import { Footer } from "../../shared/components/footer";
 
@@ -195,18 +196,11 @@ export function RoomDetails() {
 
 					<div className="pt-6">
 						<div className="flex items-center gap-4">
-							{room.imageUrl ? (
-								<img
-									src={room.imageUrl}
-									alt={`${room.firstName} ${room.lastName}`}
-									className="h-14 w-14 rounded-full object-cover"
-								/>
-							) : (
-								<div className="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-lg font-semibold">
-									{room.firstName.charAt(0)}
-								</div>
-							)}
-
+							<img
+								src={UserPlaceholder}
+								alt={`${room.firstName} ${room.lastName}`}
+								className="h-14 w-14 rounded-full object-cover"
+							/>
 							<div>
 								<p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
 									Dueño de la propiedad
