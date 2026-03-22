@@ -8,6 +8,7 @@ interface OwnerRoomCardProps {
 }
 
 export function OwnerRoomCard({ room, onClick, onEdit }: OwnerRoomCardProps) {
+	console.log(room);
 	const allImages = room.imageRoomUrls?.length ? room.imageRoomUrls : [];
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const currentImage = allImages[currentIndex];
