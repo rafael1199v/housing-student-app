@@ -69,6 +69,11 @@ export function OwnerRoomDetailsPage() {
 	const handleApproveClick = (booking: BookingDto) => {
 		setSelectedBooking(booking);
 		setShowConfirmDialog(true);
+		pendingBookings.forEach((element) => {
+			if (element.bookingStatus == "Confirmed") {
+				setShowConfirmDialog(false);
+			}
+		});
 	};
 
 	const handleConfirmApproval = () => {
@@ -201,9 +206,23 @@ export function OwnerRoomDetailsPage() {
 											<p className="text-sm text-slate-600">
 												{booking.bookerEmail}
 											</p>
-											<div className="mt-1 inline-block rounded-full bg-secondary-fixed px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-												{booking.bookingStatus}
-											</div>
+											{booking.bookingStatus == "Confirmed" ? (
+												<div className="mt-1 inline-block rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+													{booking.bookingStatus}
+												</div>
+											) : booking.bookingStatus == "Pending" ? (
+												<div className="mt-1 inline-block rounded-full bg-secondary-fixed px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+													{booking.bookingStatus}
+												</div>
+											) : booking.bookingStatus == "Rejected" ? (
+												<div className="mt-1 inline-block rounded-full bg-red-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+													{booking.bookingStatus}
+												</div>
+											) : (
+												<div className="mt-1 inline-block rounded-full bg-gray-300 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+													{booking.bookingStatus}
+												</div>
+											)}
 										</div>
 										<button
 											type="button"
