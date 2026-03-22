@@ -3,6 +3,7 @@ using HousingApp.Api.Requests;
 using HousingApp.Application;
 using HousingApp.Application.Roles;
 using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Room.UseCases;
 using HousingApp.Domain.Error;
 using Microsoft.AspNetCore.Authorization;
@@ -58,7 +59,7 @@ namespace HousingApp.Api.Controllers
         [HttpPost]
         [Authorize(Roles = RolesDescription.Householder)]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> CreateRoom([FromForm] CreateRoomRequest request)
+        public async Task<IActionResult> CreateRoom([FromForm] CreateRoomRequest request, CancellationToken cancellationToken)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (string.IsNullOrWhiteSpace(userId))
@@ -75,7 +76,7 @@ namespace HousingApp.Api.Controllers
 
             try
             {
-                Result<CreatedRoomDto> result = await createRoomUseCase.ExecuteAsync(userId, createRoomDto);
+                Result<CreatedRoomDto> result = await createRoomUseCase.ExecuteAsync(userId, createRoomDto, cancellationToken);
 
                 if (!result.IsSuccess)
                     return BadRequest(result.Error);
@@ -188,7 +189,7 @@ namespace HousingApp.Api.Controllers
                 Longitude: request.Longitude,
                 Price: request.Price,
                 RoomStatusId: request.RoomStatusId,
-                Images: [.. request.Images.Select(image => $"uploaded://{Guid.NewGuid():N}/{Path.GetFileName(image.FileName)}")]
+                Images: [.. request.Images.Select(image => new ImageRoomUpload(OpenStream: image.OpenReadStream, FileName: image.FileName, ContentType: image.ContentType))]
             );
 
             return createRoomDto;

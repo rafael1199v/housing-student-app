@@ -33,12 +33,14 @@ const roomService = {
 		const qs = query.size > 0 ? `?${query.toString()}` : "";
 		return api.get<RoomData[]>(`/api/rooms${qs}`);
 	},
+	roomAlreadyBooked: async (roomId: string) =>
+		api.get<boolean>(`/api/bookings/${roomId}`),
 	getRoomById: async (id: string) => api.get<RoomDto>(`/api/rooms/${id}`),
 	getHouseholderRooms: async () => {
 		return api.get<RoomHouseholderDto[]>("/api/rooms/householder");
 	},
 	createBooking: async (roomId: string) =>
-		api.post<void>("/api/bookings", JSON.stringify({ roomId })),
+		api.post<void>("/api/bookings", { roomId }),
 	createRoom: async (dto: CreateRoomDto) => {
 		const formData = new FormData();
 		formData.append("name", dto.name);
@@ -52,7 +54,7 @@ const roomService = {
 			formData.append("images", imageFile);
 		}
 
-		return apiFetch<void>("/api/rooms", { method: "POST", body: formData });
+		return apiFetch<void>("/api/rooms", { body: formData, method: "POST" });
 	},
 	getHouseholderRoomDetail: async (id: string) =>
 		api.get<RoomHouseholderDetailDto>(`/api/rooms/householder/${id}`),

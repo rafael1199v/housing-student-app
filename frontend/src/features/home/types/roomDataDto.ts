@@ -3,5 +3,5 @@ export interface RoomData {
 	name: string;
 	price: number;
 	description: string;
-	images?: string[];
+	imageRoomUrls?: string[];
 }

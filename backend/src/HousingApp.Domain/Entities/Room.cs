@@ -13,7 +13,7 @@ namespace HousingApp.Domain.Entities
         public required string PersonId { get; init; }
         public required RoomStatus RoomStatus { get; init; }
 
-        public required List<string> ImageUrls { get; init; }
+        public List<string> ImageUrls { get; init; } = new List<string>();
         public Person? Person { get; init; }
     }
 }

@@ -1,3 +1,5 @@
+using HousingApp.Application.Room.Upload;
+
 namespace HousingApp.Application.Room.DTO
 {
     public record CreateRoomDto(
@@ -7,6 +9,6 @@ namespace HousingApp.Application.Room.DTO
         double Longitude,
         double Price,
         int RoomStatusId,
-        List<string> Images
+        List<ImageRoomUpload> Images
     );
 }

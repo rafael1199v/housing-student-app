@@ -1,11 +1,12 @@
 ﻿using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Storage;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Error;
 using HousingApp.Domain.Repositories;
 
 namespace HousingApp.Application.Room.UseCases
 {
-    public class GetHouseholderRoomDetailUseCase(IRoomRepository roomRepository) : IGetHouseholderRoomDetailUseCase
+    public class GetHouseholderRoomDetailUseCase(IRoomRepository roomRepository, IStorageService storageService) : IGetHouseholderRoomDetailUseCase
     {
         public async Task<Result<RoomHouseholderDetailDto>> ExecuteAsync(int roomId, string userId)
         {
@@ -24,7 +25,7 @@ namespace HousingApp.Application.Room.UseCases
                 Description: roomDetail.Description,
                 Price: (decimal)roomDetail.Price,
                 RoomStatus: roomDetail.Status.ToString(),
-                ImageRoomUrls: roomDetail.ImageRoomUrls,
+                ImageRoomUrls: [.. roomDetail.ImageRoomUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))],
                 Bookings: [..roomDetail.Bookings.Select(b => new BookingDto(
                     Id: b.Id,
                     BookerId: b.BookerId,

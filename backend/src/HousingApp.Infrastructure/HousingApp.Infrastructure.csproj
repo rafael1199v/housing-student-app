@@ -10,7 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-      
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" />
+    <PackageReference Include="AWSSDK.S3" />
     <ProjectReference Include="../HousingApp.Application/HousingApp.Application.csproj" />
     <ProjectReference Include="../HousingApp.Domain/HousingApp.Domain.csproj" />
   </ItemGroup>

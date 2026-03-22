@@ -9,7 +9,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
 {
     public class RoomRepository(HousingApplicationDbContext context) : IRoomRepository
     {
-        public async Task CreateRoomAsync(Room room)
+        public async Task<int> CreateRoomAsync(Room room)
         {
             RoomModel roomModel = new()
             {
@@ -24,13 +24,14 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
 
             await context.Rooms.AddAsync(roomModel);
 
-            if (room.ImageUrls.Count == 0)
-                return;
-
             List<RoomImagesModel> roomImages =
                 [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image, Room = roomModel })];
 
             await context.RoomImages.AddRangeAsync(roomImages);
+
+            await context.SaveChangesAsync();
+
+            return roomModel.Id;
         }
 
         public async Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 3)
@@ -67,6 +68,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         {
             RoomModel? roomModel = await context.Rooms
                 .Include(r => r.Person)
+                .Include(r => r.RoomImages)
                 .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
 
             return roomModel is null ? null : ToDomain(roomModel);
@@ -92,6 +94,14 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 return false;
 
             return true;
+        }
+
+        public async Task AddImagesAsync(int roomId, List<string> imageKeys)
+        {
+            List<RoomImagesModel> roomImagesModels =
+                [.. imageKeys.Select(key => new RoomImagesModel { ImageUrl = key, RoomId = roomId })];
+
+            await context.RoomImages.AddRangeAsync(roomImagesModels);
         }
 
         public async Task<List<RoomHouseholder>> GetHouseholderRoomsAsync(string userId)

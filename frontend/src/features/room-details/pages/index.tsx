@@ -26,6 +26,12 @@ export function RoomDetails() {
 		enabled: !!id,
 	});
 
+	const userAlreadyBookedQuery = useQuery({
+		queryKey: ["user-booking", id],
+		queryFn: () => roomService.roomAlreadyBooked(id!),
+		enabled: !!id,
+	});
+
 	useEffect(() => {
 		if (room) {
 			setBooked(room.roomStatus !== "Available");
@@ -223,7 +229,7 @@ export function RoomDetails() {
 							>
 								Reserva no disponible, prueba a buscar otra habitación.
 							</button>
-						) : bookRequestSent ? (
+						) : bookRequestSent || userAlreadyBookedQuery.data ? (
 							<button
 								type="button"
 								disabled={true}
@@ -234,7 +240,9 @@ export function RoomDetails() {
 						) : (
 							<button
 								type="button"
-								disabled={bookingMutation.isPending}
+								disabled={
+									bookingMutation.isPending || userAlreadyBookedQuery.data
+								}
 								className="flex-1 rounded-full bg-primary py-3 font-semibold text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 								onClick={() => bookingMutation.mutate()}
 							>
