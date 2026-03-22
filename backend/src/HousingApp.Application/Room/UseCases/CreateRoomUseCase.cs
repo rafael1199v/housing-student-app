@@ -1,15 +1,17 @@
 using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Storage;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using System.Collections;
 
 namespace HousingApp.Application.Room.UseCases
 {
-    public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork) : ICreateRoomUseCase
+    public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService storageService) : ICreateRoomUseCase
     {
 
-        public async Task<Result<CreatedRoomDto>> ExecuteAsync(string userId, CreateRoomDto createRoomDto)
+        public async Task<Result<CreatedRoomDto>> ExecuteAsync(string userId, CreateRoomDto createRoomDto, CancellationToken cancellationToken)
         {
             if (!await unitOfWork.PersonRepository.ExistsByUserIdAsync(userId))
                 return Result<CreatedRoomDto>.Failure(RoomError.HouseholderNotFound);
@@ -52,6 +54,22 @@ namespace HousingApp.Application.Room.UseCases
             try
             {
                 int roomId = await unitOfWork.RoomRepository.CreateRoomAsync(room);
+
+                IEnumerable<Task<string>> uploadTasks =
+                    createRoomDto.Images.Select(image => 
+                        storageService.UploadAsync(
+                            image.OpenStream,
+                            image.FileName,
+                            image.ContentType,
+                            StorageType.Room,
+                            entityId: roomId.ToString(),
+                            cancellationToken
+                        )
+                    ); 
+                
+                string[] keys = await Task.WhenAll(uploadTasks);
+                
+                await unitOfWork.RoomRepository.AddImagesAsync(roomId, [.. keys]);
                 await unitOfWork.CommitTransactionAsync();
 
                 CreatedRoomDto response = new(
@@ -61,8 +79,8 @@ namespace HousingApp.Application.Room.UseCases
                     Longitude: room.Longitude,
                     Price: room.Price,
                     RoomStatus: room.RoomStatus.ToString(),
-                    ImageRoomUrls: room.ImageUrls);
-
+                    ImageRoomUrls: [..keys]);
+                
                 return Result<CreatedRoomDto>.Success(response);
             }
             catch

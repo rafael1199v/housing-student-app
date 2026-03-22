@@ -1,4 +1,5 @@
 using Amazon.Extensions.NETCore.Setup;
+using Amazon.Runtime;
 using Amazon.S3;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Booking.UseCases;
@@ -62,7 +63,13 @@ builder.Services
         };
     });
 
+AWSCredentials credentials = new BasicAWSCredentials(
+    builder.Configuration["AWS:AccessKey"],
+    builder.Configuration["AWS:SecretKey"]);
+
 AWSOptions? awsOptions = builder.Configuration.GetAWSOptions();
+awsOptions.Credentials = credentials;
+
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonS3>();
 

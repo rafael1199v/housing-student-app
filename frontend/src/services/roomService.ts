@@ -3,7 +3,7 @@ import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
 import type { RoomHouseholderDetailDto } from "../features/owner-room-details/types/roomHouseholderDetailDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
-import { api } from "./apiService";
+import { api, apiFetch } from "./apiService";
 
 export interface RoomSearchParams {
 	name?: string;
@@ -40,7 +40,7 @@ const roomService = {
 			formData.append("images", imageFile);
 		}
 
-		return api.post<void>("/api/rooms", formData);
+		return apiFetch<void>("/api/rooms", { body: formData, method: "POST" });
 	},
 	getHouseholderRoomDetail: async (id: string) =>
 		api.get<RoomHouseholderDetailDto>(`/api/rooms/householder/${id}`),

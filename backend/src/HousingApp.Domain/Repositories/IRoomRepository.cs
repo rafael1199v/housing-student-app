@@ -10,6 +10,8 @@ namespace HousingApp.Domain.Repositories
         Task<bool> TryMarkAsBookedAsync(int roomId);
         Task<bool> IsRoomAvailable(int roomId);
 
+        Task AddImagesAsync(int roomId, List<string> imageKeys);
+
         Task<List<RoomHouseholder>> GetHouseholderRoomsAsync(string userId);
         Task<RoomHouseholderDetail?> GetHouseholderRoomsDetailsAsync(string householderId, int roomId);
     }

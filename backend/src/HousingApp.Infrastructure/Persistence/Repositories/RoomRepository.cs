@@ -28,7 +28,9 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image, Room = roomModel })];
 
             await context.RoomImages.AddRangeAsync(roomImages);
-
+            
+            await context.SaveChangesAsync();
+            
             return roomModel.Id;
         }
 
@@ -91,6 +93,14 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                 return false;
 
             return true;
+        }
+
+        public async Task AddImagesAsync(int roomId, List<string> imageKeys)
+        {
+            List<RoomImagesModel> roomImagesModels =
+                [.. imageKeys.Select(key => new RoomImagesModel { ImageUrl = key, RoomId = roomId })];
+
+            await context.RoomImages.AddRangeAsync(roomImagesModels);
         }
 
         public async Task<List<RoomHouseholder>> GetHouseholderRoomsAsync(string userId)
