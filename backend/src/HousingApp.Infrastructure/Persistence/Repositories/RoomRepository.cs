@@ -68,6 +68,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         {
             RoomModel? roomModel = await context.Rooms
                 .Include(r => r.Person)
+                .Include(r => r.RoomImages)
                 .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
 
             return roomModel is null ? null : ToDomain(roomModel);
