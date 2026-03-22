@@ -107,7 +107,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         public async Task<List<RoomHouseholder>> GetHouseholderRoomsAsync(string userId)
         {
             List<RoomModel> householderRooms = await context.Rooms
-                .Include(r => r.Bookings)
+                .Include(r => r.Bookings.Where(b => !b.IsDeleted))
                 .Include(r => r.RoomImages)
                 .Where(r => r.PersonId == userId && !r.IsDeleted).ToListAsync();
             return [.. householderRooms.Select(ToHouseholderDomain)];
@@ -116,7 +116,7 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         public async Task<RoomHouseholderDetail?> GetHouseholderRoomsDetailsAsync(string householderId, int roomId)
         {
             RoomModel? room = await context.Rooms
-                .Include(r => r.Bookings)
+                .Include(r => r.Bookings.Where(b => !b.IsDeleted))
                 .ThenInclude(b => b.Booker)
                 .Include(r => r.RoomImages)
                 .Where(r => r.Id == roomId && !r.IsDeleted && r.PersonId == householderId)
