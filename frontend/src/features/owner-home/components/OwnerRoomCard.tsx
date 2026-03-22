@@ -132,7 +132,7 @@ export function OwnerRoomCard({ room, onClick, onEdit }: OwnerRoomCardProps) {
 					<button
 						type="button"
 						onClick={handleEditClick}
-						className="rounded-md p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+						className="hidden rounded-md p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
 						aria-label={`Edit ${room.name}`}
 					>
 						<svg
