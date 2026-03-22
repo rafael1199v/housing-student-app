@@ -56,7 +56,7 @@ namespace HousingApp.Application.Room.UseCases
                 int roomId = await unitOfWork.RoomRepository.CreateRoomAsync(room);
 
                 IEnumerable<Task<string>> uploadTasks =
-                    createRoomDto.Images.Select(image => 
+                    createRoomDto.Images.Select(image =>
                         storageService.UploadAsync(
                             image.OpenStream,
                             image.FileName,
@@ -65,10 +65,10 @@ namespace HousingApp.Application.Room.UseCases
                             entityId: roomId.ToString(),
                             cancellationToken
                         )
-                    ); 
-                
+                    );
+
                 string[] keys = await Task.WhenAll(uploadTasks);
-                
+
                 await unitOfWork.RoomRepository.AddImagesAsync(roomId, [.. keys]);
                 await unitOfWork.CommitTransactionAsync();
 
@@ -79,8 +79,8 @@ namespace HousingApp.Application.Room.UseCases
                     Longitude: room.Longitude,
                     Price: room.Price,
                     RoomStatus: room.RoomStatus.ToString(),
-                    ImageRoomUrls: [..keys]);
-                
+                    ImageRoomUrls: [.. keys]);
+
                 return Result<CreatedRoomDto>.Success(response);
             }
             catch

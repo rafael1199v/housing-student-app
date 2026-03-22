@@ -23,14 +23,14 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             };
 
             await context.Rooms.AddAsync(roomModel);
-            
+
             List<RoomImagesModel> roomImages =
                 [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image, Room = roomModel })];
 
             await context.RoomImages.AddRangeAsync(roomImages);
-            
+
             await context.SaveChangesAsync();
-            
+
             return roomModel.Id;
         }
 

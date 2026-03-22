@@ -11,9 +11,9 @@ namespace HousingApp.Infrastructure.Storage
             CancellationToken cancellationToken)
         {
             string key = BuildKey(storageType, entityId, fileName);
-            
+
             await using Stream stream = openStream();
-            
+
             await s3Client.PutObjectAsync(new PutObjectRequest
             {
                 BucketName = settings.Value.BucketName,
@@ -35,7 +35,7 @@ namespace HousingApp.Infrastructure.Storage
                 Expires = DateTime.UtcNow.Add(expiration ?? TimeSpan.FromMinutes(10))
             });
         }
-        
+
         private static string BuildKey(StorageType category, string entityId, string fileName) =>
             $"{category.ToString().ToLower()}/{entityId}/{Guid.NewGuid():N}_{Path.GetFileName(fileName)}";
     }
