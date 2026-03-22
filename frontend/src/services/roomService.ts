@@ -41,6 +41,8 @@ const roomService = {
 	},
 	createBooking: async (roomId: string) =>
 		api.post<void>("/api/bookings", { roomId }),
+	deleteBooking: async (roomId: string) =>
+		api.delete<void>(`/api/bookings/${roomId}`),
 	createRoom: async (dto: CreateRoomDto) => {
 		const formData = new FormData();
 		formData.append("name", dto.name);

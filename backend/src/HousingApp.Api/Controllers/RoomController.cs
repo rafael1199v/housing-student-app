@@ -1,7 +1,7 @@
-using HousingApp.Api.Constants;
 using HousingApp.Api.Requests;
 using HousingApp.Application;
 using HousingApp.Application.Roles;
+using HousingApp.Application.Room;
 using HousingApp.Application.Room.DTO;
 using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Room.UseCases;
@@ -23,6 +23,7 @@ namespace HousingApp.Api.Controllers
         IGetHouseholderRoomDetailUseCase getHouseholderRoomDetailUseCase) : ControllerBase
     {
         [HttpGet]
+        [Authorize(Roles = RolesDescription.Student + "," + RolesDescription.Householder)]
         public async Task<IActionResult> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
         {
             HashSet<string> supportedFilters = new(StringComparer.OrdinalIgnoreCase)
@@ -68,10 +69,6 @@ namespace HousingApp.Api.Controllers
             if (request.Images.Count > Images.MaxImagesAllowed)
                 return BadRequest(RoomError.MaxImagesExceeded(Images.MaxImagesAllowed));
 
-            if (HasNonImageFiles(request.Images))
-                return BadRequest(RoomError.InvalidImageType);
-
-
             CreateRoomDto createRoomDto = GetCreateRoomDto(request);
 
             try
@@ -110,6 +107,7 @@ namespace HousingApp.Api.Controllers
 
 
         [HttpGet("{roomId}")]
+        [Authorize(Roles = RolesDescription.Student)]
         public async Task<IActionResult> GetRoomById(int roomId)
         {
             Result<RoomDto> result = await getRoomDetailUseCase.ExecuteAsync(roomId);
@@ -170,14 +168,6 @@ namespace HousingApp.Api.Controllers
             {
                 return BadRequest(new { message = e.Message });
             }
-        }
-
-        private static bool HasNonImageFiles(List<IFormFile> images)
-        {
-            return images.Any(image =>
-                image.Length > 0
-                && (string.IsNullOrWhiteSpace(image.ContentType)
-                    || !image.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)));
         }
 
         private static CreateRoomDto GetCreateRoomDto(CreateRoomRequest request)

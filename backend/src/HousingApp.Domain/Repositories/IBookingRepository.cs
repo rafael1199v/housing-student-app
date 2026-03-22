@@ -9,5 +9,8 @@ namespace HousingApp.Domain.Repositories
         Task<bool> UserHasAlreadyBooked(string userId, int roomId);
         Task<bool> ChangeStatus(int bookingId, BookingStatus newStatus);
         Task<Booking?> GetBookingByIdAsync(int bookingId);
+        Task<Booking?> GetBookingByRoomAndStudentAsync(int roomId, string studentId);
+        Task<bool> ApproveBooking(int bookingId);
+        Task DeleteBookingAsync(int bookingId);
     }
 }

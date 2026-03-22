@@ -1,4 +1,5 @@
 using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Storage;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
@@ -36,6 +37,12 @@ namespace HousingApp.Application.Room.UseCases
 
             if ((RoomStatus)createRoomDto.RoomStatusId is RoomStatus.Booked)
                 return Result<CreatedRoomDto>.Failure(RoomError.InvalidRoomStatus);
+
+            if (HasNonImageFiles(createRoomDto.Images))
+                return Result<CreatedRoomDto>.Failure(RoomError.InvalidImageType);
+
+            if (createRoomDto.Images.Count > Images.MaxImagesAllowed)
+                return Result<CreatedRoomDto>.Failure(RoomError.MaxImagesExceeded(Images.MaxImagesAllowed));
 
             Domain.Entities.Room room = new()
             {
@@ -90,6 +97,13 @@ namespace HousingApp.Application.Room.UseCases
             }
         }
 
+
+        private static bool HasNonImageFiles(List<ImageRoomUpload> images)
+        {
+            return images.Any(image =>
+               string.IsNullOrWhiteSpace(image.ContentType)
+                    || !image.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase));
+        }
 
     }
 }

@@ -12,7 +12,7 @@ namespace HousingApp.Api.Controllers
 {
     [ApiController]
     [Route("api/bookings")]
-    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase, IRoomAlreadyBookedUseCase roomAlreadyBookedUseCase) : ControllerBase
+    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase, IRoomAlreadyBookedUseCase roomAlreadyBookedUseCase, IDeleteBookingUseCase deleteBookingUseCase) : ControllerBase
     {
         [HttpPost]
         [Authorize(Roles = RolesDescription.Student)]
@@ -68,6 +68,23 @@ namespace HousingApp.Api.Controllers
                 return Unauthorized();
 
             return Ok(await roomAlreadyBookedUseCase.ExecuteAsync(roomId, userId));
+        }
+
+        [HttpDelete("{roomId:int}")]
+        [Authorize(Roles = RolesDescription.Student)]
+        public async Task<IActionResult> DeleteBooking(int roomId)
+        {
+            string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+
+            Result<bool> result = await deleteBookingUseCase.ExecuteAsync(roomId, userId);
+
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            return NoContent();
         }
     }
 }

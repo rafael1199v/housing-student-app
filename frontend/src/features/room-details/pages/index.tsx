@@ -52,6 +52,17 @@ export function RoomDetails() {
 		},
 	});
 
+	const bookingDeletion = useMutation({
+		mutationFn: () => roomService.deleteBooking(String(room!.id)),
+		onSuccess: () => {
+			toast.success("Reserva eliminada con éxito.");
+			setBookRequestSent(0);
+		},
+		onError: () => {
+			toast.error("Error al eliminar la reserva. Por favor, intenta de nuevo.");
+		},
+	});
+
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center py-24 text-slate-500 text-sm">
@@ -226,10 +237,10 @@ export function RoomDetails() {
 						) : bookRequestSent || userAlreadyBookedQuery.data ? (
 							<button
 								type="button"
-								disabled={true}
-								className="flex-1 rounded-full bg-primary py-3 font-semibold text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+								className="flex-1 rounded-full bg-secondary-fixed py-3 font-semibold text-red-800 transition hover:bg-red-800 hover:text-white"
+								onClick={() => bookingDeletion.mutate()}
 							>
-								Reservación solicitada!
+								Eliminar solicitud
 							</button>
 						) : (
 							<button

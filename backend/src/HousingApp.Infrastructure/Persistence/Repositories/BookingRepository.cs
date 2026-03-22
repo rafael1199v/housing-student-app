@@ -44,6 +44,35 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
             return booking is null ? null : ToDomain(booking);
         }
 
+        public async Task<Booking?> GetBookingByRoomAndStudentAsync(int roomId, string studentId)
+        {
+            BookingModel? booking = await context.Bookings.FirstOrDefaultAsync(b => b.RoomId == roomId && b.BookerId == studentId && !b.IsDeleted);
+            return booking is null ? null : ToDomain(booking);
+        }
+
+        public async Task<bool> ApproveBooking(int bookingId)
+        {
+            BookingModel? booking = await context.Bookings.FindAsync(bookingId);
+
+            if (booking is null)
+                return false;
+
+            await context.Bookings
+                .Where(b => b.RoomId == booking.RoomId && b.Id != bookingId && !b.IsDeleted)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(b => b.BookingStatusId, (int)BookingStatus.Cancelled));
+
+            await context.Bookings
+                .Where(b => b.Id == bookingId && !b.IsDeleted)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(b => b.BookingStatusId, (int)BookingStatus.Confirmed));
+
+            return true;
+        }
+
+        public async Task DeleteBookingAsync(int bookingId)
+        {
+            await context.Bookings.Where(b => b.Id == bookingId).ExecuteUpdateAsync(setters => setters.SetProperty(b => b.IsDeleted, true));
+        }
+
         private static Booking ToDomain(BookingModel model)
         {
             return new Booking

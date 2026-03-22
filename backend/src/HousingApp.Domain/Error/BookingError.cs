@@ -17,6 +17,9 @@ namespace HousingApp.Domain.Error
         public static readonly Error BookingAlreadyDenied =
             new("booking.already.denied", "La reserva ya fue denegada");
 
+        public static readonly Error BookingAlreadyCompleted =
+            new("booking.already.completed", "La reserva ya fue completada");
+
         public static readonly Error BookingNotFound =
             new("booking.not.found", "La reserva no fue encontrada");
 
