@@ -1,6 +1,4 @@
-using System;
-
-namespace HousingApp.Api.Constants;
+namespace HousingApp.Application.Room;
 
 public static class Images
 {

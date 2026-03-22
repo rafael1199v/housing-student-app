@@ -28,7 +28,7 @@ namespace HousingApp.Application.Booking.UseCases
 
                 case BookingStatus.Pending:
                     await unitOfWork.BeginTransactionAsync();
-                    bool result = await unitOfWork.BookingRepository.ChangeStatus(bookingId, BookingStatus.Confirmed);
+                    bool result = await unitOfWork.BookingRepository.ApproveBooking(bookingId);
                     await unitOfWork.CommitTransactionAsync();
 
                     return !result ? Result<bool>.Failure(BookingError.BookingCouldNotChangeStatus) : Result<bool>.Success(result);
