@@ -66,45 +66,14 @@ namespace HousingApp.Api.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
 
-            if (request.Images.Count > Images.MaxImagesAllowed)
-                return BadRequest(RoomError.MaxImagesExceeded(Images.MaxImagesAllowed));
-
             CreateRoomDto createRoomDto = GetCreateRoomDto(request);
+            Result<CreatedRoomDto> result = await createRoomUseCase.ExecuteAsync(userId, createRoomDto, cancellationToken);
 
-            try
-            {
-                Result<CreatedRoomDto> result = await createRoomUseCase.ExecuteAsync(userId, createRoomDto, cancellationToken);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
 
-                if (!result.IsSuccess)
-                    return BadRequest(result.Error);
-
-                return Ok(result.Value);
-            }
-            catch
-            {
-                return BadRequest(new { message = "Hubo un error al crear el alojamiento. Intentalo otra vez" });
-            }
+            return Ok(result.Value);
         }
-
-        private static bool TryParseNullableDouble(string? value, out double? result)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                result = null;
-                return true;
-            }
-
-            if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedValue))
-            {
-                result = parsedValue;
-                return true;
-            }
-
-            result = null;
-            return false;
-        }
-
-
 
         [HttpGet("{roomId}")]
         [Authorize(Roles = RolesDescription.Student)]
@@ -129,19 +98,12 @@ namespace HousingApp.Api.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
 
-            try
-            {
-                Result<List<RoomHouseholderDto>> result = await getHouseholderRoomsUseCase.ExecuteAsync(userId);
+            Result<List<RoomHouseholderDto>> result = await getHouseholderRoomsUseCase.ExecuteAsync(userId);
 
-                if (!result.IsSuccess)
-                    return BadRequest(result.Error);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
 
-                return Ok(result.Value);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return Ok(result.Value);
         }
 
         [HttpGet("householder/{roomId:int}")]
@@ -153,21 +115,14 @@ namespace HousingApp.Api.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
 
-            try
-            {
-                Result<RoomHouseholderDetailDto> result = await getHouseholderRoomDetailUseCase.ExecuteAsync(roomId: roomId, userId: userId);
+            Result<RoomHouseholderDetailDto> result = await getHouseholderRoomDetailUseCase.ExecuteAsync(roomId: roomId, userId: userId);
 
-                if (!result.IsSuccess)
-                {
-                    return BadRequest(result.Error);
-                }
-
-                return Ok(result.Value);
-            }
-            catch (Exception e)
+            if (!result.IsSuccess)
             {
-                return BadRequest(new { message = e.Message });
+                return BadRequest(result.Error);
             }
+
+            return Ok(result.Value);
         }
 
         private static CreateRoomDto GetCreateRoomDto(CreateRoomRequest request)
@@ -184,5 +139,24 @@ namespace HousingApp.Api.Controllers
 
             return createRoomDto;
         }
+
+        private static bool TryParseNullableDouble(string? value, out double? result)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result = null;
+                return true;
+            }
+
+            if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedValue))
+            {
+                result = parsedValue;
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
     }
 }

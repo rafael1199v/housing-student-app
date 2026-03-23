@@ -23,38 +23,25 @@ namespace HousingApp.Api.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();
 
-            try
-            {
-                Result<CreatedBookingDto> result = await createBookingUseCase.ExecuteAsync(userId, createBookingDto);
+            Result<CreatedBookingDto> result = await createBookingUseCase.ExecuteAsync(userId, createBookingDto);
 
-                if (!result.IsSuccess)
-                    return BadRequest(result.Error);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
 
-                return Ok(result.Value);
-            }
-            catch
-            {
-                return BadRequest(new { message = "Hubo un error al crear la reservacion. Intentalo otra vez" });
-            }
+            return Ok(result.Value);
         }
 
         [HttpPut("approve/{bookingId:int}")]
         [Authorize(Roles = RolesDescription.Householder)]
         public async Task<IActionResult> ApproveBooking(int bookingId)
         {
-            try
-            {
-                Result<bool> result = await approveBookingUseCase.ExecuteAsync(bookingId);
 
-                if (!result.IsSuccess)
-                    return BadRequest(result.Error);
+            Result<bool> result = await approveBookingUseCase.ExecuteAsync(bookingId);
 
-                return Ok(result.Value);
-            }
-            catch
-            {
-                return BadRequest(new { message = "Hubo un error al aprobar la reservacion. Intentalo otra vez." });
-            }
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            return Ok(result.Value);
         }
 
 
