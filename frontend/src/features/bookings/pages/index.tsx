@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import bookingService from "../../../services/bookingService";
-import { CardSkeleton } from "../../home/components/skeleton";
 import { Footer } from "../../shared/components/footer";
 import { BookingCard } from "../components/booking-card";
+import { BookedSkeleton } from "../components/skeleton";
 
 export function BookingsPage() {
 	const navigate = useNavigate();
@@ -36,7 +36,7 @@ export function BookingsPage() {
 				</div>
 
 				{isLoading ? (
-					<CardSkeleton quantity={6} />
+					<BookedSkeleton quantity={3} />
 				) : isError ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
 						Could not load rooms. Please try again later.
@@ -54,7 +54,6 @@ export function BookingsPage() {
 								name={room.name}
 								price={room.price}
 								status={room.status}
-								images={room.imageRoomUrls}
 								onClick={() => navigate(`/details/${room.id}`)}
 							/>
 						))}

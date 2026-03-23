@@ -3,5 +3,4 @@ export interface BookingData {
 	name: string;
 	price: number;
 	status: string;
-	imageRoomUrls?: string[];
 }
