@@ -12,20 +12,12 @@ namespace HousingApp.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterDto registerDto)
         {
-            try
-            {
-                Result<string> result = await registerUseCase.ExecuteAsync(registerDto);
+            Result<string> result = await registerUseCase.ExecuteAsync(registerDto);
 
-                if (!result.IsSuccess)
-                    return BadRequest(result.Error);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
 
-                return Ok(new { userId = result.Value });
-            }
-            catch (System.Exception e)
-            {
-                return BadRequest(new { message = e.Message });
-            }
-
+            return Ok(new { userId = result.Value });
         }
 
     }
