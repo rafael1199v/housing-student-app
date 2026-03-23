@@ -138,7 +138,7 @@ namespace HousingApp.Api.Controllers
 
                 return Ok(result.Value);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
@@ -164,7 +164,7 @@ namespace HousingApp.Api.Controllers
 
                 return Ok(result.Value);
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 return BadRequest(new { message = e.Message });
             }

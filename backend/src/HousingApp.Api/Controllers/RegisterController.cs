@@ -21,7 +21,7 @@ namespace HousingApp.Api.Controllers
 
                 return Ok(new { userId = result.Value });
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 return BadRequest(new { message = e.Message });
             }

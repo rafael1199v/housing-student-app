@@ -1,6 +1,7 @@
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
+using HousingApp.Api.Exception;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Room.UseCases;
@@ -13,6 +14,7 @@ using HousingApp.Infrastructure.Persistence.UnitOfWork;
 using HousingApp.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +28,7 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<HousingApplicationDbContext>(options =>
@@ -123,7 +126,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
+app.UseExceptionHandler(_ => { });
 app.UseCors(myAllowSpecificOrigins);
 
 app.UseAuthentication();
