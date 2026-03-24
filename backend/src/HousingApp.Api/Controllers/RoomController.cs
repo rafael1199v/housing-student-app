@@ -24,7 +24,7 @@ namespace HousingApp.Api.Controllers
     {
         [HttpGet]
         [Authorize(Roles = RolesDescription.Student + "," + RolesDescription.Householder)]
-        public async Task<IActionResult> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
+        public async Task<ActionResult<RoomDto>> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
         {
             HashSet<string> supportedFilters = new(StringComparer.OrdinalIgnoreCase)
             {
