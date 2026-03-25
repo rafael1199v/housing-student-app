@@ -4,7 +4,7 @@ import roomService from "../../../services/roomService";
 import { useUser } from "../../auth/store/authStore";
 import { CardSkeleton } from "../../home/components/skeleton";
 import { Footer } from "../../shared/components/footer";
-import { OwnerRoomCard } from "../components/OwnerRoomCard";
+import { RoomCard } from "../../shared/components/RoomCard";
 
 export function OwnerHomePage() {
 	const navigate = useNavigate();
@@ -58,12 +58,23 @@ export function OwnerHomePage() {
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
 						{rooms.map((room) => (
-							<OwnerRoomCard
+							<RoomCard
 								key={room.id}
-								room={room}
+								name={room.name}
+								price={room.price}
+								images={room.imageRoomUrls}
+								subtitle="Tu habitación publicada"
 								onClick={() => navigate(`/owner/rooms/${room.id}`)}
-								onEdit={() => navigate(`/owner/rooms/${room.id}/edit`)}
-							/>
+							>
+								<div className="rounded-lg bg-surface-container-low px-3 py-2">
+									<p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+										Booking requests
+									</p>
+									<p className="mt-1 text-base font-semibold text-slate-800">
+										{room.bookingRequests}
+									</p>
+								</div>
+							</RoomCard>
 						))}
 					</div>
 				)}

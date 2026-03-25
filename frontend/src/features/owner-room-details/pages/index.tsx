@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -11,7 +11,9 @@ import type { BookingDto } from "../types/roomHouseholderDetailDto";
 export function OwnerRoomDetailsPage() {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+	const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
 	const [selectedBooking, setSelectedBooking] = useState<BookingDto | null>(
 		null,
 	);
@@ -26,14 +28,15 @@ export function OwnerRoomDetailsPage() {
 		queryFn: () => roomService.getHouseholderRoomDetail(id!),
 		enabled: !!id,
 	});
+	const isCurrentBroken = brokenImages.has(selectedImageIndex);
 
 	const approveMutation = useMutation({
 		mutationFn: () => bookingService.approveBooking(selectedBooking!.id),
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["owner-room", id] });
 			toast.success("Booking approved successfully.");
 			setShowConfirmDialog(false);
 			setSelectedBooking(null);
-			setTimeout(() => navigate("/"), 1500);
 		},
 		onError: () => {
 			toast.error("Error approving booking. Please try again.");
@@ -58,6 +61,9 @@ export function OwnerRoomDetailsPage() {
 
 	const images = room.imageRoomUrls ?? [];
 	const pendingBookings = room.bookings;
+	const hasConfirmedBooking = pendingBookings.some(
+		(booking) => booking.bookingStatus === "Confirmed",
+	);
 
 	const nextImage = () => {
 		setSelectedImageIndex((prev) => (prev + 1) % images.length);
@@ -67,14 +73,13 @@ export function OwnerRoomDetailsPage() {
 		setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
 	};
 
+	const handleImageError = () => {
+		setBrokenImages((prev) => new Set(prev).add(selectedImageIndex));
+	};
+
 	const handleApproveClick = (booking: BookingDto) => {
 		setSelectedBooking(booking);
 		setShowConfirmDialog(true);
-		pendingBookings.forEach((element) => {
-			if (element.bookingStatus == "Confirmed") {
-				setShowConfirmDialog(false);
-			}
-		});
 	};
 
 	const handleConfirmApproval = () => {
@@ -91,15 +96,16 @@ export function OwnerRoomDetailsPage() {
 			<section className="surface-card overflow-hidden rounded-2xl">
 				{/* Image carousel */}
 				<div className="relative bg-surface-container-low">
-					{images.length > 0 ? (
+					{images.length > 0 && !isCurrentBroken ? (
 						<img
 							src={images[selectedImageIndex]}
 							alt={`${room.name} - Image ${selectedImageIndex + 1}`}
 							className="w-full h-96 object-cover"
+							onError={handleImageError}
 						/>
 					) : (
 						<div className="w-full h-96 flex items-center justify-center text-sm text-slate-400">
-							No images available
+							No image available
 						</div>
 					)}
 
@@ -228,7 +234,9 @@ export function OwnerRoomDetailsPage() {
 										<button
 											type="button"
 											onClick={() => handleApproveClick(booking)}
-											disabled={approveMutation.isPending}
+											disabled={
+												approveMutation.isPending || hasConfirmedBooking
+											}
 											className="whitespace-nowrap rounded-full bg-primary px-4 py-2 font-medium text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 										>
 											Approve

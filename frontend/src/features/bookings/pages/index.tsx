@@ -50,11 +50,10 @@ export function BookingsPage() {
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
 						{rooms.map((room) => (
 							<BookingCard
-								key={room.id}
+								key={room.room_id}
 								name={room.name}
-								price={room.price}
 								status={room.status}
-								onClick={() => navigate(`/details/${room.id}`)}
+								onClick={() => navigate(`/details/${room.room_id}`)}
 							/>
 						))}
 					</div>

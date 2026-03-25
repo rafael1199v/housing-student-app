@@ -1,6 +1,5 @@
 export interface BookingData {
-	id: string;
+	room_id: string;
 	name: string;
-	price: number;
 	status: string;
 }

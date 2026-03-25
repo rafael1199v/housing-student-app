@@ -11,8 +11,6 @@ export function BookedSkeleton({ quantity }: BookedSkeletonProps) {
 						<div className="space-y-3 p-5">
 							<div className="h-6 w-3/4 rounded bg-slate-200"></div>
 
-							<div className="h-7 w-2/5 rounded bg-slate-200"></div>
-
 							<div className="h-3 w-1/4 rounded bg-slate-200"></div>
 						</div>
 					</div>
