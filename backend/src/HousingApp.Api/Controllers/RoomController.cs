@@ -24,6 +24,7 @@ namespace HousingApp.Api.Controllers
     {
         [HttpGet]
         [Authorize(Roles = RolesDescription.Student + "," + RolesDescription.Householder)]
+        [ProducesResponseType(typeof(List<RoomDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<RoomDto>> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice, [FromQuery] string? maxPrice)
         {
             HashSet<string> supportedFilters = new(StringComparer.OrdinalIgnoreCase)
@@ -60,6 +61,7 @@ namespace HousingApp.Api.Controllers
         [HttpPost]
         [Authorize(Roles = RolesDescription.Householder)]
         [Consumes("multipart/form-data")]
+        [ProducesResponseType(typeof(CreatedRoomDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateRoom([FromForm] CreateRoomRequest request, CancellationToken cancellationToken)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -77,6 +79,7 @@ namespace HousingApp.Api.Controllers
 
         [HttpGet("{roomId}")]
         [Authorize(Roles = RolesDescription.Student)]
+        [ProducesResponseType(typeof(RoomDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetRoomById(int roomId)
         {
             Result<RoomDto> result = await getRoomDetailUseCase.ExecuteAsync(roomId);
@@ -92,6 +95,7 @@ namespace HousingApp.Api.Controllers
 
         [HttpGet("householder")]
         [Authorize(Roles = RolesDescription.Householder)]
+        [ProducesResponseType(typeof(List<RoomHouseholderDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHouseholderRooms()
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -108,6 +112,7 @@ namespace HousingApp.Api.Controllers
 
         [HttpGet("householder/{roomId:int}")]
         [Authorize(Roles = RolesDescription.Householder)]
+        [ProducesResponseType(typeof(RoomHouseholderDetailDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHouseholderRoomDetail(int roomId)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);

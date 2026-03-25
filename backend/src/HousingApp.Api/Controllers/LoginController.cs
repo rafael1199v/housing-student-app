@@ -14,6 +14,7 @@ namespace HousingApp.Api.Controllers
     public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration) : ControllerBase
     {
         [HttpPost]
+        [ProducesResponseType(typeof(CredentialsDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginDto user)
         {
             Result<UserDto> result = await loginUseCase.Login(user);

@@ -10,6 +10,7 @@ namespace HousingApp.Api.Controllers
     public class RegisterController(IRegisterUseCase registerUseCase) : ControllerBase
     {
         [HttpPost]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterDto registerDto)
         {
             Result<string> result = await registerUseCase.ExecuteAsync(registerDto);
@@ -17,7 +18,7 @@ namespace HousingApp.Api.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
-            return Ok(new { userId = result.Value });
+            return Ok(new RegisterResponseDto(result.Value!));
         }
 
     }
