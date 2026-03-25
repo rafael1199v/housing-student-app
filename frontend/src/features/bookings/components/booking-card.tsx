@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface BookingCardProps {
 	name: string;
 	status: string;
@@ -23,16 +21,27 @@ export function BookingCard({ name, status, onClick }: BookingCardProps) {
 			role={onClick ? "button" : undefined}
 			tabIndex={onClick ? 0 : undefined}
 		>
-			<div className="relative h-44 w-full bg-surface-container-low"></div>
-
 			<div className="space-y-3 p-5">
 				<div className="space-y-1">
 					<h3 className="text-lg font-semibold text-slate-900">{name}</h3>
 				</div>
-
-				<p className="-mt-2 text-xs text-slate-500">por mes</p>
-
-				<p className="text-sm leading-relaxed text-slate-600">{status}</p>
+				{status == "Confirmed" ? (
+					<div className="mt-1 inline-block rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+						{status}
+					</div>
+				) : status == "Pending" ? (
+					<div className="mt-1 inline-block rounded-full bg-secondary-fixed px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+						{status}
+					</div>
+				) : status == "Rejected" ? (
+					<div className="mt-1 inline-block rounded-full bg-red-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+						{status}
+					</div>
+				) : (
+					<div className="mt-1 inline-block rounded-full bg-gray-300 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
+						{status}
+					</div>
+				)}
 			</div>
 		</div>
 	);
