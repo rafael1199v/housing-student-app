@@ -1,7 +1,7 @@
+using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.DTO;
 using HousingApp.Application.Storage;
 using HousingApp.Domain.Error;
-using HousingApp.Domain.Repositories;
 using System;
 
 namespace HousingApp.Application.Room.UseCases;

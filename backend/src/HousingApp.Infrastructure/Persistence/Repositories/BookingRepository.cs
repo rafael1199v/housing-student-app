@@ -1,6 +1,6 @@
+using HousingApp.Application.Repositories;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
-using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
@@ -40,14 +40,34 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
 
         public async Task<Booking?> GetBookingByIdAsync(int bookingId)
         {
-            BookingModel? booking = await context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId && !b.IsDeleted);
-            return booking is null ? null : ToDomain(booking);
+            Booking? booking = await context.Bookings
+                .Where(b => b.Id == bookingId && !b.IsDeleted)
+                .Select(model => new Booking
+                {
+                    Id = model.Id,
+                    BookerId = model.BookerId,
+                    RoomId = model.RoomId,
+                    BookingStatus = (BookingStatus)model.BookingStatusId
+                })
+                .FirstOrDefaultAsync();
+
+            return booking;
         }
 
         public async Task<Booking?> GetBookingByRoomAndStudentAsync(int roomId, string studentId)
         {
-            BookingModel? booking = await context.Bookings.FirstOrDefaultAsync(b => b.RoomId == roomId && b.BookerId == studentId && !b.IsDeleted);
-            return booking is null ? null : ToDomain(booking);
+            Booking? booking = await context.Bookings
+                .Where(b => b.RoomId == roomId && b.BookerId == studentId && !b.IsDeleted)
+                .Select(model => new Booking
+                {
+                    Id = model.Id,
+                    BookerId = model.BookerId,
+                    RoomId = model.RoomId,
+                    BookingStatus = (BookingStatus)model.BookingStatusId
+                })
+                .FirstOrDefaultAsync();
+
+            return booking;
         }
 
         public async Task<bool> ApproveBooking(int bookingId)
@@ -71,17 +91,6 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         public async Task DeleteBookingAsync(int bookingId)
         {
             await context.Bookings.Where(b => b.Id == bookingId).ExecuteUpdateAsync(setters => setters.SetProperty(b => b.IsDeleted, true));
-        }
-
-        private static Booking ToDomain(BookingModel model)
-        {
-            return new Booking
-            {
-                Id = model.Id,
-                BookerId = model.BookerId,
-                RoomId = model.RoomId,
-                BookingStatus = (BookingStatus)model.BookingStatusId
-            };
         }
     }
 }

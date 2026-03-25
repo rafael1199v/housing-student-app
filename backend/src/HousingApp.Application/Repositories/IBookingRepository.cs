@@ -1,15 +1,14 @@
-using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
 
-namespace HousingApp.Domain.Repositories
+namespace HousingApp.Application.Repositories
 {
     public interface IBookingRepository
     {
-        Task CreateBookingAsync(Booking booking);
+        Task CreateBookingAsync(Domain.Entities.Booking booking);
         Task<bool> UserHasAlreadyBooked(string userId, int roomId);
         Task<bool> ChangeStatus(int bookingId, BookingStatus newStatus);
-        Task<Booking?> GetBookingByIdAsync(int bookingId);
-        Task<Booking?> GetBookingByRoomAndStudentAsync(int roomId, string studentId);
+        Task<Domain.Entities.Booking?> GetBookingByIdAsync(int bookingId);
+        Task<Domain.Entities.Booking?> GetBookingByRoomAndStudentAsync(int roomId, string studentId);
         Task<bool> ApproveBooking(int bookingId);
         Task DeleteBookingAsync(int bookingId);
     }

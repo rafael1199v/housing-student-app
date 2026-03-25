@@ -1,6 +1,6 @@
 using HousingApp.Domain.Entities;
 
-namespace HousingApp.Domain.Repositories
+namespace HousingApp.Application.Repositories
 {
     public interface IPersonRepository
     {
