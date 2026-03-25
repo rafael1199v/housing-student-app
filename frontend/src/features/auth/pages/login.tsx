@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -6,7 +7,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
-import { useSignIn } from "../store/authStore";
+import authService from "../../../services/authService";
+import { useAuthActions } from "../store/authStore";
 
 const loginSchema = z.object({
 	email: z
@@ -27,17 +29,23 @@ function Login() {
 	const { register, handleSubmit, formState } = useForm<IFormInput>({
 		resolver: zodResolver(loginSchema),
 	});
-	const signIn = useSignIn();
+	const { setAccessToken } = useAuthActions();
 	const navigate = useNavigate();
 
-	const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-		try {
-			await signIn({ email: data.email, password: data.password });
+	const { mutate, isPending } = useMutation({
+		mutationFn: authService.login,
+		onSuccess: (response) => {
+			setAccessToken(response.accessToken);
 			toast.success("Bienvenido");
 			navigate("/");
-		} catch {
+		},
+		onError: () => {
 			toast.error("Credenciales invalidas");
-		}
+		},
+	});
+
+	const onSubmit: SubmitHandler<IFormInput> = (data) => {
+		mutate({ email: data.email, password: data.password });
 	};
 
 	return (
@@ -135,9 +143,9 @@ function Login() {
 						<button
 							className="btn-primary mt-6 w-full"
 							type="submit"
-							disabled={formState.isSubmitting}
+							disabled={isPending}
 						>
-							{formState.isSubmitting ? "Iniciando..." : "Iniciar sesión"}
+							{isPending ? "Iniciando..." : "Iniciar sesión"}
 						</button>
 					</form>
 
