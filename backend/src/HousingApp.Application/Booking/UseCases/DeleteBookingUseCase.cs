@@ -1,6 +1,6 @@
-﻿using HousingApp.Domain.Enums;
+﻿using HousingApp.Application.Repositories;
+using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
-using HousingApp.Domain.Repositories;
 
 namespace HousingApp.Application.Booking.UseCases
 {

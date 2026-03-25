@@ -1,11 +1,10 @@
 using HousingApp.Domain.Entities;
-using HousingApp.Domain.Enums;
 
-namespace HousingApp.Domain.Repositories
+namespace HousingApp.Application.Repositories
 {
     public interface IUserRepository
     {
-        Task<string> RegisterUser(User newUser, Roles role);
+        Task<string> RegisterUser(User newUser, Domain.Enums.Roles role);
 
         Task<User?> FindUserByEmailAsync(string email);
 

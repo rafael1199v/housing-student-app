@@ -1,5 +1,5 @@
+using HousingApp.Application.Repositories;
 using HousingApp.Application.UnitOfWork;
-using HousingApp.Domain.Repositories;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;

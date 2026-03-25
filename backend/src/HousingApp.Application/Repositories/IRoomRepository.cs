@@ -1,12 +1,12 @@
 using HousingApp.Domain.Entities;
 
-namespace HousingApp.Domain.Repositories
+namespace HousingApp.Application.Repositories
 {
     public interface IRoomRepository
     {
-        Task<int> CreateRoomAsync(Room room);
-        Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20);
-        Task<Room?> GetRoomByIdAsync(int roomId);
+        Task<int> CreateRoomAsync(Domain.Entities.Room room);
+        Task<List<Domain.Entities.Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20);
+        Task<Domain.Entities.Room?> GetRoomByIdAsync(int roomId);
         Task<bool> TryMarkAsBookedAsync(int roomId);
         Task<bool> IsRoomAvailable(int roomId);
 

@@ -1,10 +1,7 @@
-using HousingApp.Application.Roles;
+using HousingApp.Application.Repositories;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
-using HousingApp.Domain.Repositories;
-using HousingApp.Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories
 {

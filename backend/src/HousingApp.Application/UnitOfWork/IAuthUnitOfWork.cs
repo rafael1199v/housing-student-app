@@ -1,4 +1,4 @@
-using HousingApp.Domain.Repositories;
+using HousingApp.Application.Repositories;
 
 namespace HousingApp.Application.UnitOfWork
 {
