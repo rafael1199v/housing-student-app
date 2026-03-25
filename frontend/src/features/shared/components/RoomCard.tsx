@@ -1,26 +1,36 @@
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
-interface RoomSearchCardProps {
+interface RoomCardProps {
 	name: string;
 	price: number;
-	description: string;
 	images?: string[];
+	subtitle?: string;
+	description?: string;
 	onClick?: () => void;
+	children?: ReactNode;
 }
 
-export function RoomSearchCard({
+export function RoomCard({
 	name,
 	price,
-	description,
 	images,
+	subtitle = "Habitación para estudiantes",
+	description,
 	onClick,
-}: RoomSearchCardProps) {
+	children,
+}: RoomCardProps) {
 	const allImages = images?.length ? images : [];
 	const [currentIndex, setCurrentIndex] = useState(0);
+	const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
+
+	const currentImage = allImages[currentIndex];
+	const hasMultiple = allImages.length > 1;
+	const isCurrentBroken = brokenImages.has(currentIndex);
 
 	const formattedPrice = new Intl.NumberFormat("es-BO").format(price);
+
 	const shortDescription =
-		description.length > 120
+		description && description.length > 120
 			? `${description.slice(0, 120).trim()}...`
 			: description;
 
@@ -34,8 +44,9 @@ export function RoomSearchCard({
 		setCurrentIndex((prev) => Math.min(allImages.length - 1, prev + 1));
 	};
 
-	const currentImage = allImages[currentIndex];
-	const hasMultiple = allImages.length > 1;
+	const handleImageError = () => {
+		setBrokenImages((prev) => new Set(prev).add(currentIndex));
+	};
 
 	return (
 		<div
@@ -54,11 +65,12 @@ export function RoomSearchCard({
 			tabIndex={onClick ? 0 : undefined}
 		>
 			<div className="relative h-44 w-full bg-surface-container-low">
-				{currentImage ? (
+				{currentImage && !isCurrentBroken ? (
 					<img
 						src={currentImage}
-						alt={`${name} – image ${currentIndex + 1}`}
+						alt={`${name} - image ${currentIndex + 1}`}
 						className="h-full w-full object-cover"
+						onError={handleImageError}
 					/>
 				) : (
 					<div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">
@@ -129,15 +141,19 @@ export function RoomSearchCard({
 			<div className="space-y-3 p-5">
 				<div className="space-y-1">
 					<h3 className="text-lg font-semibold text-slate-900">{name}</h3>
-					<p className="text-sm text-slate-500">Habitación para estudiantes</p>
+					<p className="text-sm text-slate-500">{subtitle}</p>
 				</div>
 
 				<p className="text-2xl font-bold text-primary">${formattedPrice}</p>
 				<p className="-mt-2 text-xs text-slate-500">por mes</p>
 
-				<p className="text-sm leading-relaxed text-slate-600">
-					{shortDescription}
-				</p>
+				{shortDescription && (
+					<p className="text-sm leading-relaxed text-slate-600">
+						{shortDescription}
+					</p>
+				)}
+
+				{children}
 			</div>
 		</div>
 	);

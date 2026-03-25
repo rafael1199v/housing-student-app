@@ -15,6 +15,7 @@ import { Footer } from "../../shared/components/footer";
 export function RoomDetails() {
 	const { id } = useParams<{ id: string }>();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+	const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
 	const [bookRequestSent, setBookRequestSent] = useState(0);
 	const [booked, setBooked] = useState(false);
 
@@ -28,6 +29,8 @@ export function RoomDetails() {
 		enabled: !!id,
 	});
 
+	const isCurrentBroken = brokenImages.has(selectedImageIndex);
+
 	const userAlreadyBookedQuery = useQuery({
 		queryKey: ["user-booking", id],
 		queryFn: () => roomService.roomAlreadyBooked(id!),
@@ -39,8 +42,6 @@ export function RoomDetails() {
 			setBooked(room.roomStatus !== "Available");
 		}
 	}, [room]);
-	//TODO: hacer un GET para verificar si ya existe una reservación de esta habitación por el mismo estudiante
-	//TODO: Mostrar datos de contacto si el booking fue confirmado!
 
 	const bookingMutation = useMutation({
 		mutationFn: () => bookingService.createBooking(String(room!.id)),
@@ -90,6 +91,10 @@ export function RoomDetails() {
 		setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
 	};
 
+	const handleImageError = () => {
+		setBrokenImages((prev) => new Set(prev).add(selectedImageIndex));
+	};
+
 	const formattedPrice = new Intl.NumberFormat("es-BO", {
 		style: "currency",
 		currency: "BOB",
@@ -99,15 +104,16 @@ export function RoomDetails() {
 		<div className="space-y-8">
 			<section className="surface-card overflow-hidden rounded-2xl">
 				<div className="relative bg-surface-container-low">
-					{images.length > 0 ? (
+					{images.length > 0 && !isCurrentBroken ? (
 						<img
 							src={images[selectedImageIndex]}
 							alt={`${room.name} - Image ${selectedImageIndex + 1}`}
 							className="w-full h-96 object-cover"
+							onError={handleImageError}
 						/>
 					) : (
 						<div className="w-full h-96 flex items-center justify-center text-sm text-slate-400">
-							Sin imágenes disponibles
+							Sin imagen disponible
 						</div>
 					)}
 

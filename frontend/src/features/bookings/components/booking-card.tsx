@@ -2,19 +2,11 @@ import { useState } from "react";
 
 interface BookingCardProps {
 	name: string;
-	price: number;
 	status: string;
 	onClick?: () => void;
 }
 
-export function BookingCard({
-	name,
-	price,
-	status,
-	onClick,
-}: BookingCardProps) {
-	const formattedPrice = new Intl.NumberFormat("es-BO").format(price);
-
+export function BookingCard({ name, status, onClick }: BookingCardProps) {
 	return (
 		<div
 			className={`surface-card overflow-hidden ${
@@ -38,7 +30,6 @@ export function BookingCard({
 					<h3 className="text-lg font-semibold text-slate-900">{name}</h3>
 				</div>
 
-				<p className="text-2xl font-bold text-primary">${formattedPrice}</p>
 				<p className="-mt-2 text-xs text-slate-500">por mes</p>
 
 				<p className="text-sm leading-relaxed text-slate-600">{status}</p>

@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import roomService from "../../../services/roomService";
 import { useUser } from "../../auth/store/authStore";
 import { Footer } from "../../shared/components/footer";
-import { Card } from "../components/cards";
+import { RoomCard } from "../../shared/components/RoomCard";
 import { CardSkeleton } from "../components/skeleton";
 
 export function HomePage() {
@@ -145,7 +145,7 @@ export function HomePage() {
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
 						{rooms.map((room) => (
-							<Card
+							<RoomCard
 								key={room.id}
 								name={room.name}
 								price={room.price}

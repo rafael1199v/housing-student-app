@@ -12,7 +12,7 @@ import roomService from "../../../services/roomService";
 import { CardSkeleton } from "../../home/components/skeleton";
 import type { RoomData } from "../../home/types/roomDataDto";
 import { Footer } from "../../shared/components/footer";
-import { RoomSearchCard } from "../components/RoomSearchCard";
+import { RoomCard } from "../../shared/components/RoomCard";
 
 type OrderBy = "price-asc" | "price-desc" | "name-asc" | "name-desc";
 type MapPosition = { lat: number; lng: number };
@@ -275,7 +275,7 @@ export function RoomsPage() {
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
 						{sortedRooms.map((room) => (
-							<RoomSearchCard
+							<RoomCard
 								key={room.id}
 								name={room.name}
 								price={room.price}
