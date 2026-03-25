@@ -8,6 +8,7 @@ namespace HousingApp.Api.Controllers
     public class PingController : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Ping()
         {
             return Ok("Pong");
