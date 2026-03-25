@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
+import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
 import { Footer } from "../../shared/components/footer";
 
@@ -42,7 +43,7 @@ export function RoomDetails() {
 	//TODO: Mostrar datos de contacto si el booking fue confirmado!
 
 	const bookingMutation = useMutation({
-		mutationFn: () => roomService.createBooking(String(room!.id)),
+		mutationFn: () => bookingService.createBooking(String(room!.id)),
 		onSuccess: () => {
 			toast.success("Reserva realizada con éxito.");
 			setBookRequestSent(1);
@@ -53,7 +54,7 @@ export function RoomDetails() {
 	});
 
 	const bookingDeletion = useMutation({
-		mutationFn: () => roomService.deleteBooking(String(room!.id)),
+		mutationFn: () => bookingService.deleteBooking(String(room!.id)),
 		onSuccess: () => {
 			toast.success("Reserva eliminada con éxito.");
 			setBookRequestSent(0);

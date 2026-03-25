@@ -4,6 +4,7 @@ import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
 import { useAccessToken } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
+import { BookingsPage } from "../features/bookings/pages";
 import { HomePage } from "../features/home/pages";
 import { NewRoomPage } from "../features/new-room/pages";
 import { NotFoundPage } from "../features/not-found/pages";
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
 							{
 								path: "rooms",
 								Component: RoomsPage,
+							},
+							{
+								path: "bookings",
+								Component: BookingsPage,
 							},
 						],
 					},

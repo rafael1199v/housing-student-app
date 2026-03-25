@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
+import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
 import { Footer } from "../../shared/components/footer";
 import { BookingApprovalDialog } from "../components/BookingApprovalDialog";
@@ -27,7 +28,7 @@ export function OwnerRoomDetailsPage() {
 	});
 
 	const approveMutation = useMutation({
-		mutationFn: () => roomService.approveBooking(selectedBooking!.id),
+		mutationFn: () => bookingService.approveBooking(selectedBooking!.id),
 		onSuccess: () => {
 			toast.success("Booking approved successfully.");
 			setShowConfirmDialog(false);

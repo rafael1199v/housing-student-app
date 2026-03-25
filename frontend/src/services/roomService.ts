@@ -39,10 +39,6 @@ const roomService = {
 	getHouseholderRooms: async () => {
 		return api.get<RoomHouseholderDto[]>("/api/rooms/householder");
 	},
-	createBooking: async (roomId: string) =>
-		api.post<void>("/api/bookings", { roomId }),
-	deleteBooking: async (roomId: string) =>
-		api.delete<void>(`/api/bookings/${roomId}`),
 	createRoom: async (dto: CreateRoomDto) => {
 		const formData = new FormData();
 		formData.append("name", dto.name);
@@ -60,8 +56,6 @@ const roomService = {
 	},
 	getHouseholderRoomDetail: async (id: string) =>
 		api.get<RoomHouseholderDetailDto>(`/api/rooms/householder/${id}`),
-	approveBooking: async (bookingId: number) =>
-		api.put<void>(`/api/bookings/approve/${bookingId}`, bookingId),
 };
 
 export default roomService;

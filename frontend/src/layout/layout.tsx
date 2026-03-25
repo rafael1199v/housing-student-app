@@ -40,17 +40,30 @@ export function MainLayout() {
 
 					<div className="flex items-center gap-3">
 						{role == "Student" ? (
-							<button
-								type="button"
-								onClick={() => navigate("/rooms")}
-								className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-									location.pathname === "/rooms"
-										? "bg-primary text-on-primary"
-										: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
-								}`}
-							>
-								Rooms
-							</button>
+							<>
+								<button
+									type="button"
+									onClick={() => navigate("/rooms")}
+									className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+										location.pathname === "/rooms"
+											? "bg-primary text-on-primary"
+											: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
+									}`}
+								>
+									Rooms
+								</button>
+								<button
+									type="button"
+									onClick={() => navigate("/bookings")}
+									className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+										location.pathname === "/bookings"
+											? "bg-primary text-on-primary"
+											: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
+									}`}
+								>
+									Booked rooms
+								</button>
+							</>
 						) : (
 							<button
 								type="button"
