@@ -1,5 +1,5 @@
 export interface BookingData {
-	room_id: string;
+	roomId: string;
 	name: string;
 	status: string;
 }
