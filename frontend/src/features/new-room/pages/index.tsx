@@ -9,10 +9,12 @@ import {
 import type { DragEvent } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import roomService from "../../../services/roomService";
+import { useAccessToken } from "../../auth/store/authStore";
+import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
 import type { CreateRoomDto } from "../types/createRoomDto";
 
 const MAX_IMAGES = 5;
@@ -47,6 +49,8 @@ type MapPosition = { lat: number; lng: number };
 
 export function NewRoomPage() {
 	const navigate = useNavigate();
+	const token = useAccessToken();
+	const role = getRoleFromAccessToken(token);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [imageFiles, setImageFiles] = useState<File[]>([]);
 	const [previews, setPreviews] = useState<string[]>([]);
@@ -141,6 +145,10 @@ export function NewRoomPage() {
 		};
 		mutation.mutate(dto);
 	};
+
+	if (role !== "Householder") {
+		return <Navigate to="/not-found" replace />;
+	}
 
 	return (
 		<div className="mx-auto w-full max-w-2xl space-y-6">
