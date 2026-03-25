@@ -10,7 +10,7 @@ namespace HousingApp.Api.Controllers
     public class RegisterController(IRegisterUseCase registerUseCase) : ControllerBase
     {
         [HttpPost]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RegisterResponseDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterDto registerDto)
         {
             Result<string> result = await registerUseCase.ExecuteAsync(registerDto);
