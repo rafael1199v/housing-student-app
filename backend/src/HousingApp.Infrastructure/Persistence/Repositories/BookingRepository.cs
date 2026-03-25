@@ -1,3 +1,4 @@
+using HousingApp.Application.Booking.DTO;
 using HousingApp.Application.Repositories;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
@@ -91,6 +92,20 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
         public async Task DeleteBookingAsync(int bookingId)
         {
             await context.Bookings.Where(b => b.Id == bookingId).ExecuteUpdateAsync(setters => setters.SetProperty(b => b.IsDeleted, true));
+        }
+
+        public async Task<List<BookingStudentDto>> GetStudentBookingsAsync(string studentId)
+        {
+            return await context.Bookings
+                .AsNoTracking()
+                .Where(b => b.BookerId == studentId && !b.IsDeleted)
+                .Select(b => new BookingStudentDto(
+                    Id: b.Id,
+                    RoomId: b.RoomId,
+                    BookingStatus: b.BookingStatus.Name,
+                    BookingStatusId: b.BookingStatusId,
+                    BookingRoomName: b.Room.Name
+                )).ToListAsync();
         }
     }
 }

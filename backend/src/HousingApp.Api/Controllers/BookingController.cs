@@ -12,10 +12,30 @@ namespace HousingApp.Api.Controllers
 {
     [ApiController]
     [Route("api/bookings")]
-    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase, IRoomAlreadyBookedUseCase roomAlreadyBookedUseCase, IDeleteBookingUseCase deleteBookingUseCase) : ControllerBase
+    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase, IRoomAlreadyBookedUseCase roomAlreadyBookedUseCase, IDeleteBookingUseCase deleteBookingUseCase, IGetStudentBookingsUseCase getStudentBookingsUseCase) : ControllerBase
     {
+
+        [HttpGet]
+        [Authorize(Roles = RolesDescription.Student)]
+        [ProducesResponseType(typeof(List<BookingStudentDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetStudentBookings()
+        {
+            string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+
+            Result<List<BookingStudentDto>> bookings = await getStudentBookingsUseCase.ExecuteAsync(userId);
+
+            if (!bookings.IsSuccess)
+                return BadRequest(bookings.Error);
+
+            return Ok(bookings.Value);
+        }
+
         [HttpPost]
         [Authorize(Roles = RolesDescription.Student)]
+        [ProducesResponseType(typeof(CreatedBookingDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto createBookingDto)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -33,6 +53,7 @@ namespace HousingApp.Api.Controllers
 
         [HttpPut("approve/{bookingId:int}")]
         [Authorize(Roles = RolesDescription.Householder)]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<IActionResult> ApproveBooking(int bookingId)
         {
 
@@ -47,6 +68,7 @@ namespace HousingApp.Api.Controllers
 
         [HttpGet("{roomId:int}")]
         [Authorize(Roles = RolesDescription.Student)]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserHasAlreadyBooked(int roomId)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -59,6 +81,7 @@ namespace HousingApp.Api.Controllers
 
         [HttpDelete("{roomId:int}")]
         [Authorize(Roles = RolesDescription.Student)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteBooking(int roomId)
         {
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
