@@ -1,5 +1,7 @@
 export interface BookingData {
-	roomId: string;
-	name: string;
-	status: string;
+	id: number;
+	roomId: number;
+	bookingStatus: string;
+	bookingStatusId: number;
+	bookingRoomName: string;
 }
