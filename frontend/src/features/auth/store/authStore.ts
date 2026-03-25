@@ -1,9 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import authService from "../../../services/authService";
-import type { AuthResponse } from "../types/authResponse";
-import type { LoginRequest } from "../types/loginRequest";
 import type { User } from "../types/user";
 
 interface AuthState {
@@ -51,25 +47,3 @@ export const useAccessToken = () => useAuthStore((state) => state.accessToken);
 export const useRefreshToken = () =>
 	useAuthStore((state) => state.refreshToken);
 export const useAuthActions = () => useAuthStore((state) => state.actions);
-
-export const useSignIn = () => {
-	const { setAccessToken } = useAuthActions();
-
-	const signInMutation = useMutation({
-		mutationFn: authService.login,
-	});
-
-	const signIn = async (data: LoginRequest) => {
-		try {
-			const response: AuthResponse = await signInMutation.mutateAsync(data);
-			console.log(response);
-			const { accessToken } = response;
-			setAccessToken(accessToken);
-		} catch (e) {
-			console.error(e);
-			throw e;
-		}
-	};
-
-	return signIn;
-};
