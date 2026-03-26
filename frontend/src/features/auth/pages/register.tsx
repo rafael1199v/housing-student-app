@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
+import See from "../../../assets/see.png";
+import Unsee from "../../../assets/unsee.png";
 import authService from "../../../services/authService";
 import { LATIN_AMERICAN_COUNTRIES } from "../components/NationalitySelector";
 import type { RegisterDto } from "../types/registerDto";
@@ -22,9 +24,9 @@ const registerSchema = z
 			.string()
 			.min(1, "La contraseña es requerida")
 			.min(8, "La contraseña debe tener al menos 8 caracteres")
-			.regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/, {
+			.regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/, {
 				message:
-					"La contraseña debe contener letras, números y un carácter especial",
+					"La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo",
 			}),
 		confirmPassword: z.string().min(1, "Debe confirmar la contraseña"),
 		role: z.string().min(1, "El rol es requerido"),
@@ -38,10 +40,6 @@ const registerSchema = z
 			.min(7, "El teléfono debe tener al menos 7 dígitos"),
 		phoneExtension: z.string().min(1, "La extensión es requerida"),
 		nationality: z.string().min(1, "La nacionalidad es requerida"),
-		age: z.coerce
-			.number({ message: "La edad es requerida" })
-			.int("La edad debe ser un número entero")
-			.min(1, "La edad debe ser mayor que 0"),
 		gender: z.string().min(1, "El género es requerido"),
 		imageUrl: z.union([
 			z.literal(""),
@@ -61,25 +59,6 @@ const registerSchema = z
 		const birthDate = new Date(data.birthDate);
 		if (Number.isNaN(birthDate.getTime())) {
 			return;
-		}
-
-		const today = new Date();
-		let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-		const hasNotHadBirthdayThisYear =
-			today.getMonth() < birthDate.getMonth() ||
-			(today.getMonth() === birthDate.getMonth() &&
-				today.getDate() < birthDate.getDate());
-
-		if (hasNotHadBirthdayThisYear) {
-			calculatedAge -= 1;
-		}
-
-		if (calculatedAge !== data.age) {
-			context.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: "La edad no coincide con la fecha de nacimiento",
-				path: ["age"],
-			});
 		}
 	});
 
@@ -116,6 +95,17 @@ function Register() {
 	});
 
 	const onSubmit: SubmitHandler<RegisterFormOutput> = (data) => {
+		const birthDate = new Date(data.birthDate);
+		const today = new Date();
+		let age = today.getFullYear() - birthDate.getFullYear();
+		const monthDiff = today.getMonth() - birthDate.getMonth();
+		if (
+			monthDiff < 0 ||
+			(monthDiff === 0 && today.getDate() < birthDate.getDate())
+		) {
+			age--;
+		}
+
 		const newRegister: RegisterDto = {
 			email: data.email,
 			password: data.password,
@@ -124,7 +114,7 @@ function Register() {
 			lastName: data.lastName,
 			phoneNumber: `${data.phoneExtension}${data.phoneNumber}`,
 			nationality: data.nationality,
-			age: data.age,
+			age,
 			gender: data.gender,
 			imageUrl: data.imageUrl,
 			birthdate: data.birthDate,
@@ -211,7 +201,7 @@ function Register() {
 						</div>
 
 						{/* Personal Info Section */}
-						<div className="grid sm:grid-cols-3 gap-4">
+						<div className="grid sm:grid-cols-2 gap-4">
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
 									Género
@@ -243,22 +233,6 @@ function Register() {
 								{formState.errors.birthDate && (
 									<p className="text-red-500 text-xs mt-1">
 										{formState.errors.birthDate.message}
-									</p>
-								)}
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Edad
-								</label>
-								<input
-									type="number"
-									className="field-filled w-full px-4 py-2.5"
-									placeholder="18"
-									{...register("age")}
-								/>
-								{formState.errors.age && (
-									<p className="text-red-500 text-xs mt-1">
-										{formState.errors.age.message}
 									</p>
 								)}
 							</div>
@@ -416,7 +390,11 @@ function Register() {
 											showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
 										}
 									>
-										{showPassword ? "🙈" : "👁️"}
+										{showPassword ? (
+											<img src={Unsee} className="w-5" />
+										) : (
+											<img src={See} className="w-5" />
+										)}
 									</button>
 								</div>
 								{formState.errors.password && (
@@ -448,7 +426,11 @@ function Register() {
 												: "Mostrar contraseña"
 										}
 									>
-										{showConfirmPassword ? "🙈" : "👁️"}
+										{showConfirmPassword ? (
+											<img src={Unsee} className="w-5" />
+										) : (
+											<img src={See} className="w-5" />
+										)}
 									</button>
 								</div>
 								{formState.errors.confirmPassword && (

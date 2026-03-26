@@ -18,7 +18,7 @@ export function BookingApprovalDialog({
 	if (!isOpen || !booking) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-4 backdrop-blur-sm">
+		<div className="fixed inset-0 z-50 h-full flex items-center justify-center bg-slate-900/35 p-4 backdrop-blur-sm">
 			<div className="w-full max-w-sm space-y-6 rounded-2xl bg-surface-container-lowest p-6 shadow-2xl">
 				<div className="space-y-2">
 					<h2 className="text-xl font-semibold text-slate-900">
