@@ -24,17 +24,17 @@ export function MainLayout() {
 			<nav className="glass-surface sticky top-0 z-30">
 				<div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
 					<div className="flex items-center gap-3">
-						<div
+						{/* <div
 							className="cursor-pointer rounded-full bg-surface-container-high px-3 py-1 text-sm font-semibold text-slate-900"
 							onClick={() => navigate("/")}
 						>
 							Logo
-						</div>
+						</div> */}
 						<p
 							className="cursor-pointer text-lg font-semibold text-slate-900"
 							onClick={() => navigate("/")}
 						>
-							App navbar
+							Itersapiens
 						</p>
 					</div>
 
