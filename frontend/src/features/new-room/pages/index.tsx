@@ -21,7 +21,6 @@ const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
 const ROOM_STATUS_OPTIONS = [
 	{ value: 1, label: "Available" },
 	{ value: 2, label: "Unavailable" },
-	{ value: 3, label: "Booked" },
 ] as const;
 
 const createRoomSchema = z.object({
