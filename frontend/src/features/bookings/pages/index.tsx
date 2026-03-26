@@ -1,16 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import bookingService from "../../../services/bookingService";
-import { useAccessToken } from "../../auth/store/authStore";
-import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
 import { Footer } from "../../shared/components/footer";
 import { BookingCard } from "../components/booking-card";
 import { BookedSkeleton } from "../components/skeleton";
 
 export function BookingsPage() {
 	const navigate = useNavigate();
-	const token = useAccessToken();
-	const role = getRoleFromAccessToken(token);
 
 	const { isLoading, isError, data } = useQuery({
 		queryKey: ["rooms", "search"],
@@ -21,10 +17,6 @@ export function BookingsPage() {
 	const sortedRooms = rooms?.sort((a, b) =>
 		a.bookingStatus.localeCompare(b.bookingStatus),
 	);
-
-	if (role !== "Student") {
-		return <Navigate to="/not-found" replace />;
-	}
 
 	return (
 		<div className="space-y-8">

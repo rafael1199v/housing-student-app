@@ -14,7 +14,9 @@ import { RoomDetails } from "../features/room-details/pages";
 import { RoomsPage } from "../features/rooms/pages";
 import { MainLayout } from "../layout/layout";
 import GuestRoute from "./GuestRoute";
+import { HouseholderProtectedRoute } from "./HouseholderProtectedRoute";
 import ProtectedRoute from "./ProtectedRoute";
+import { StudentProtectedRoute } from "./StudentProtectedRoute";
 
 function HomeRoutePage() {
 	const accessToken = useAccessToken();
@@ -54,42 +56,36 @@ export const router = createBrowserRouter([
 								Component: HomeRoutePage,
 							},
 							{
-								path: "rooms",
-								Component: RoomsPage,
+								path: "",
+								Component: StudentProtectedRoute,
+								children: [
+									{
+										path: "rooms",
+										Component: RoomsPage,
+									},
+									{
+										path: "bookings",
+										Component: BookingsPage,
+									},
+									{
+										path: "details/:id",
+										Component: RoomDetails,
+									},
+								],
 							},
 							{
-								path: "bookings",
-								Component: BookingsPage,
-							},
-						],
-					},
-					{
-						path: "details/:id",
-						Component: MainLayout,
-						children: [
-							{
-								index: true,
-								Component: RoomDetails,
-							},
-						],
-					},
-					{
-						path: "owner/rooms/new",
-						Component: MainLayout,
-						children: [
-							{
-								index: true,
-								Component: NewRoomPage,
-							},
-						],
-					},
-					{
-						path: "owner/rooms/:id",
-						Component: MainLayout,
-						children: [
-							{
-								index: true,
-								Component: OwnerRoomDetailsPage,
+								path: "",
+								Component: HouseholderProtectedRoute,
+								children: [
+									{
+										path: "owner/rooms/new",
+										Component: NewRoomPage,
+									},
+									{
+										path: "owner/rooms/:id",
+										Component: OwnerRoomDetailsPage,
+									},
+								],
 							},
 						],
 					},

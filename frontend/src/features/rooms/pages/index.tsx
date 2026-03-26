@@ -9,8 +9,6 @@ import { type FormEvent, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import type { RoomSearchParams } from "../../../services/roomService";
 import roomService from "../../../services/roomService";
-import { useAccessToken } from "../../auth/store/authStore";
-import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
 import { CardSkeleton } from "../../home/components/skeleton";
 import type { RoomData } from "../../home/types/roomDataDto";
 import { Footer } from "../../shared/components/footer";
@@ -36,8 +34,6 @@ function sortRooms(rooms: RoomData[], orderBy: OrderBy): RoomData[] {
 
 export function RoomsPage() {
 	const navigate = useNavigate();
-	const token = useAccessToken();
-	const role = getRoleFromAccessToken(token);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -93,10 +89,6 @@ export function RoomsPage() {
 
 	const rooms = data ?? [];
 	const sortedRooms = sortRooms(rooms, orderBy);
-
-	if (role !== "Student") {
-		return <Navigate to="/not-found" replace />;
-	}
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
