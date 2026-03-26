@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
+import See from "../../../assets/see.png";
+import Unsee from "../../../assets/unsee.png";
 import authService from "../../../services/authService";
 import { useAuthActions } from "../store/authStore";
 
@@ -129,7 +131,11 @@ function Login() {
 										showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
 									}
 								>
-									{showPassword ? "🙈" : "👁️"}
+									{showPassword ? (
+										<img src={Unsee} className="w-5" />
+									) : (
+										<img src={See} className="w-5" />
+									)}
 								</button>
 							</div>
 							{formState.errors.password && (
