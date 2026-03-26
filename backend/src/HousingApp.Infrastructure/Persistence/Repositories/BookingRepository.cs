@@ -107,5 +107,14 @@ namespace HousingApp.Infrastructure.Persistence.Repositories
                     BookingRoomName: b.Room.Name
                 )).ToListAsync();
         }
+
+        public async Task<int?> GetRoomIdByBookingIdAsync(int bookingId)
+        {
+            return await context.Bookings
+                .AsNoTracking()
+                .Where(b => b.Id == bookingId && !b.IsDeleted)
+                .Select(b => b.RoomId)
+                .FirstOrDefaultAsync();
+        }
     }
 }

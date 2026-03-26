@@ -30,6 +30,8 @@ namespace HousingApp.Infrastructure.Persistence.UnitOfWork
 
             await SaveChangesAsync();
             await _transaction.CommitAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null;
         }
 
         public async Task RollbackTransactionAsync()
