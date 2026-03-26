@@ -29,8 +29,11 @@ namespace HousingApp.Infrastructure.Persistence.UnitOfWork
             {
                 throw new NullReferenceException("There is no active transaction");
             }
-            await this.SaveChangesAsync();
+
+            await SaveChangesAsync();
             await _transaction.CommitAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null;
         }
 
         public async Task RollbackTransactionAsync()

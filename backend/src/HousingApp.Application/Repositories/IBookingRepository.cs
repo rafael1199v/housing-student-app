@@ -14,5 +14,6 @@ namespace HousingApp.Application.Repositories
         Task DeleteBookingAsync(int bookingId);
 
         Task<List<BookingStudentDto>> GetStudentBookingsAsync(string studentId);
+        Task<int?> GetRoomIdByBookingIdAsync(int bookingId);
     }
 }

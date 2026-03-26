@@ -10,32 +10,39 @@ namespace HousingApp.Application.Booking.UseCases
     {
         public async Task<Result<bool>> ExecuteAsync(int bookingId)
         {
-
             Domain.Entities.Booking? booking = await unitOfWork.BookingRepository.GetBookingByIdAsync(bookingId);
 
             if (booking is null)
-            {
                 return Result<bool>.Failure(BookingError.BookingNotFound);
-            }
 
-            switch (booking.BookingStatus)
+            return booking.BookingStatus switch
             {
-                case BookingStatus.Confirmed:
-                    return Result<bool>.Failure(BookingError.BookingAlreadyApproved);
+                BookingStatus.Confirmed => Result<bool>.Failure(BookingError.BookingAlreadyApproved),
+                BookingStatus.Cancelled => Result<bool>.Failure(BookingError.BookingAlreadyDenied),
+                BookingStatus.Pending => await ApproveAsync(booking),
+                _ => Result<bool>.Failure(BookingError.BookingInvalidStatus)
+            };
+        }
 
-                case BookingStatus.Cancelled:
-                    return Result<bool>.Failure(BookingError.BookingAlreadyDenied);
+        private async Task<Result<bool>> ApproveAsync(Domain.Entities.Booking booking)
+        {
+            await unitOfWork.BeginTransactionAsync();
+            try
+            {
+                bool result = await unitOfWork.BookingRepository.ApproveBooking(booking.Id);
 
-                case BookingStatus.Pending:
-                    await unitOfWork.BeginTransactionAsync();
-                    bool result = await unitOfWork.BookingRepository.ApproveBooking(bookingId);
-                    await unitOfWork.CommitTransactionAsync();
+                if (!result)
+                    return Result<bool>.Failure(BookingError.BookingCouldNotChangeStatus);
 
-                    return !result ? Result<bool>.Failure(BookingError.BookingCouldNotChangeStatus) : Result<bool>.Success(result);
+                await unitOfWork.RoomRepository.TryMarkAsBookedAsync(booking.RoomId);
+                await unitOfWork.CommitTransactionAsync();
 
-                case BookingStatus.Completed:
-                default:
-                    return Result<bool>.Failure(BookingError.BookingInvalidStatus);
+                return Result<bool>.Success(result);
+            }
+            catch
+            {
+                await unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
     }
