@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useAuthActions } from "../../auth/store/authStore";
+import { useAccessToken, useAuthActions } from "../../auth/store/authStore";
+import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
 
 export function Footer() {
 	const navigate = useNavigate();
 	const { clearAll } = useAuthActions();
+	const token = useAccessToken();
+	const role = getRoleFromAccessToken(token);
 	const handleLogout = () => {
 		clearAll();
 		toast.success("Sesión cerrada");
@@ -33,13 +36,32 @@ export function Footer() {
 						>
 							Home
 						</button>
-						<button
-							type="button"
-							onClick={() => navigate("/rooms")}
-							className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
-						>
-							Rooms
-						</button>
+						{role === "Student" ? (
+							<>
+								<button
+									type="button"
+									onClick={() => navigate("/rooms")}
+									className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
+								>
+									Rooms
+								</button>
+								<button
+									type="button"
+									onClick={() => navigate("/bookings")}
+									className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
+								>
+									Booked rooms
+								</button>
+							</>
+						) : (
+							<button
+								type="button"
+								onClick={() => navigate("/owner/rooms/new")}
+								className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
+							>
+								Create new room
+							</button>
+						)}
 						<button
 							type="button"
 							onClick={handleLogout}
