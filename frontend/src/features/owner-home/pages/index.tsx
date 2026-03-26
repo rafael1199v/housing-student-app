@@ -64,13 +64,14 @@ export function OwnerHomePage() {
 								price={room.price}
 								images={room.imageRoomUrls}
 								subtitle="Tu habitación publicada"
+								description={room.description}
 								onClick={() => navigate(`/owner/rooms/${room.id}`)}
 							>
-								<div className="rounded-lg bg-surface-container-low px-3 py-2">
+								<div className="flex gap-1 flex-row items-center rounded-lg bg-surface-container-low px-3 py-2">
 									<p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-										Booking requests
+										Booking requests:
 									</p>
-									<p className="mt-1 text-base font-semibold text-slate-800">
+									<p className="text-base font-semibold text-slate-800">
 										{room.bookingRequests}
 									</p>
 								</div>
