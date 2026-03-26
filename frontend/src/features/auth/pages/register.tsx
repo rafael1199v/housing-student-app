@@ -19,7 +19,8 @@ const registerSchema = z
 			.string()
 			.trim()
 			.min(1, "El email es requerido")
-			.email("Por favor ingresa un email válido"),
+			.email("Por favor ingresa un email válido")
+			.max(150, "Email muy largo"),
 		password: z
 			.string()
 			.min(1, "La contraseña es requerida")
@@ -27,17 +28,27 @@ const registerSchema = z
 			.regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/, {
 				message:
 					"La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo",
-			}),
+			})
+			.max(150, "La contraseña es excesivamente larga"),
 		confirmPassword: z.string().min(1, "Debe confirmar la contraseña"),
 		role: z.string().min(1, "El rol es requerido"),
-		firstName: z.string().trim().min(1, "El nombre es requerido"),
-		lastName: z.string().trim().min(1, "El apellido es requerido"),
+		firstName: z
+			.string()
+			.trim()
+			.min(1, "El nombre es requerido")
+			.max(150, "Nombre muy largo"),
+		lastName: z
+			.string()
+			.trim()
+			.min(1, "El apellido es requerido")
+			.max(150, "Apellido demasiado largo"),
 		phoneNumber: z
 			.string()
 			.trim()
 			.min(1, "El teléfono es requerido")
 			.regex(/^\d+$/, "El teléfono solo debe contener números")
-			.min(7, "El teléfono debe tener al menos 7 dígitos"),
+			.min(7, "El teléfono debe tener al menos 7 dígitos")
+			.max(15, "El nombre no puede tener más de 15 caracteres"),
 		phoneExtension: z.string().min(1, "La extensión es requerida"),
 		nationality: z.string().min(1, "La nacionalidad es requerida"),
 		gender: z.string().min(1, "El género es requerido"),
