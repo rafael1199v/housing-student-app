@@ -25,10 +25,15 @@ const ROOM_STATUS_OPTIONS = [
 
 const createRoomSchema = z.object({
 	name: z.string().trim().min(1, "Room name is required"),
-	description: z.string().trim().min(1, "Description is required"),
+	description: z
+		.string()
+		.trim()
+		.min(1, "Description is required")
+		.max(300, "Description is too long!"),
 	price: z.coerce
 		.number({ error: "Price is required" })
-		.positive("Price must be greater than 0"),
+		.positive("Price must be greater than 0")
+		.max(99999, "Don't be greedy..."),
 	roomStatus: z.coerce.number().int().min(1).max(3),
 	latitude: z
 		.number({ error: "Please select a location on the map" })
