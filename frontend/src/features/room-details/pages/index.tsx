@@ -194,7 +194,7 @@ export function RoomDetails() {
 
 					<div>
 						<GoogleMap
-							mapId={"ede7684c941ba061c27c52d4"}
+							mapId={import.meta.env.VITE_GOOGLE_MAPS_ID}
 							style={{ height: "400px", width: "100%" }}
 							defaultCenter={{ lat: room.latitude, lng: room.longitude }}
 							defaultZoom={15}

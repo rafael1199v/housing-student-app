@@ -159,7 +159,7 @@ export function RoomsPage() {
 							<p className="text-sm font-medium text-slate-700">Ubicación</p>
 							<div className="overflow-hidden rounded-xl border border-outline-variant/35">
 								<GoogleMap
-									mapId={"ede7684c941ba061c27c52d4"}
+									mapId={import.meta.env.VITE_GOOGLE_MAPS_ID}
 									style={{ height: "25dvh", width: "100%" }}
 									defaultCenter={DEFAULT_MAP_CENTER}
 									defaultZoom={13}
