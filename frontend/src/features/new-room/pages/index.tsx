@@ -19,30 +19,30 @@ const MAX_IMAGES = 5;
 const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
 
 const ROOM_STATUS_OPTIONS = [
-	{ value: 1, label: "Available" },
-	{ value: 2, label: "Unavailable" },
+	{ value: 1, label: "Disponible" },
+	{ value: 2, label: "No disponible" },
 ] as const;
 
 const createRoomSchema = z.object({
-	name: z.string().trim().min(1, "Room name is required"),
+	name: z.string().trim().min(1, "El nombre de la habitación es obligatorio"),
 	description: z
 		.string()
 		.trim()
-		.min(1, "Description is required")
-		.max(300, "Description is too long!"),
+		.min(1, "La descripción es obligatoria")
+		.max(300, "La descripción es demasiado larga"),
 	price: z.coerce
-		.number({ error: "Price is required" })
-		.positive("Price must be greater than 0")
-		.max(99999, "Don't be greedy..."),
+		.number({ error: "El precio es obligatorio" })
+		.positive("El precio debe ser mayor a 0")
+		.max(99999, "El precio es demasiado alto"),
 	roomStatus: z.coerce.number().int().min(1).max(3),
 	latitude: z
-		.number({ error: "Please select a location on the map" })
-		.min(-90, "Latitude must be between -90 and 90")
-		.max(90, "Latitude must be between -90 and 90"),
+		.number({ error: "Por favor, selecciona una ubicación en el mapa" })
+		.min(-90, "La latitud debe estar entre -90 y 90")
+		.max(90, "La latitud debe estar entre -90 y 90"),
 	longitude: z
-		.number({ error: "Please select a location on the map" })
-		.min(-180, "Longitude must be between -180 and 180")
-		.max(180, "Longitude must be between -180 and 180"),
+		.number({ error: "Por favor, selecciona una ubicación en el mapa" })
+		.min(-180, "La longitud debe estar entre -180 y 180")
+		.max(180, "La longitud debe estar entre -180 y 180"),
 });
 
 type CreateRoomFormValues = z.input<typeof createRoomSchema>;
@@ -125,11 +125,14 @@ export function NewRoomPage() {
 	const mutation = useMutation({
 		mutationFn: (dto: CreateRoomDto) => roomService.createRoom(dto),
 		onSuccess: () => {
-			toast.success("Room created successfully!");
+			toast.success("¡Habitación creada exitosamente!");
 			navigate("/");
 		},
 		onError: (error: Error) => {
-			toast.error(error.message ?? "Failed to create room. Please try again.");
+			toast.error(
+				error.message ??
+					"Error al crear la habitación. Por favor, intenta de nuevo.",
+			);
 		},
 	});
 
@@ -169,13 +172,14 @@ export function NewRoomPage() {
 					>
 						<path d="m15 18-6-6 6-6" />
 					</svg>
-					Back to home
+					Volver al inicio
 				</button>
 				<h1 className="text-2xl font-semibold text-slate-900">
-					Create a new room
+					Crear nueva habitación
 				</h1>
 				<p className="mt-1 text-sm text-slate-500">
-					Fill in the details below to publish your room for students.
+					Completa los datos a continuación para publicar tu habitación para
+					estudiantes.
 				</p>
 			</div>
 
@@ -186,7 +190,7 @@ export function NewRoomPage() {
 				{/* Section: Room Details */}
 				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-						Room details
+						Detalles de la habitación
 					</h2>
 
 					{/* Name */}
@@ -195,12 +199,12 @@ export function NewRoomPage() {
 							htmlFor="name"
 							className="block text-sm font-medium text-slate-700"
 						>
-							Room name
+							Nombre de la habitación
 						</label>
 						<input
 							id="name"
 							type="text"
-							placeholder="e.g. Cozy single room near campus"
+							placeholder="Ej. Habitación individual cerca del campus"
 							{...register("name")}
 							className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 						/>
@@ -215,12 +219,12 @@ export function NewRoomPage() {
 							htmlFor="description"
 							className="block text-sm font-medium text-slate-700"
 						>
-							Description
+							Descripción
 						</label>
 						<textarea
 							id="description"
 							rows={4}
-							placeholder="Describe the room, amenities, rules, nearby places…"
+							placeholder="Describe la habitación, servicios, reglas, lugares cercanos…"
 							{...register("description")}
 							className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 						/>
@@ -235,7 +239,7 @@ export function NewRoomPage() {
 				{/* Section: Pricing & Availability */}
 				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-						Pricing & availability
+						Precio y disponibilidad
 					</h2>
 
 					<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -245,7 +249,7 @@ export function NewRoomPage() {
 								htmlFor="price"
 								className="block text-sm font-medium text-slate-700"
 							>
-								Monthly price (BOB)
+								Precio mensual (BOB)
 							</label>
 							<div className="relative">
 								<span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-slate-400">
@@ -272,7 +276,7 @@ export function NewRoomPage() {
 								htmlFor="roomStatus"
 								className="block text-sm font-medium text-slate-700"
 							>
-								Status
+								Estado
 							</label>
 							<select
 								id="roomStatus"
@@ -297,10 +301,11 @@ export function NewRoomPage() {
 				{/* Section: Location */}
 				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-						Location
+						Ubicación
 					</h2>
 					<p className="text-xs text-slate-500 -mt-2">
-						Click on the map to place a marker for the room location.
+						Haz clic en el mapa para colocar un marcador en la ubicación de la
+						habitación.
 					</p>
 
 					<div className="overflow-hidden rounded-xl border border-outline-variant/35">
@@ -327,11 +332,11 @@ export function NewRoomPage() {
 					<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
 						{selectedPosition ? (
 							<p>
-								Selected location: {selectedPosition.lat.toFixed(6)},
+								Ubicación seleccionada: {selectedPosition.lat.toFixed(6)},
 								{selectedPosition.lng.toFixed(6)}
 							</p>
 						) : (
-							<p>No location selected yet.</p>
+							<p>No se ha seleccionado ubicación.</p>
 						)}
 
 						{selectedPosition && (
@@ -348,7 +353,7 @@ export function NewRoomPage() {
 								}}
 								className="text-primary underline underline-offset-2"
 							>
-								Clear marker
+								Quitar marcador
 							</button>
 						)}
 					</div>
@@ -362,10 +367,10 @@ export function NewRoomPage() {
 				<section className="surface-section space-y-5">
 					<div>
 						<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-							Images
+							Imágenes
 						</h2>
 						<p className="mt-1 text-xs text-slate-500">
-							Up to {MAX_IMAGES} images. Optional.
+							Hasta {MAX_IMAGES} imágenes. Opcional.
 						</p>
 					</div>
 
@@ -401,16 +406,18 @@ export function NewRoomPage() {
 								<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
 							</svg>
 							<p className="text-sm font-medium text-slate-700">
-								{isDragging ? "Drop images here" : "Drag & drop images here"}
+								{isDragging
+									? "Suelta las imágenes aquí"
+									: "Arrastra y suelta imágenes aquí"}
 							</p>
 							<p className="mt-1 text-xs text-slate-500">
-								or{" "}
+								o{" "}
 								<span className="text-primary underline underline-offset-2">
-									click to browse
+									haz clic para explorar
 								</span>
 							</p>
 							<p className="mt-2 text-xs text-slate-400">
-								PNG, JPG, WEBP — {imageFiles.length}/{MAX_IMAGES} added
+								PNG, JPG, WEBP — {imageFiles.length}/{MAX_IMAGES} agregadas
 							</p>
 						</button>
 					)}
@@ -437,13 +444,13 @@ export function NewRoomPage() {
 								>
 									<img
 										src={src}
-										alt={`Preview ${index + 1}`}
+										alt={`Vista previa ${index + 1}`}
 										className="h-full w-full object-cover"
 									/>
 									<button
 										type="button"
 										onClick={() => removeImage(index)}
-										aria-label={`Remove image ${index + 1}`}
+										aria-label={`Eliminar imagen ${index + 1}`}
 										className="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1 text-white opacity-0 transition group-hover:opacity-100 hover:bg-black/80 focus:opacity-100 focus:outline-none"
 									>
 										<svg
@@ -475,14 +482,14 @@ export function NewRoomPage() {
 						onClick={() => navigate("/")}
 						className="rounded-full bg-surface-container-high px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-surface-container"
 					>
-						Cancel
+						Cancelar
 					</button>
 					<button
 						type="submit"
 						disabled={mutation.isPending}
 						className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
 					>
-						{mutation.isPending ? "Creating…" : "Create room"}
+						{mutation.isPending ? "Creando…" : "Crear habitación"}
 					</button>
 				</div>
 			</form>
