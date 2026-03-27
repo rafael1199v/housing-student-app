@@ -34,19 +34,19 @@ export function OwnerRoomDetailsPage() {
 		mutationFn: () => bookingService.approveBooking(selectedBooking!.id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["owner-room", id] });
-			toast.success("Booking approved successfully.");
+			toast.success("Reserva aprobada exitosamente.");
 			setShowConfirmDialog(false);
 			setSelectedBooking(null);
 		},
 		onError: () => {
-			toast.error("Error approving booking. Please try again.");
+			toast.error("Error al aprobar la reserva. Por favor, intenta de nuevo.");
 		},
 	});
 
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center py-24 text-slate-500 text-sm">
-				Loading room details...
+				Cargando detalles de la habitación...
 			</div>
 		);
 	}
@@ -54,7 +54,8 @@ export function OwnerRoomDetailsPage() {
 	if (isError || !room) {
 		return (
 			<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-				Could not load room details. Please try again later.
+				No se pudieron cargar los detalles de la habitación. Por favor, intenta
+				de nuevo más tarde.
 			</div>
 		);
 	}
@@ -105,7 +106,7 @@ export function OwnerRoomDetailsPage() {
 						/>
 					) : (
 						<div className="w-full h-96 flex items-center justify-center text-sm text-slate-400">
-							No image available
+							Sin imagen disponible
 						</div>
 					)}
 
@@ -114,7 +115,7 @@ export function OwnerRoomDetailsPage() {
 							<button
 								onClick={prevImage}
 								className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
-								aria-label="Previous image"
+								aria-label="Imagen anterior"
 							>
 								<svg
 									className="w-6 h-6"
@@ -134,7 +135,7 @@ export function OwnerRoomDetailsPage() {
 							<button
 								onClick={nextImage}
 								className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
-								aria-label="Next image"
+								aria-label="Siguiente imagen"
 							>
 								<svg
 									className="w-6 h-6"
@@ -161,7 +162,7 @@ export function OwnerRoomDetailsPage() {
 												? "w-7 bg-surface-container-lowest"
 												: "bg-surface-container-lowest/50 hover:bg-surface-container-lowest/80"
 										}`}
-										aria-label={`View image ${index + 1}`}
+										aria-label={`Ver imagen ${index + 1}`}
 									/>
 								))}
 							</div>
@@ -174,17 +175,17 @@ export function OwnerRoomDetailsPage() {
 					<div className="space-y-3">
 						<h1 className="text-4xl font-bold text-slate-900">{room.name}</h1>
 						<div className="inline-block rounded-full bg-primary px-4 py-2 text-lg font-semibold text-on-primary">
-							{formattedPrice}/month
+							{formattedPrice}/mes
 						</div>
 						<div className="ml-3 inline-block rounded-full bg-surface-container-low px-4 py-2 text-sm font-semibold text-slate-700">
-							Status: {room.roomStatus}
+							Estado: {room.roomStatus}
 						</div>
 					</div>
 
 					{/* Description */}
 					<div className="space-y-2">
 						<h2 className="text-lg font-semibold text-slate-900">
-							Description
+							Descripción
 						</h2>
 						<p className="text-slate-600 leading-relaxed">{room.description}</p>
 					</div>
@@ -192,12 +193,12 @@ export function OwnerRoomDetailsPage() {
 					{/* Pending bookings section */}
 					<div className="pt-6">
 						<h2 className="text-lg font-semibold text-slate-900 mb-4">
-							Pending Booking Requests
+							Solicitudes de reserva pendientes
 						</h2>
 
 						{pendingBookings.length === 0 ? (
 							<div className="rounded-lg bg-surface-container-low p-6 text-center text-slate-600">
-								<p>No pending booking requests at this time.</p>
+								<p>No hay solicitudes de reserva pendientes en este momento.</p>
 							</div>
 						) : (
 							<div className="space-y-3">
@@ -239,7 +240,7 @@ export function OwnerRoomDetailsPage() {
 											}
 											className="whitespace-nowrap rounded-full bg-primary px-4 py-2 font-medium text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 										>
-											Approve
+											Aprobar
 										</button>
 									</div>
 								))}
@@ -254,7 +255,7 @@ export function OwnerRoomDetailsPage() {
 							onClick={() => navigate("/")}
 							className="flex-1 rounded-full bg-secondary-fixed py-3 font-semibold text-on-secondary-fixed transition hover:brightness-95"
 						>
-							Back to My Rooms
+							Volver a mis habitaciones
 						</button>
 					</div>
 				</div>

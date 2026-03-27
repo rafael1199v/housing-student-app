@@ -50,7 +50,7 @@ export function MainLayout() {
 											: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
 									}`}
 								>
-									Rooms
+									Habitaciones
 								</button>
 								<button
 									type="button"
@@ -61,7 +61,7 @@ export function MainLayout() {
 											: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
 									}`}
 								>
-									Booked rooms
+									Reservas
 								</button>
 							</>
 						) : (
@@ -74,7 +74,7 @@ export function MainLayout() {
 										: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
 								}`}
 							>
-								Create new Room
+								Crear habitación
 							</button>
 						)}
 						<button
@@ -82,7 +82,7 @@ export function MainLayout() {
 							onClick={handleLogout}
 							className="rounded-full bg-secondary-fixed px-4 py-2 text-sm font-medium text-on-secondary-fixed transition hover:brightness-95"
 						>
-							Log out
+							Cerrar sesión
 						</button>
 					</div>
 				</div>

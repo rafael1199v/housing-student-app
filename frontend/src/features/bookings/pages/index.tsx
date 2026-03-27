@@ -21,10 +21,12 @@ export function BookingsPage() {
 	return (
 		<div className="space-y-8">
 			<section className="surface-section">
-				<h1 className="text-3xl font-semibold text-slate-900">Booked rooms</h1>
+				<h1 className="text-3xl font-semibold text-slate-900">
+					Habitaciones reservadas
+				</h1>
 				<p className="mt-2 text-sm text-slate-600">
-					Take a look at the rooms you already booked. Confirmed books appear
-					first.
+					Mira las habitaciones de las que solicitaste una reserva. Las
+					habitaciones ya confirmadas aparecerán primero.
 				</p>
 			</section>
 
@@ -33,8 +35,8 @@ export function BookingsPage() {
 					{!isLoading && !isError && (
 						<p className="text-sm text-slate-500">
 							{sortedRooms.length === 0
-								? "No rooms found."
-								: `${sortedRooms.length} booked room${sortedRooms.length !== 1 ? "s" : ""}.`}
+								? "No se encontraron habitaciones."
+								: `${sortedRooms.length} ${sortedRooms.length !== 1 ? "habitaciones reservadas" : "habitación reservada"}.`}
 						</p>
 					)}
 				</div>
@@ -43,12 +45,13 @@ export function BookingsPage() {
 					<BookedSkeleton quantity={3} />
 				) : isError ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-						Could not load rooms. Please try again later.
+						Hubo un problema al cargar las habitaciones. Por favor, intente de
+						nuevo más tarde.
 					</div>
 				) : sortedRooms.length === 0 ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
-						No rooms match the current search filters. Try adjusting your
-						search.
+						No hay habitaciones que se ajusten a los filtros introducidos.
+						Pruebe a ajustar su búsqueda
 					</div>
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

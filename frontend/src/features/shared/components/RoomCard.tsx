@@ -82,7 +82,7 @@ export function RoomCard({
 					<>
 						<button
 							type="button"
-							aria-label="Previous image"
+							aria-label="Imagen anterior"
 							onClick={handlePrev}
 							disabled={currentIndex === 0}
 							className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-surface-container-lowest disabled:cursor-not-allowed disabled:opacity-40"
@@ -104,7 +104,7 @@ export function RoomCard({
 
 						<button
 							type="button"
-							aria-label="Next image"
+							aria-label="Siguiente imagen"
 							onClick={handleNext}
 							disabled={currentIndex === allImages.length - 1}
 							className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-surface-container-lowest disabled:cursor-not-allowed disabled:opacity-40"

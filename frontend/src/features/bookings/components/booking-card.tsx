@@ -27,19 +27,19 @@ export function BookingCard({ name, status, onClick }: BookingCardProps) {
 				</div>
 				{status == "Confirmed" ? (
 					<div className="mt-1 inline-block rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						{status}
+						Confirmado
 					</div>
 				) : status == "Pending" ? (
 					<div className="mt-1 inline-block rounded-full bg-secondary-fixed px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						{status}
+						Pendiente
 					</div>
 				) : status == "Rejected" ? (
 					<div className="mt-1 inline-block rounded-full bg-red-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						{status}
+						Rechazado
 					</div>
 				) : (
 					<div className="mt-1 inline-block rounded-full bg-gray-300 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						{status}
+						Desconocido({status})
 					</div>
 				)}
 			</div>

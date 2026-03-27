@@ -118,9 +118,11 @@ export function RoomsPage() {
 	return (
 		<div className="space-y-8">
 			<section className="surface-section">
-				<h1 className="text-3xl font-semibold text-slate-900">Search rooms</h1>
+				<h1 className="text-3xl font-semibold text-slate-900">
+					Buscar habitaciones
+				</h1>
 				<p className="mt-2 text-sm text-slate-600">
-					Filter by name, price range, and sorting preference.
+					Filtra por nombre, rango de precio y preferencia de orden.
 				</p>
 
 				<form className="mt-6 space-y-4" onSubmit={handleSubmit}>
@@ -129,13 +131,13 @@ export function RoomsPage() {
 							type="search"
 							value={searchText}
 							onChange={(event) => setSearchText(event.target.value)}
-							placeholder="Search room by name"
+							placeholder="Buscar habitación por nombre"
 							className="w-full bg-transparent text-sm text-slate-700 outline-none"
 						/>
 						<button
 							type="submit"
 							className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
-							aria-label="Search rooms"
+							aria-label="Buscar habitaciones"
 						>
 							<svg
 								className="h-5 w-5"
@@ -154,7 +156,7 @@ export function RoomsPage() {
 					</div>
 					<div className="grid gap-2 sm:grid-cols-1">
 						<section className="hidden surface-section space-y-2">
-							<p className="text-sm font-medium text-slate-700">Location</p>
+							<p className="text-sm font-medium text-slate-700">Ubicación</p>
 							<div className="overflow-hidden rounded-xl border border-outline-variant/35">
 								<GoogleMap
 									mapId={"ede7684c941ba061c27c52d4"}
@@ -179,11 +181,11 @@ export function RoomsPage() {
 							<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
 								{selectedPosition ? (
 									<p>
-										Selected location: {selectedPosition.lat.toFixed(6)},
+										Ubicación seleccionada: {selectedPosition.lat.toFixed(6)},
 										{selectedPosition.lng.toFixed(6)}
 									</p>
 								) : (
-									<p>No location selected yet.</p>
+									<p>No se ha seleccionado ubicación.</p>
 								)}
 
 								{selectedPosition && (
@@ -194,7 +196,7 @@ export function RoomsPage() {
 										}}
 										className="text-primary underline underline-offset-2"
 									>
-										Clear marker
+										Quitar marcador
 									</button>
 								)}
 							</div>
@@ -202,7 +204,7 @@ export function RoomsPage() {
 						<div className="flex flex-col justify-around">
 							<div className="space-y-2">
 								<p className="text-sm font-medium text-slate-700">
-									Price range
+									Rango de precio
 								</p>
 								<div className="grid gap-2 sm:grid-cols-2">
 									<input
@@ -211,7 +213,7 @@ export function RoomsPage() {
 										min={0}
 										value={minPrice}
 										onChange={(event) => setMinPrice(event.target.value)}
-										placeholder="Min price"
+										placeholder="Precio mínimo"
 										className="field-filled"
 									/>
 									<input
@@ -220,14 +222,16 @@ export function RoomsPage() {
 										min={0}
 										value={maxPrice}
 										onChange={(event) => setMaxPrice(event.target.value)}
-										placeholder="Max price"
+										placeholder="Precio máximo"
 										className="field-filled"
 									/>
 								</div>
 							</div>
 
 							<div className="space-y-2">
-								<p className="text-sm font-medium text-slate-700">Order by</p>
+								<p className="text-sm font-medium text-slate-700">
+									Ordenar por
+								</p>
 								<select
 									value={orderBy}
 									onChange={(event) =>
@@ -235,8 +239,8 @@ export function RoomsPage() {
 									}
 									className="field-filled w-full"
 								>
-									<option value="price-asc">Price (ascending)</option>
-									<option value="price-desc">Price (descending)</option>
+									<option value="price-asc">Precio (ascendente)</option>
+									<option value="price-desc">Precio (descendente)</option>
 									<option value="name-asc">A-Z</option>
 									<option value="name-desc">Z-A</option>
 								</select>
@@ -245,19 +249,19 @@ export function RoomsPage() {
 					</div>
 
 					<button type="submit" className="btn-primary w-full">
-						Search
+						Buscar
 					</button>
 				</form>
 			</section>
 
 			<section className="space-y-4">
 				<div>
-					<h2 className="text-xl font-semibold text-slate-900">Results</h2>
+					<h2 className="text-xl font-semibold text-slate-900">Resultados</h2>
 					{!isLoading && !isError && (
 						<p className="text-sm text-slate-500">
 							{sortedRooms.length === 0
-								? "No rooms found."
-								: `${sortedRooms.length} room${sortedRooms.length !== 1 ? "s" : ""} found.`}
+								? "No se encontraron habitaciones."
+								: `${sortedRooms.length} ${sortedRooms.length !== 1 ? "habitaciones encontradas" : "habitación encontrada"}.`}
 						</p>
 					)}
 				</div>
@@ -266,12 +270,13 @@ export function RoomsPage() {
 					<CardSkeleton quantity={6} />
 				) : isError ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-						Could not load rooms. Please try again later.
+						No se pudieron cargar las habitaciones. Por favor, intenta de nuevo
+						más tarde.
 					</div>
 				) : sortedRooms.length === 0 ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
-						No rooms match the current search filters. Try adjusting your
-						search.
+						No hay habitaciones que coincidan con los filtros actuales. Intenta
+						ajustar tu búsqueda.
 					</div>
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -292,12 +297,12 @@ export function RoomsPage() {
 			{!isLoading && !isError && rooms.length >= 20 && (
 				<div className="rounded-xl bg-surface-container-low p-5 text-sm text-slate-600 shadow-sm">
 					<p className="font-medium text-slate-800">
-						Showing up to 20 results.
+						Mostrando hasta 20 resultados.
 					</p>
 					<p className="mt-1">
-						Didn't find what you were looking for? Try narrowing your search
-						with a more specific name or a tighter price range to get more
-						relevant results.
+						¿No encontraste lo que buscabas? Intenta acotar tu búsqueda con un
+						nombre más específico o un rango de precio más ajustado para obtener
+						resultados más relevantes.
 					</p>
 				</div>
 			)}

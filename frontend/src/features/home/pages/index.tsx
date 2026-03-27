@@ -54,16 +54,16 @@ export function HomePage() {
 		handleSearchRedirect();
 	};
 
-	const welcomeName = user?.email?.split("@")[0] ?? "student";
+	const welcomeName = user?.email?.split("@")[0] ?? "estudiante";
 
 	return (
 		<div className="space-y-8">
 			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">
-					Welcome, {welcomeName}!
+					¡Bienvenido, {welcomeName}!
 				</h1>
 				<p className="mt-2 text-sm text-slate-600">
-					Find your next room quickly.
+					Encuentra tu próxima habitación rápidamente.
 				</p>
 
 				<form className="mt-6 space-y-4" onSubmit={handleSearchSubmit}>
@@ -72,13 +72,13 @@ export function HomePage() {
 							type="search"
 							value={searchText}
 							onChange={(event) => setSearchText(event.target.value)}
-							placeholder="Search room by name"
+							placeholder="Buscar habitación por nombre"
 							className="w-full bg-transparent text-sm text-slate-700 outline-none"
 						/>
 						<button
 							type="submit"
 							className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
-							aria-label="Search rooms"
+							aria-label="Buscar habitaciones"
 						>
 							<svg
 								className="h-5 w-5"
@@ -97,7 +97,9 @@ export function HomePage() {
 					</div>
 
 					<div className="space-y-2">
-						<p className="text-sm font-medium text-slate-700">Price range</p>
+						<p className="text-sm font-medium text-slate-700">
+							Rango de precio
+						</p>
 						<div className="grid gap-2 sm:grid-cols-2">
 							<input
 								type="number"
@@ -105,7 +107,7 @@ export function HomePage() {
 								min={0}
 								value={minPrice}
 								onChange={(event) => setMinPrice(event.target.value)}
-								placeholder="Min price"
+								placeholder="Precio mínimo"
 								className="field-filled"
 							/>
 							<input
@@ -114,7 +116,7 @@ export function HomePage() {
 								min={0}
 								value={maxPrice}
 								onChange={(event) => setMaxPrice(event.target.value)}
-								placeholder="Max price"
+								placeholder="Precio máximo"
 								className="field-filled"
 							/>
 						</div>
@@ -125,10 +127,10 @@ export function HomePage() {
 			<section className="space-y-4">
 				<div>
 					<h2 className="text-xl font-semibold text-slate-900">
-						Featured rooms
+						Habitaciones destacadas
 					</h2>
 					<p className="text-sm text-slate-500">
-						Quickly jump to room details.
+						Accede rápidamente a los detalles de cada habitación.
 					</p>
 				</div>
 
@@ -136,11 +138,12 @@ export function HomePage() {
 					<CardSkeleton quantity={3} />
 				) : isError ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-						Could not load rooms. Please try again later.
+						No se pudieron cargar las habitaciones. Por favor, intenta de nuevo
+						más tarde.
 					</div>
 				) : rooms.length === 0 ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
-						No rooms match the current search filters.
+						No hay habitaciones que coincidan con los filtros de búsqueda.
 					</div>
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -162,7 +165,7 @@ export function HomePage() {
 					onClick={() => navigate("/rooms")}
 					className="w-full rounded-full bg-secondary-fixed px-4 py-3 text-sm font-medium text-on-secondary-fixed transition hover:brightness-95"
 				>
-					Show more rooms
+					Mostrar más habitaciones
 				</button>
 			</section>
 			<Footer />
