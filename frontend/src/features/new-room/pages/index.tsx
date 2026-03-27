@@ -310,7 +310,7 @@ export function NewRoomPage() {
 
 					<div className="overflow-hidden rounded-xl border border-outline-variant/35">
 						<GoogleMap
-							mapId={"ede7684c941ba061c27c52d4"}
+							mapId={import.meta.env.VITE_GOOGLE_MAPS_ID}
 							style={{ height: "360px", width: "100%" }}
 							defaultCenter={DEFAULT_MAP_CENTER}
 							defaultZoom={13}
