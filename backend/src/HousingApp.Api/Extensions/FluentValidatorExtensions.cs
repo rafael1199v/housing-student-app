@@ -6,7 +6,6 @@ namespace HousingApp.Api.Extensions
     {
         public static IServiceCollection AddFluentValidation(this IServiceCollection services)
         {
-
             services.AddValidatorsFromAssemblyContaining<Program>();
             return services;
         }

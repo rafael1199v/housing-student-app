@@ -1,7 +1,8 @@
+using FluentValidation;
+using FluentValidation.Results;
 using HousingApp.Api.Requests;
 using HousingApp.Application;
 using HousingApp.Application.Roles;
-using HousingApp.Application.Room;
 using HousingApp.Application.Room.DTO;
 using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Room.UseCases;
@@ -20,7 +21,8 @@ namespace HousingApp.Api.Controllers
         IGetRoomDetailUseCase getRoomDetailUseCase,
         IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase,
         ICreateRoomUseCase createRoomUseCase,
-        IGetHouseholderRoomDetailUseCase getHouseholderRoomDetailUseCase) : ControllerBase
+        IGetHouseholderRoomDetailUseCase getHouseholderRoomDetailUseCase,
+        IValidator<CreateRoomRequest> validator) : ControllerBase
     {
         [HttpGet]
         [Authorize(Roles = RolesDescription.Student + "," + RolesDescription.Householder)]
@@ -64,6 +66,11 @@ namespace HousingApp.Api.Controllers
         [ProducesResponseType(typeof(CreatedRoomDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateRoom([FromForm] CreateRoomRequest request, CancellationToken cancellationToken)
         {
+            ValidationResult? validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
             string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized();

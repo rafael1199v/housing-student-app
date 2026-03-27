@@ -1,5 +1,6 @@
 using HousingApp.Api.Exception;
 using HousingApp.Api.Extensions;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Scalar.AspNetCore;
 using System.Globalization;
 
@@ -23,6 +24,7 @@ builder.Services.AddCorsPolicy(builder.Configuration, myAllowSpecificOrigins);
 builder.Services.AddAwsStorage(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddRateLimiterPolicy();
+builder.Services.AddFluentValidation();
 
 builder.Services.AddAuthorization();
 
