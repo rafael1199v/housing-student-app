@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	AdvancedMarker,
 	Map as GoogleMap,
@@ -14,6 +14,7 @@ import { Footer } from "../../shared/components/footer";
 
 export function RoomDetails() {
 	const { id } = useParams<{ id: string }>();
+	const queryClient = useQueryClient();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 	const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
 	const [bookRequestSent, setBookRequestSent] = useState(0);
@@ -48,6 +49,7 @@ export function RoomDetails() {
 		onSuccess: () => {
 			toast.success("Reserva realizada con éxito.");
 			setBookRequestSent(1);
+			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
 		onError: () => {
 			toast.error("Error al realizar la reserva. Por favor, intenta de nuevo.");
@@ -59,9 +61,16 @@ export function RoomDetails() {
 		onSuccess: () => {
 			toast.success("Reserva eliminada con éxito.");
 			setBookRequestSent(0);
+			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
-		onError: () => {
-			toast.error("Error al eliminar la reserva. Por favor, intenta de nuevo.");
+		onError: (error: Error) => {
+			if (error.message == "La reserva ya fue aprobada") {
+				toast.error("La reserva ya fue aprobada, felicidades!");
+			} else {
+				toast.error(
+					"Error al eliminar la reserva. Por favor, intenta de nuevo.",
+				);
+			}
 		},
 	});
 
