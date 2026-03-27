@@ -1,0 +1,10 @@
+obj
+bin
+
+.idea
+bin/Debug/
+
+bin\\Debug
+HousingApp.sln.DotSettings.user
+specs
+.env
