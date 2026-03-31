@@ -1,0 +1,10 @@
+**/bin
+**/obj
+**/Properties
+**/Dockerfile
+**/.dockerignore
+**/appsettings.Development.json
+**/*.slnx
+**/.editorconfig
+**/HousingApp.sln.DotSettings.user
+**/*.sql
