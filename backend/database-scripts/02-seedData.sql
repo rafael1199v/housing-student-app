@@ -19,7 +19,7 @@ VALUES
     ('No Show', NOW(), false);
 
 -- Borrar las líneas de la tabla para asegurar un UUID estático
-DELETE FROM "AspNetRoles"
+-- DELETE FROM "AspNetRoles"
 
 INSERT INTO public."AspNetRoles"
 (id, "name", normalized_name, concurrency_stamp)
