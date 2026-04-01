@@ -8,3 +8,10 @@
 **/.editorconfig
 **/HousingApp.sln.DotSettings.user
 **/*.sql
+**/.vscode
+**/.env
+**/makefile
+**/.gitattributes
+**/.gitignore
+**/.idea
+

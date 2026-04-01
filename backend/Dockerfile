@@ -9,13 +9,14 @@ WORKDIR /src
 COPY ["src/Directory.Build.props", "Directory.Build.props"]
 COPY ["src/Directory.Packages.props", "Directory.Packages.props"]
 
-COPY ["src/HousingApp.Domain", "HousingApp.Domain"]
-COPY ["src/HousingApp.Application", "HousingApp.Application"]
-COPY ["src/HousingApp.Infrastructure", "HousingApp.Infrastructure"]
-COPY ["src/HousingApp.Api", "HousingApp.Api"]
+COPY ["src/HousingApp.Domain/HousingApp.Domain.csproj", "HousingApp.Domain/"]
+COPY ["src/HousingApp.Application/HousingApp.Application.csproj", "HousingApp.Application/"]
+COPY ["src/HousingApp.Infrastructure/HousingApp.Infrastructure.csproj", "HousingApp.Infrastructure/"]
+COPY ["src/HousingApp.Api/HousingApp.Api.csproj", "HousingApp.Api/"]
 
 RUN dotnet restore "HousingApp.Api/HousingApp.Api.csproj"
-RUN dotnet build "HousingApp.Api/HousingApp.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+COPY src .
 
 RUN dotnet publish "HousingApp.Api/HousingApp.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
