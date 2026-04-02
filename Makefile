@@ -1,4 +1,4 @@
-.PHONY: dev backend frontend
+.PHONY: dev backend frontend backend-db
 
 DOTNET = dotnet
 BACKEND_PROJECT = backend
@@ -12,5 +12,7 @@ backend:
 
 frontend:
 	cd $(FRONTEND_PROJECT) && npm run dev
-	
+
+backend-db: dev-db
+	$(MAKE) -C $(BACKEND_PROJECT) run	
 
