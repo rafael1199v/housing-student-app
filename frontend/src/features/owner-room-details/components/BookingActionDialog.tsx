@@ -1,20 +1,22 @@
 import type { BookingDto } from "../types/roomHouseholderDetailDto";
 
-interface BookingApprovalDialogProps {
+interface BookingDialogProps {
 	booking: BookingDto | null;
+	action: string;
 	isOpen: boolean;
 	isLoading?: boolean;
 	onConfirm: () => void;
 	onCancel: () => void;
 }
 
-export function BookingApprovalDialog({
+export function BookingActionDialog({
 	booking,
+	action,
 	isOpen,
 	isLoading,
 	onConfirm,
 	onCancel,
-}: BookingApprovalDialogProps) {
+}: BookingDialogProps) {
 	if (!isOpen || !booking) return null;
 
 	return (
@@ -22,10 +24,13 @@ export function BookingApprovalDialog({
 			<div className="w-full max-w-sm space-y-6 rounded-2xl bg-surface-container-lowest p-6 shadow-2xl">
 				<div className="space-y-2">
 					<h2 className="text-xl font-semibold text-slate-900">
-						Confirmar aprobación de reserva
+						Confirmar {action == "approve" ? "aprobación" : "rechazo"} de
+						reserva
 					</h2>
 					<p className="text-sm text-slate-600">
-						¿Estás seguro de que deseas aprobar esta solicitud de reserva?
+						¿Estás seguro de que deseas{" "}
+						{action == "approve" ? "aprobar" : "rechazar"} esta solicitud de
+						reserva?
 					</p>
 				</div>
 
@@ -44,8 +49,9 @@ export function BookingApprovalDialog({
 					</div>
 					<div className="pt-2">
 						<p className="text-xs text-slate-600">
-							Una vez aprobada, esta reserva será confirmada y todas las demás
-							solicitudes pendientes serán rechazadas.
+							{action == "approve"
+								? "Una vez aprobada, esta reserva será confirmada y todas las demás solicitudes pendientes serán rechazadas."
+								: "Una vez rechazada, el usuario ya no podrá solicitar esta habitación."}
 						</p>
 					</div>
 				</div>
@@ -63,9 +69,18 @@ export function BookingApprovalDialog({
 						type="button"
 						onClick={onConfirm}
 						disabled={isLoading}
-						className="flex-1 rounded-full bg-primary px-4 py-2 font-medium text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+						className={
+							"flex-1 rounded-full px-4 py-2 font-medium text-on-primary transition disabled:cursor-not-allowed disabled:opacity-60 " +
+							(action == "approve"
+								? "bg-primary hover:bg-primary-container"
+								: "bg-red-800 hover:bg-red-500")
+						}
 					>
-						{isLoading ? "Aprobando..." : "Aprobar"}
+						{isLoading
+							? "Un momento..."
+							: action == "approve"
+								? "Aprobar"
+								: "Rechazar"}
 					</button>
 				</div>
 			</div>

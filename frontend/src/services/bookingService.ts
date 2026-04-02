@@ -4,6 +4,8 @@ import { api } from "./apiService";
 const bookingService = {
 	approveBooking: async (bookingId: number) =>
 		api.put<void>(`/api/bookings/approve/${bookingId}`, bookingId),
+	rejectBooking: async (bookingId: number) =>
+		api.put<void>(`/api/bookings/reject/${bookingId}`, bookingId),
 	createBooking: async (roomId: string) =>
 		api.post<void>("/api/bookings", { roomId }),
 	deleteBooking: async (roomId: string) =>

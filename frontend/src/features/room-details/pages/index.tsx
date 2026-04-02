@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
+import { RoomStatusEnum } from "../../../global/enum/room-status";
 import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
 import { Footer } from "../../shared/components/footer";
@@ -40,7 +41,7 @@ export function RoomDetails() {
 
 	useEffect(() => {
 		if (room) {
-			setBooked(room.roomStatus !== "Available");
+			setBooked(room.roomStatus !== RoomStatusEnum.Available);
 		}
 	}, [room]);
 
@@ -64,8 +65,12 @@ export function RoomDetails() {
 			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
 		onError: (error: Error) => {
-			if (error.message == "La reserva ya fue aprobada") {
-				toast.error("La reserva ya fue aprobada, felicidades!");
+			if (error.message == "booking.already.denied") {
+				toast.error(
+					"La reserva fue rechazada. No puedes solicitar esta habitación de nuevo.",
+				);
+			} else if (error.message == "booking.already.approved") {
+				toast.error("La reserva ya fue aprobada. Felicidades!");
 			} else {
 				toast.error(
 					"Error al eliminar la reserva. Por favor, intenta de nuevo.",

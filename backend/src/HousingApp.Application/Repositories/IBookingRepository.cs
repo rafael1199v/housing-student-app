@@ -11,6 +11,7 @@ namespace HousingApp.Application.Repositories
         Task<Domain.Entities.Booking?> GetBookingByIdAsync(int bookingId);
         Task<Domain.Entities.Booking?> GetBookingByRoomAndStudentAsync(int roomId, string studentId);
         Task<bool> ApproveBooking(int bookingId);
+        Task<bool> RejectBooking(int bookingId);
         Task DeleteBookingAsync(int bookingId);
 
         Task<List<BookingStudentDto>> GetStudentBookingsAsync(string studentId);
