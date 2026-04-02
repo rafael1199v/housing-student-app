@@ -5,6 +5,7 @@ import {
 	useAuthActions,
 } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
+import { RoleEnum } from "../global/enum/role";
 
 export function MainLayout() {
 	const { clearAll } = useAuthActions();
@@ -39,7 +40,7 @@ export function MainLayout() {
 					</div>
 
 					<div className="flex items-center gap-3">
-						{role == "Student" ? (
+						{role == RoleEnum.Student ? (
 							<>
 								<button
 									type="button"

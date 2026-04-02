@@ -30,6 +30,7 @@ namespace HousingApp.Api.Extensions
             services.AddScoped<ICreateRoomUseCase, CreateRoomUseCase>();
             services.AddScoped<IGetHouseholderRoomDetailUseCase, GetHouseholderRoomDetailUseCase>();
             services.AddScoped<IApproveBookingUseCase, ApproveBookingUseCase>();
+            services.AddScoped<IRejectBookingUseCase, RejectBookingUseCase>();
             services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
             services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
             services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();

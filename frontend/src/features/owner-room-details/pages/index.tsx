@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
+import { BookingStatusEnum } from "../../../global/enum/booking-status";
 import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
 import { Footer } from "../../shared/components/footer";
-import { BookingApprovalDialog } from "../components/BookingApprovalDialog";
+import { BookingActionDialog } from "../components/BookingActionDialog";
 import type { BookingDto } from "../types/roomHouseholderDetailDto";
 
 export function OwnerRoomDetailsPage() {
@@ -17,7 +18,8 @@ export function OwnerRoomDetailsPage() {
 	const [selectedBooking, setSelectedBooking] = useState<BookingDto | null>(
 		null,
 	);
-	const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+	const [bookingAction, setBookingAction] = useState("approve");
+	const [showDialog, setShowDialog] = useState(false);
 
 	const {
 		data: room,
@@ -35,11 +37,24 @@ export function OwnerRoomDetailsPage() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["owner-room", id] });
 			toast.success("Reserva aprobada exitosamente.");
-			setShowConfirmDialog(false);
+			setShowDialog(false);
 			setSelectedBooking(null);
 		},
 		onError: () => {
 			toast.error("Error al aprobar la reserva. Por favor, intenta de nuevo.");
+		},
+	});
+
+	const rejectMutation = useMutation({
+		mutationFn: () => bookingService.rejectBooking(selectedBooking!.id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["owner-room", id] });
+			toast.success("Reserva rechazada exitosamente.");
+			setShowDialog(false);
+			setSelectedBooking(null);
+		},
+		onError: () => {
+			toast.error("Error al rechazar la reserva. Por favor, intenta de nuevo.");
 		},
 	});
 
@@ -80,11 +95,21 @@ export function OwnerRoomDetailsPage() {
 
 	const handleApproveClick = (booking: BookingDto) => {
 		setSelectedBooking(booking);
-		setShowConfirmDialog(true);
+		setBookingAction("approve");
+		setShowDialog(true);
+	};
+
+	const handleRejectClick = (booking: BookingDto) => {
+		setSelectedBooking(booking);
+		setBookingAction("reject");
+		setShowDialog(true);
 	};
 
 	const handleConfirmApproval = () => {
 		approveMutation.mutate();
+	};
+	const handleRejectApproval = () => {
+		rejectMutation.mutate();
 	};
 
 	const formattedPrice = new Intl.NumberFormat("es-BO", {
@@ -214,15 +239,16 @@ export function OwnerRoomDetailsPage() {
 											<p className="text-sm text-slate-600">
 												{booking.bookerEmail}
 											</p>
-											{booking.bookingStatus == "Confirmed" ? (
+											{booking.bookingStatus == BookingStatusEnum.Confirmed ? (
 												<div className="mt-1 inline-block rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
 													{booking.bookingStatus}
 												</div>
-											) : booking.bookingStatus == "Pending" ? (
+											) : booking.bookingStatus == BookingStatusEnum.Pending ? (
 												<div className="mt-1 inline-block rounded-full bg-secondary-fixed px-2 py-1 text-xs font-medium text-on-secondary-fixed">
 													{booking.bookingStatus}
 												</div>
-											) : booking.bookingStatus == "Rejected" ? (
+											) : booking.bookingStatus ==
+												BookingStatusEnum.Rejected ? (
 												<div className="mt-1 inline-block rounded-full bg-red-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
 													{booking.bookingStatus}
 												</div>
@@ -236,11 +262,27 @@ export function OwnerRoomDetailsPage() {
 											type="button"
 											onClick={() => handleApproveClick(booking)}
 											disabled={
-												approveMutation.isPending || hasConfirmedBooking
+												approveMutation.isPending ||
+												rejectMutation.isPending ||
+												hasConfirmedBooking ||
+												booking.bookingStatus != BookingStatusEnum.Pending
 											}
 											className="whitespace-nowrap rounded-full bg-primary px-4 py-2 font-medium text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 										>
 											Aprobar
+										</button>
+										<button
+											type="button"
+											onClick={() => handleRejectClick(booking)}
+											disabled={
+												approveMutation.isPending ||
+												rejectMutation.isPending ||
+												hasConfirmedBooking ||
+												booking.bookingStatus != BookingStatusEnum.Pending
+											}
+											className="whitespace-nowrap rounded-full bg-red-800 px-4 py-2 font-medium text-on-primary transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+										>
+											Rechazar
 										</button>
 									</div>
 								))}
@@ -261,13 +303,18 @@ export function OwnerRoomDetailsPage() {
 				</div>
 			</section>
 
-			<BookingApprovalDialog
+			<BookingActionDialog
 				booking={selectedBooking}
-				isOpen={showConfirmDialog}
+				action={bookingAction}
+				isOpen={showDialog}
 				isLoading={approveMutation.isPending}
-				onConfirm={handleConfirmApproval}
+				onConfirm={
+					bookingAction == "approve"
+						? handleConfirmApproval
+						: handleRejectApproval
+				}
 				onCancel={() => {
-					setShowConfirmDialog(false);
+					setShowDialog(false);
 					setSelectedBooking(null);
 				}}
 			/>
