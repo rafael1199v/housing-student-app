@@ -23,7 +23,7 @@ public class RegisterUseCaseTests
         _unitOfWork = Substitute.For<IAuthUnitOfWork>();
         _unitOfWork.UserRepository.Returns(_userRepository);
         _unitOfWork.PersonRepository.Returns(_personRepository);
-        
+
         _registerUseCase = new RegisterUseCase(_unitOfWork);
     }
 
@@ -35,10 +35,10 @@ public class RegisterUseCaseTests
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((User?)null);
         _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<HousingApp.Domain.Enums.Roles>()).Returns("new-user-id");
-        
+
         //Act
         var result = await _registerUseCase.ExecuteAsync(registerDto);
-        
+
         // Assert 
         result.Value.Should().Be("new-user-id");
         await _unitOfWork.Received(1).CommitTransactionAsync();
