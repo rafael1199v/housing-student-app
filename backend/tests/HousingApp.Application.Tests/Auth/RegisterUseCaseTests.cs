@@ -44,4 +44,51 @@ public class RegisterUseCaseTests
         await _unitOfWork.Received(1).CommitTransactionAsync();
     }
 
+    [Fact]
+    public async Task Register_EmailAlreadyExists_ShouldReturnError()
+    {
+        //Arrange
+        var registerDto = new RegisterDto(Email: "a@a.com", Password: "Password!555", Role: "Student", FirstName: "Wilson", LastName: "Higgsbury", PhoneNumber: "456789213", Nationality: "Argentina", Age: 30, Gender: "Male", BirthDate: "1996-01-01", ImageUrl: "");
+
+        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns(new User());
+
+        //Act
+        var result = await _registerUseCase.ExecuteAsync(registerDto);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("email.in.use");
+        await _unitOfWork.DidNotReceive().CommitTransactionAsync();
+    }
+
+    [Fact]
+    public async Task Register_InvalidRole_ShouldReturnError()
+    {
+        //Arrange
+        var registerDto = new RegisterDto(Email: "a@a.com", Password: "Password!555", Role: "invalid", FirstName: "Wilson", LastName: "Higgsbury", PhoneNumber: "456789213", Nationality: "Argentina", Age: 30, Gender: "Male", BirthDate: "1996-01-01", ImageUrl: "");
+
+        //Act
+        var result = await _registerUseCase.ExecuteAsync(registerDto);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("role.not.exist");
+        await _unitOfWork.DidNotReceive().CommitTransactionAsync();
+    }
+
+    [Fact]
+    public async Task Register_AdminRole_ShouldReturnError()
+    {
+        //Arrange
+        var registerDto = new RegisterDto(Email: "a@a.com", Password: "Password!555", Role: "Admin", FirstName: "Wilson", LastName: "Higgsbury", PhoneNumber: "456789213", Nationality: "Argentina", Age: 30, Gender: "Male", BirthDate: "1996-01-01", ImageUrl: "");
+
+        //Act
+        var result = await _registerUseCase.ExecuteAsync(registerDto);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("admin.role.denied");
+        await _unitOfWork.DidNotReceive().CommitTransactionAsync();
+    }
+
 }
