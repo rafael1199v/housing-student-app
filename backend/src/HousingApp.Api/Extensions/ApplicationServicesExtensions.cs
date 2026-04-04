@@ -6,20 +6,20 @@ using HousingApp.Application.UnitOfWork;
 using HousingApp.Infrastructure.Persistence.Repositories;
 using HousingApp.Infrastructure.Persistence.UnitOfWork;
 
-namespace HousingApp.Api.Extensions
-{
-    public static class ApplicationServicesExtensions
-    {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        {
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IPersonRepository, PersonRepository>();
-            services.AddScoped<IBookingRepository, BookingRepository>();
-            services.AddScoped<IRoomRepository, RoomRepository>();
+namespace HousingApp.Api.Extensions;
 
-            services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
-            services.AddScoped<IBookingUnitOfWork, BookingUnitOfWork>();
-            services.AddScoped<IRoomUnitOfWork, RoomUnitOfWork>();
+public static class ApplicationServicesExtensions
+{
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    {
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPersonRepository, PersonRepository>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
+
+        services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
+        services.AddScoped<IBookingUnitOfWork, BookingUnitOfWork>();
+        services.AddScoped<IRoomUnitOfWork, RoomUnitOfWork>();
 
             services.AddScoped<ILoginUseCase, LoginUseCase>();
             services.AddScoped<IRegisterUseCase, RegisterUseCase>();
@@ -35,7 +35,6 @@ namespace HousingApp.Api.Extensions
             services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
             services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
 
-            return services;
-        }
+        return services;
     }
 }

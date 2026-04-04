@@ -1,6 +1,5 @@
 using HousingApp.Api.Exception;
 using HousingApp.Api.Extensions;
-using Microsoft.CodeAnalysis.Host.Mef;
 using Scalar.AspNetCore;
 using System.Globalization;
 
@@ -28,7 +27,7 @@ builder.Services.AddFluentValidation();
 
 builder.Services.AddAuthorization();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

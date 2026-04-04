@@ -1,8 +1,7 @@
-﻿namespace HousingApp.Application.Storage
+﻿namespace HousingApp.Application.Storage;
+
+public enum StorageType
 {
-    public enum StorageType
-    {
-        Room,
-        UserProfile
-    }
+    Room,
+    UserProfile
 }

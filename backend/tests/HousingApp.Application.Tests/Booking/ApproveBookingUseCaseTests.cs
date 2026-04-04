@@ -10,9 +10,9 @@ namespace HousingApp.Application.Tests.Booking;
 public class ApproveBookingUseCaseTests
 {
     private readonly ApproveBookingUseCase _approveBookingUseCase;
-    private readonly IBookingUnitOfWork _unitOfWork;
     private readonly IBookingRepository _bookingRepository;
     private readonly IRoomRepository _roomRepository;
+    private readonly IBookingUnitOfWork _unitOfWork;
 
     public ApproveBookingUseCaseTests()
     {
@@ -30,18 +30,15 @@ public class ApproveBookingUseCaseTests
     public async Task ApproveBooking_Pending_ShouldApproveAndCommit()
     {
         // Arrange
-        var booking = new Domain.Entities.Booking
+        Domain.Entities.Booking booking = new()
         {
-            Id = 1,
-            BookerId = "user-1",
-            RoomId = 10,
-            BookingStatus = BookingStatus.Pending
+            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Pending
         };
         _bookingRepository.GetBookingByIdAsync(1).Returns(booking);
         _bookingRepository.ApproveBooking(1).Returns(true);
 
         // Act
-        var result = await _approveBookingUseCase.ExecuteAsync(1);
+        Result<bool> result = await _approveBookingUseCase.ExecuteAsync(1);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -59,7 +56,7 @@ public class ApproveBookingUseCaseTests
         _bookingRepository.GetBookingByIdAsync(Arg.Any<int>()).Returns((Domain.Entities.Booking?)null);
 
         // Act
-        var result = await _approveBookingUseCase.ExecuteAsync(1);
+        Result<bool> result = await _approveBookingUseCase.ExecuteAsync(1);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -71,17 +68,14 @@ public class ApproveBookingUseCaseTests
     public async Task ApproveBooking_AlreadyApproved_ShouldReturnError()
     {
         // Arrange
-        var booking = new Domain.Entities.Booking
+        Domain.Entities.Booking booking = new()
         {
-            Id = 1,
-            BookerId = "user-1",
-            RoomId = 10,
-            BookingStatus = BookingStatus.Confirmed
+            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Confirmed
         };
         _bookingRepository.GetBookingByIdAsync(1).Returns(booking);
 
         // Act
-        var result = await _approveBookingUseCase.ExecuteAsync(1);
+        Result<bool> result = await _approveBookingUseCase.ExecuteAsync(1);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -93,22 +87,18 @@ public class ApproveBookingUseCaseTests
     public async Task ApproveBooking_AlreadyCancelled_ShouldReturnError()
     {
         // Arrange
-        var booking = new Domain.Entities.Booking
+        Domain.Entities.Booking booking = new()
         {
-            Id = 1,
-            BookerId = "user-1",
-            RoomId = 10,
-            BookingStatus = BookingStatus.Cancelled
+            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Cancelled
         };
         _bookingRepository.GetBookingByIdAsync(1).Returns(booking);
 
         // Act
-        var result = await _approveBookingUseCase.ExecuteAsync(1);
+        Result<bool> result = await _approveBookingUseCase.ExecuteAsync(1);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("booking.already.denied");
         await _unitOfWork.DidNotReceive().CommitTransactionAsync();
     }
-
 }

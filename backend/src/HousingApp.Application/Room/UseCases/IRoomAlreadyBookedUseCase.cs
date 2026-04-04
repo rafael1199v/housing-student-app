@@ -1,7 +1,6 @@
-﻿namespace HousingApp.Application.Room.UseCases
+﻿namespace HousingApp.Application.Room.UseCases;
+
+public interface IRoomAlreadyBookedUseCase
 {
-    public interface IRoomAlreadyBookedUseCase
-    {
-        Task<bool> ExecuteAsync(int roomId, string studentId);
-    }
+    Task<bool> ExecuteAsync(int roomId, string studentId);
 }

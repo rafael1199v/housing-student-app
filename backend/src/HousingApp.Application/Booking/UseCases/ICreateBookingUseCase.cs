@@ -1,9 +1,8 @@
 using HousingApp.Application.Booking.DTO;
 
-namespace HousingApp.Application.Booking.UseCases
+namespace HousingApp.Application.Booking.UseCases;
+
+public interface ICreateBookingUseCase
 {
-    public interface ICreateBookingUseCase
-    {
-        Task<Result<CreatedBookingDto>> ExecuteAsync(string bookerId, CreateBookingDto createBookingDto);
-    }
+    Task<Result<CreatedBookingDto>> ExecuteAsync(string bookerId, CreateBookingDto createBookingDto);
 }

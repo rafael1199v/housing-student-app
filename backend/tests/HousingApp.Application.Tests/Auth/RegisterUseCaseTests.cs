@@ -10,10 +10,10 @@ namespace HousingApp.Application.Tests.Auth;
 
 public class RegisterUseCaseTests
 {
+    private readonly IPersonRepository _personRepository;
     private readonly RegisterUseCase _registerUseCase;
     private readonly IAuthUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
-    private readonly IPersonRepository _personRepository;
 
     public RegisterUseCaseTests()
     {
@@ -31,13 +31,14 @@ public class RegisterUseCaseTests
     public async Task Register_ShouldReturnUserId()
     {
         //Arrange
-        var registerDto = new RegisterDto(Email: "o@o.com", Password: "Password!555", Role: "Student", FirstName: "Wilson", LastName: "Higgsbury", PhoneNumber: "456789213", Nationality: "Argentina", Age: 30, Gender: "Male", BirthDate: "1996-01-01", ImageUrl: "");
+        RegisterDto registerDto = new("o@o.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
+            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((User?)null);
-        _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<HousingApp.Domain.Enums.Roles>()).Returns("new-user-id");
+        _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
 
         //Act
-        var result = await _registerUseCase.ExecuteAsync(registerDto);
+        Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
 
         // Assert 
         result.Value.Should().Be("new-user-id");
@@ -48,12 +49,13 @@ public class RegisterUseCaseTests
     public async Task Register_EmailAlreadyExists_ShouldReturnError()
     {
         //Arrange
-        var registerDto = new RegisterDto(Email: "a@a.com", Password: "Password!555", Role: "Student", FirstName: "Wilson", LastName: "Higgsbury", PhoneNumber: "456789213", Nationality: "Argentina", Age: 30, Gender: "Male", BirthDate: "1996-01-01", ImageUrl: "");
+        RegisterDto registerDto = new("a@a.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
+            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns(new User());
 
         //Act
-        var result = await _registerUseCase.ExecuteAsync(registerDto);
+        Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -65,10 +67,11 @@ public class RegisterUseCaseTests
     public async Task Register_InvalidRole_ShouldReturnError()
     {
         //Arrange
-        var registerDto = new RegisterDto(Email: "a@a.com", Password: "Password!555", Role: "invalid", FirstName: "Wilson", LastName: "Higgsbury", PhoneNumber: "456789213", Nationality: "Argentina", Age: 30, Gender: "Male", BirthDate: "1996-01-01", ImageUrl: "");
+        RegisterDto registerDto = new("a@a.com", "Password!555", "invalid", "Wilson", "Higgsbury", "456789213",
+            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         //Act
-        var result = await _registerUseCase.ExecuteAsync(registerDto);
+        Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -80,15 +83,15 @@ public class RegisterUseCaseTests
     public async Task Register_AdminRole_ShouldReturnError()
     {
         //Arrange
-        var registerDto = new RegisterDto(Email: "a@a.com", Password: "Password!555", Role: "Admin", FirstName: "Wilson", LastName: "Higgsbury", PhoneNumber: "456789213", Nationality: "Argentina", Age: 30, Gender: "Male", BirthDate: "1996-01-01", ImageUrl: "");
+        RegisterDto registerDto = new("a@a.com", "Password!555", "Admin", "Wilson", "Higgsbury", "456789213",
+            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         //Act
-        var result = await _registerUseCase.ExecuteAsync(registerDto);
+        Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("admin.role.denied");
         await _unitOfWork.DidNotReceive().CommitTransactionAsync();
     }
-
 }

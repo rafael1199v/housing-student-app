@@ -1,7 +1,6 @@
-namespace HousingApp.Domain.Error
+namespace HousingApp.Domain.Error;
+
+public sealed record Error(string Code, string Message)
 {
-    public sealed record Error(string Code, string Message)
-    {
-        public static readonly Error None = new(string.Empty, string.Empty);
-    }
+    public static readonly Error None = new(string.Empty, string.Empty);
 }

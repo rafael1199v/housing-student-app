@@ -1,19 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HousingApp.Infrastructure.Persistence.Models
+namespace HousingApp.Infrastructure.Persistence.Models;
+
+[Table("booking_statuses")]
+public class BookingStatusModel
 {
-    [Table("booking_statuses")]
-    public class BookingStatusModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        [Required, MaxLength(50)]
-        public string Name { get; set; } = string.Empty;
+    [Required] [MaxLength(50)] public string Name { get; set; } = string.Empty;
 
-        public DateTime? UpdatedAt { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? DeletedAt { get; set; }
-        public bool IsDeleted { get; set; } = false;
-    }
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? DeletedAt { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }

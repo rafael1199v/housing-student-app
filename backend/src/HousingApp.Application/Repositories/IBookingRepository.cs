@@ -1,7 +1,9 @@
 using HousingApp.Application.Booking.DTO;
 using HousingApp.Domain.Enums;
 
-namespace HousingApp.Application.Repositories
+namespace HousingApp.Application.Repositories;
+
+public interface IBookingRepository
 {
     public interface IBookingRepository
     {
@@ -14,7 +16,6 @@ namespace HousingApp.Application.Repositories
         Task<bool> RejectBooking(int bookingId);
         Task DeleteBookingAsync(int bookingId);
 
-        Task<List<BookingStudentDto>> GetStudentBookingsAsync(string studentId);
-        Task<int?> GetRoomIdByBookingIdAsync(int bookingId);
-    }
+    Task<List<BookingStudentDto>> GetStudentBookingsAsync(string studentId);
+    Task<int?> GetRoomIdByBookingIdAsync(int bookingId);
 }

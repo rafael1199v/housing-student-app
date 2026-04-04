@@ -23,27 +23,27 @@ public class LoginUseCaseTests
     public async Task Login_ShouldReturnUserData()
     {
         //Arrange
-        var loginDto = new LoginDto(Email: "rafael@gmail.com", Password: "Password!555");
+        LoginDto loginDto = new("rafael@gmail.com", "Password!555");
 
-        var returnedUser = User.CreateUser(
-            uuid: "uuid",
-            email: loginDto.Email,
-            password: "password-hash",
-            roles: ["student"]
+        User returnedUser = User.CreateUser(
+            "uuid",
+            loginDto.Email,
+            "password-hash",
+            ["student"]
         );
 
         _userRepository.FindUserByEmailAsync(loginDto.Email).Returns(returnedUser);
         _userRepository.CheckPassword(loginDto.Email, loginDto.Password).Returns(true);
 
-        var userDtoExpected = new UserDto(
-            Id: returnedUser.Id,
-            Email: loginDto.Email,
-            PasswordHash: returnedUser.Password,
-            Roles: returnedUser.Roles
+        UserDto userDtoExpected = new(
+            returnedUser.Id,
+            loginDto.Email,
+            returnedUser.Password,
+            returnedUser.Roles
         );
 
         //Act
-        var result = await _loginUseCase.Login(loginDto);
+        Result<UserDto> result = await _loginUseCase.Login(loginDto);
 
         // Assert 
         result.Value.Should().Be(userDtoExpected);
@@ -53,13 +53,13 @@ public class LoginUseCaseTests
     public async Task Login_UserDoesNotExist_ShouldReturnInvalidCredentials()
     {
         //Arrange
-        var loginDto = new LoginDto(Email: "rafael@gmail.com", Password: "Password!555");
+        LoginDto loginDto = new("rafael@gmail.com", "Password!555");
 
         _userRepository.FindUserByEmailAsync(loginDto.Email).Returns((User?)null);
 
         //Act
-        var result = await _loginUseCase.Login(loginDto);
-        var error = result.Error;
+        Result<UserDto> result = await _loginUseCase.Login(loginDto);
+        Error error = result.Error;
 
         // Assert 
         error.Should().Be(AuthError.InvalidCredentials);
@@ -69,20 +69,20 @@ public class LoginUseCaseTests
     public async Task Login_WrongPassword_ShouldReturnInvalidCredentials()
     {
         //Arrange
-        var loginDto = new LoginDto(Email: "rafael@gmail.com", Password: "Password!555");
-        var returnedUser = User.CreateUser(
-            uuid: "uuid",
-            email: loginDto.Email,
-            password: "password-hash",
-            roles: ["student"]
+        LoginDto loginDto = new("rafael@gmail.com", "Password!555");
+        User returnedUser = User.CreateUser(
+            "uuid",
+            loginDto.Email,
+            "password-hash",
+            ["student"]
         );
 
         _userRepository.FindUserByEmailAsync(loginDto.Email).Returns(returnedUser);
         _userRepository.CheckPassword(loginDto.Email, loginDto.Password).Returns(false);
 
         //Act
-        var result = await _loginUseCase.Login(loginDto);
-        var error = result.Error;
+        Result<UserDto> result = await _loginUseCase.Login(loginDto);
+        Error error = result.Error;
 
         // Assert 
         error.Should().Be(AuthError.InvalidCredentials);

@@ -1,5 +1,3 @@
-using System;
-
 namespace HousingApp.Api.Requests;
 
 public class CreateRoomRequest

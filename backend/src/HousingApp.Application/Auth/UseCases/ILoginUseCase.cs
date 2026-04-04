@@ -1,9 +1,8 @@
 using HousingApp.Application.Auth.DTOs;
 
-namespace HousingApp.Application.Auth.UseCases
+namespace HousingApp.Application.Auth.UseCases;
+
+public interface ILoginUseCase
 {
-    public interface ILoginUseCase
-    {
-        Task<Result<UserDto>> Login(LoginDto user);
-    }
+    Task<Result<UserDto>> Login(LoginDto user);
 }
