@@ -42,16 +42,16 @@ public class CreateRoomUseCaseTests
     public async Task CreateRoom_ShouldReturnNewRoomData(int roomImageQuantity)
     {
         //Arrange
-        var userId = Guid.NewGuid().ToString();
-        var roomImageId = Guid.NewGuid().ToString();
-        var images = Enumerable.Range(1, roomImageQuantity)
+        string userId = Guid.NewGuid().ToString();
+        string roomImageId = Guid.NewGuid().ToString();
+        List<ImageRoomUpload> images = [.. Enumerable.Range(1, roomImageQuantity)
             .Select(i => new ImageRoomUpload(
                     OpenStream: () => new MemoryStream([0xFF, 0xD8, 0xFF]),
                     FileName: $"room-image-{i}.jpeg",
                     ContentType: "image/jpeg"
                 )
-            ).ToList();
-        var createRoomDto = new CreateRoomDto(
+            )];
+        CreateRoomDto createRoomDto = new(
             Name: "Room test",
             Description: "Room test description",
             Latitude: 90,
@@ -63,7 +63,7 @@ public class CreateRoomUseCaseTests
 
         const int newRoomId = 1;
 
-        var expectedCreatedRoomDto = new CreatedRoomDto(
+        CreatedRoomDto expectedCreatedRoomDto = new(
             Name: createRoomDto.Name,
             Description: createRoomDto.Description,
             Latitude: createRoomDto.Latitude,
@@ -87,8 +87,8 @@ public class CreateRoomUseCaseTests
         ).Returns(roomImageId);
 
         //Act
-        var result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
-        var createdRoomDto = result.Value;
+        Result<CreatedRoomDto> result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
+        CreatedRoomDto? createdRoomDto = result.Value;
 
         //Assert
         createdRoomDto.Should().BeEquivalentTo(expectedCreatedRoomDto);
@@ -100,8 +100,8 @@ public class CreateRoomUseCaseTests
     public async Task CreateRoom_HouseholderDoesNotExist_ShouldReturnHouseholderNotFoundError()
     {
         //Arrange
-        var userId = Guid.NewGuid().ToString();
-        var createRoomDto = new CreateRoomDto(
+        string userId = Guid.NewGuid().ToString();
+        CreateRoomDto createRoomDto = new(
             Name: "Room test",
             Description: "Room test description",
             Latitude: 90,
@@ -114,8 +114,8 @@ public class CreateRoomUseCaseTests
         _personRepository.ExistsByUserIdAsync(userId).Returns(false);
 
         //Act
-        var result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
-        var householderNotFoundError = result.Error;
+        Result<CreatedRoomDto> result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
+        Error householderNotFoundError = result.Error;
 
         //Assert
         householderNotFoundError.Should().BeEquivalentTo(RoomError.HouseholderNotFound);
@@ -130,8 +130,8 @@ public class CreateRoomUseCaseTests
     public async Task CreateRoom_InvalidRoomStatus_ShouldReturnInvalidRoomStatusError(int roomStatusId)
     {
         //Arrange
-        var userId = Guid.NewGuid().ToString();
-        var createRoomDto = new CreateRoomDto(
+        string userId = Guid.NewGuid().ToString();
+        CreateRoomDto createRoomDto = new(
             Name: "Room test",
             Description: "Room test description",
             Latitude: 90,
@@ -144,8 +144,8 @@ public class CreateRoomUseCaseTests
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);
 
         //Act
-        var result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
-        var error = result.Error;
+        Result<CreatedRoomDto> result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
+        Error error = result.Error;
 
         //Assert
         error.Should().BeEquivalentTo(RoomError.InvalidRoomStatus);
@@ -156,8 +156,8 @@ public class CreateRoomUseCaseTests
     public async Task CreateRoom_BookedRoomStatus_ShouldReturnInvalidRoomStatusError()
     {
         //Arrange
-        var userId = Guid.NewGuid().ToString();
-        var createRoomDto = new CreateRoomDto(
+        string userId = Guid.NewGuid().ToString();
+        CreateRoomDto createRoomDto = new(
             Name: "Room test",
             Description: "Room test description",
             Latitude: 90,
@@ -170,8 +170,8 @@ public class CreateRoomUseCaseTests
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);
 
         //Act
-        var result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
-        var error = result.Error;
+        Result<CreatedRoomDto> result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
+        Error error = result.Error;
 
         //Assert
         error.Should().BeEquivalentTo(RoomError.InvalidRoomStatus);
@@ -186,8 +186,8 @@ public class CreateRoomUseCaseTests
     public async Task CreateRoom_NonImageFiles_ShouldReturnInvalidImageTypeError(string contentType, string extension)
     {
         //Arrange
-        var userId = Guid.NewGuid().ToString();
-        var createRoomDto = new CreateRoomDto(
+        string userId = Guid.NewGuid().ToString();
+        CreateRoomDto createRoomDto = new(
             Name: "Room test",
             Description: "Room test description",
             Latitude: 90,
@@ -207,8 +207,8 @@ public class CreateRoomUseCaseTests
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);
 
         //Act
-        var result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
-        var error = result.Error;
+        Result<CreatedRoomDto> result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
+        Error error = result.Error;
 
         //Assert
         error.Should().BeEquivalentTo(RoomError.InvalidImageType);
@@ -221,16 +221,15 @@ public class CreateRoomUseCaseTests
     public async Task CreateRoom_MaxImagesExceeded_ShouldReturnMaxImagesExceededError(int roomImageQuantity)
     {
         //Arrange
-        var userId = Guid.NewGuid().ToString();
-        var roomImageId = Guid.NewGuid().ToString();
-        var images = Enumerable.Range(1, roomImageQuantity)
+        string userId = Guid.NewGuid().ToString();
+        List<ImageRoomUpload> images = [.. Enumerable.Range(1, roomImageQuantity)
             .Select(i => new ImageRoomUpload(
                     OpenStream: () => new MemoryStream([0xFF, 0xD8, 0xFF]),
                     FileName: $"room-image-{i}.jpeg",
                     ContentType: "image/jpeg"
                 )
-            ).ToList();
-        var createRoomDto = new CreateRoomDto(
+            )];
+        CreateRoomDto createRoomDto = new(
             Name: "Room test",
             Description: "Room test description",
             Latitude: 90,
@@ -243,8 +242,8 @@ public class CreateRoomUseCaseTests
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);
 
         //Act
-        var result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
-        var error = result.Error;
+        Result<CreatedRoomDto> result = await _createRoomUseCase.ExecuteAsync(userId, createRoomDto, CancellationToken.None);
+        Error error = result.Error;
 
         //Assert
         error.Should().BeEquivalentTo(RoomError.MaxImagesExceeded(Images.MaxImagesAllowed));
