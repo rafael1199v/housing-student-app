@@ -8,8 +8,9 @@ namespace HousingApp.Application.Tests.Booking;
 
 public class DeleteBookingUseCaseTests
 {
-    private readonly DeleteBookingUseCase _deleteBookingUseCase;
     private readonly IBookingRepository _bookingRepository;
+    private readonly DeleteBookingUseCase _deleteBookingUseCase;
+
     public DeleteBookingUseCaseTests()
     {
         _bookingRepository = Substitute.For<IBookingRepository>();
@@ -20,17 +21,14 @@ public class DeleteBookingUseCaseTests
     public async Task DeleteBooking_Pending_ShouldDelete()
     {
         // Arrange
-        var booking = new Domain.Entities.Booking
+        Domain.Entities.Booking booking = new()
         {
-            Id = 1,
-            BookerId = "user-1",
-            RoomId = 10,
-            BookingStatus = BookingStatus.Pending
+            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Pending
         };
         _bookingRepository.GetBookingByRoomAndStudentAsync(10, "user-1").Returns(booking);
 
         // Act
-        var result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
+        Result<bool> result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -42,10 +40,11 @@ public class DeleteBookingUseCaseTests
     public async Task DeleteBooking_BookingNotFound_ShouldReturnError()
     {
         // Arrange
-        _bookingRepository.GetBookingByRoomAndStudentAsync(Arg.Any<int>(), Arg.Any<string>()).Returns((Domain.Entities.Booking?)null);
+        _bookingRepository.GetBookingByRoomAndStudentAsync(Arg.Any<int>(), Arg.Any<string>())
+            .Returns((Domain.Entities.Booking?)null);
 
         // Act
-        var result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
+        Result<bool> result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -57,17 +56,14 @@ public class DeleteBookingUseCaseTests
     public async Task DeleteBooking_AlreadyApproved_ShouldReturnError()
     {
         // Arrange
-        var booking = new Domain.Entities.Booking
+        Domain.Entities.Booking booking = new()
         {
-            Id = 1,
-            BookerId = "user-1",
-            RoomId = 10,
-            BookingStatus = BookingStatus.Confirmed
+            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Confirmed
         };
         _bookingRepository.GetBookingByRoomAndStudentAsync(10, "user-1").Returns(booking);
 
         // Act
-        var result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
+        Result<bool> result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -79,22 +75,18 @@ public class DeleteBookingUseCaseTests
     public async Task DeleteBooking_AlreadyDenied_ShouldReturnError()
     {
         // Arrange
-        var booking = new Domain.Entities.Booking
+        Domain.Entities.Booking booking = new()
         {
-            Id = 1,
-            BookerId = "user-1",
-            RoomId = 10,
-            BookingStatus = BookingStatus.Cancelled
+            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Cancelled
         };
         _bookingRepository.GetBookingByRoomAndStudentAsync(10, "user-1").Returns(booking);
 
         // Act
-        var result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
+        Result<bool> result = await _deleteBookingUseCase.ExecuteAsync(10, "user-1");
 
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("booking.already.denied");
         await _bookingRepository.DidNotReceive().DeleteBookingAsync(Arg.Any<int>());
     }
-
 }

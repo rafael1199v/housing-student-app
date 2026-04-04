@@ -1,7 +1,6 @@
-﻿namespace HousingApp.Application.Booking.UseCases
+﻿namespace HousingApp.Application.Booking.UseCases;
+
+public interface IApproveBookingUseCase
 {
-    public interface IApproveBookingUseCase
-    {
-        Task<Result<bool>> ExecuteAsync(int bookingId);
-    }
+    Task<Result<bool>> ExecuteAsync(int bookingId);
 }

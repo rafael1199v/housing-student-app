@@ -1,7 +1,6 @@
-﻿namespace HousingApp.Infrastructure.Storage
+﻿namespace HousingApp.Infrastructure.Storage;
+
+public sealed class StorageSettings
 {
-    public sealed class StorageSettings
-    {
-        public string BucketName { get; init; } = string.Empty;
-    }
+    public string BucketName { get; init; } = string.Empty;
 }

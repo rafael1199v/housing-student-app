@@ -11,12 +11,12 @@ namespace HousingApp.Application.Tests.Booking;
 
 public class CreateBookingUseCaseTests
 {
+    private readonly IBookingRepository _bookingRepository;
     private readonly CreateBookingUseCase _createBookingUseCase;
+    private readonly IPersonRepository _personRepository;
+    private readonly IRoomRepository _roomRepository;
 
     private readonly IBookingUnitOfWork _unitOfWork;
-    private readonly IRoomRepository _roomRepository;
-    private readonly IBookingRepository _bookingRepository;
-    private readonly IPersonRepository _personRepository;
 
 
     public CreateBookingUseCaseTests()
@@ -39,12 +39,12 @@ public class CreateBookingUseCaseTests
     {
         //Arrange
         const int roomId = 50;
-        var bookerId = Guid.NewGuid().ToString();
-        var createBookingDto = new CreateBookingDto(RoomId: roomId);
-        var expectedCreatedBookingDto = new CreatedBookingDto(
-            RoomId: roomId,
-            BookerId: bookerId,
-            Status: nameof(BookingStatus.Pending)
+        string bookerId = Guid.NewGuid().ToString();
+        CreateBookingDto createBookingDto = new(roomId);
+        CreatedBookingDto expectedCreatedBookingDto = new(
+            roomId,
+            bookerId,
+            nameof(BookingStatus.Pending)
         );
 
         _personRepository.ExistsByUserIdAsync(bookerId).Returns(true);
@@ -52,8 +52,8 @@ public class CreateBookingUseCaseTests
         _roomRepository.IsRoomAvailable(roomId).Returns(true);
 
         //Act
-        var result = await _createBookingUseCase.ExecuteAsync(bookerId, createBookingDto);
-        var createdBookingDto = result.Value;
+        Result<CreatedBookingDto> result = await _createBookingUseCase.ExecuteAsync(bookerId, createBookingDto);
+        CreatedBookingDto? createdBookingDto = result.Value;
 
         //Assert
         createdBookingDto.Should().BeEquivalentTo(expectedCreatedBookingDto);
@@ -65,16 +65,16 @@ public class CreateBookingUseCaseTests
     {
         //Arrange
         const int roomId = 50;
-        var bookerId = Guid.NewGuid().ToString();
-        var createBookingDto = new CreateBookingDto(RoomId: roomId);
+        string bookerId = Guid.NewGuid().ToString();
+        CreateBookingDto createBookingDto = new(roomId);
 
 
         _personRepository.ExistsByUserIdAsync(bookerId).Returns(true);
         _bookingRepository.UserHasAlreadyBooked(bookerId, roomId).Returns(true);
 
         //Act
-        var result = await _createBookingUseCase.ExecuteAsync(bookerId, createBookingDto);
-        var error = result.Error;
+        Result<CreatedBookingDto> result = await _createBookingUseCase.ExecuteAsync(bookerId, createBookingDto);
+        Error error = result.Error;
 
         //Assert
         error.Should().BeEquivalentTo(BookingError.RoomAlreadyBooked);
@@ -86,20 +86,19 @@ public class CreateBookingUseCaseTests
     {
         //Arrange
         const int roomId = 50;
-        var bookerId = Guid.NewGuid().ToString();
-        var createBookingDto = new CreateBookingDto(RoomId: roomId);
-        
+        string bookerId = Guid.NewGuid().ToString();
+        CreateBookingDto createBookingDto = new(roomId);
+
         _personRepository.ExistsByUserIdAsync(bookerId).Returns(true);
         _bookingRepository.UserHasAlreadyBooked(bookerId, roomId).Returns(false);
         _roomRepository.IsRoomAvailable(roomId).Returns(false);
 
         //Act
-        var result = await _createBookingUseCase.ExecuteAsync(bookerId, createBookingDto);
-        var error = result.Error;
+        Result<CreatedBookingDto> result = await _createBookingUseCase.ExecuteAsync(bookerId, createBookingDto);
+        Error error = result.Error;
 
         //Assert
         error.Should().BeEquivalentTo(BookingError.RoomNotAvailable);
         await _unitOfWork.DidNotReceive().CommitTransactionAsync();
     }
-
 }

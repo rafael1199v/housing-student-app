@@ -1,9 +1,8 @@
 using HousingApp.Application.Room.DTO;
 
-namespace HousingApp.Application.Room.UseCases
+namespace HousingApp.Application.Room.UseCases;
+
+public interface IGetRoomsUseCase
 {
-    public interface IGetRoomsUseCase
-    {
-        Task<Result<List<RoomDto>>> ExecuteAsync(SearchRoomsFiltersDto filters);
-    }
+    Task<Result<List<RoomDto>>> ExecuteAsync(SearchRoomsFiltersDto filters);
 }

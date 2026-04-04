@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    
-  <ItemGroup>
-    <ProjectReference Include="../HousingApp.Domain/HousingApp.Domain.csproj" />
-  </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../HousingApp.Domain/HousingApp.Domain.csproj"/>
+    </ItemGroup>
 
 </Project>

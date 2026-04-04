@@ -1,13 +1,12 @@
 using HousingApp.Domain.Entities;
 
-namespace HousingApp.Application.Repositories
+namespace HousingApp.Application.Repositories;
+
+public interface IUserRepository
 {
-    public interface IUserRepository
-    {
-        Task<string> RegisterUser(User newUser, Domain.Enums.Roles role);
+    Task<string> RegisterUser(User newUser, Domain.Enums.Roles role);
 
-        Task<User?> FindUserByEmailAsync(string email);
+    Task<User?> FindUserByEmailAsync(string email);
 
-        Task<bool> CheckPassword(string email, string password);
-    }
+    Task<bool> CheckPassword(string email, string password);
 }

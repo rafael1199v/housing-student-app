@@ -1,9 +1,8 @@
-namespace HousingApp.Application.Roles
+namespace HousingApp.Application.Roles;
+
+public static class RolesDescription
 {
-    public static class RolesDescription
-    {
-        public const string Admin = "Admin";
-        public const string Student = "Student";
-        public const string Householder = "Householder";
-    }
+    public const string Admin = "Admin";
+    public const string Student = "Student";
+    public const string Householder = "Householder";
 }

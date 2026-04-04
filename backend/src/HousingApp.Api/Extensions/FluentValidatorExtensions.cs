@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 
-namespace HousingApp.Api.Extensions
+namespace HousingApp.Api.Extensions;
+
+public static class FluentValidatorExtensions
 {
-    public static class FluentValidatorExtensions
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services)
     {
-        public static IServiceCollection AddFluentValidation(this IServiceCollection services)
-        {
-            services.AddValidatorsFromAssemblyContaining<Program>();
-            return services;
-        }
+        services.AddValidatorsFromAssemblyContaining<Program>();
+        return services;
     }
 }

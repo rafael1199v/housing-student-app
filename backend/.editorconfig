@@ -8,7 +8,7 @@ indent_style = space
 tab_width = 4
 
 end_of_line = lf
-insert_final_newline = true   # Cambio: false → true (convención Unix, evita diffs sucios en Git)
+insert_final_newline = true # Cambio: false → true (convención Unix, evita diffs sucios en Git)
 
 #### .NET Coding Conventions ####
 dotnet_separate_import_directive_groups = false
@@ -75,7 +75,7 @@ csharp_prefer_static_local_function = true
 
 csharp_prefer_braces = true
 csharp_prefer_simple_using_statement = true
-csharp_style_namespace_declarations = file_scoped   # Cambio: block_scoped → file_scoped (C# 10+, menos indentación)
+csharp_style_namespace_declarations = file_scoped # Cambio: block_scoped → file_scoped (C# 10+, menos indentación)
 
 csharp_prefer_simple_default_expression = true
 csharp_style_deconstructed_variable_declaration = true
