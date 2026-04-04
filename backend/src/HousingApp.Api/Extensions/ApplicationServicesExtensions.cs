@@ -21,19 +21,19 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IBookingUnitOfWork, BookingUnitOfWork>();
         services.AddScoped<IRoomUnitOfWork, RoomUnitOfWork>();
 
-            services.AddScoped<ILoginUseCase, LoginUseCase>();
-            services.AddScoped<IRegisterUseCase, RegisterUseCase>();
-            services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
-            services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
-            services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();
-            services.AddScoped<IGetHouseholderRoomsUseCase, GetHouseholderRoomsUseCase>();
-            services.AddScoped<ICreateRoomUseCase, CreateRoomUseCase>();
-            services.AddScoped<IGetHouseholderRoomDetailUseCase, GetHouseholderRoomDetailUseCase>();
-            services.AddScoped<IApproveBookingUseCase, ApproveBookingUseCase>();
-            services.AddScoped<IRejectBookingUseCase, RejectBookingUseCase>();
-            services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
-            services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
-            services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
+        services.AddScoped<ILoginUseCase, LoginUseCase>();
+        services.AddScoped<IRegisterUseCase, RegisterUseCase>();
+        services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
+        services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
+        services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();
+        services.AddScoped<IGetHouseholderRoomsUseCase, GetHouseholderRoomsUseCase>();
+        services.AddScoped<ICreateRoomUseCase, CreateRoomUseCase>();
+        services.AddScoped<IGetHouseholderRoomDetailUseCase, GetHouseholderRoomDetailUseCase>();
+        services.AddScoped<IApproveBookingUseCase, ApproveBookingUseCase>();
+        services.AddScoped<IRejectBookingUseCase, RejectBookingUseCase>();
+        services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
+        services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
+        services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
 
         return services;
     }

@@ -92,24 +92,24 @@ public class BookingRepository(HousingApplicationDbContext context) : IBookingRe
         return true;
     }
 
-        public async Task<bool> RejectBooking(int bookingId)
-        {
-            BookingModel? booking = await context.Bookings.FindAsync(bookingId);
+    public async Task<bool> RejectBooking(int bookingId)
+    {
+        BookingModel? booking = await context.Bookings.FindAsync(bookingId);
 
-            if (booking is null)
-                return false;
+        if (booking is null)
+            return false;
 
-            await context.Bookings
-                .Where(b => b.Id == bookingId && !b.IsDeleted)
-                .ExecuteUpdateAsync(setters => setters.SetProperty(b => b.BookingStatusId, (int)BookingStatus.Cancelled));
+        await context.Bookings
+            .Where(b => b.Id == bookingId && !b.IsDeleted)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(b => b.BookingStatusId, (int)BookingStatus.Cancelled));
 
-            return true;
-        }
+        return true;
+    }
 
-        public async Task DeleteBookingAsync(int bookingId)
-        {
-            await context.Bookings.Where(b => b.Id == bookingId).ExecuteUpdateAsync(setters => setters.SetProperty(b => b.IsDeleted, true));
-        }
+    public async Task DeleteBookingAsync(int bookingId)
+    {
+        await context.Bookings.Where(b => b.Id == bookingId).ExecuteUpdateAsync(setters => setters.SetProperty(b => b.IsDeleted, true));
+    }
 
     public async Task<List<BookingStudentDto>> GetStudentBookingsAsync(string studentId)
     {
