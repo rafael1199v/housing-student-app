@@ -32,10 +32,7 @@ namespace HousingApp.Application.Room.UseCases
             if (createRoomDto.Longitude < -180 || createRoomDto.Longitude > 180)
                 return Result<CreatedRoomDto>.Failure(RoomError.InvalidLongitude);
 
-            if (!Enum.IsDefined(typeof(RoomStatus), createRoomDto.RoomStatusId))
-                return Result<CreatedRoomDto>.Failure(RoomError.InvalidRoomStatus);
-
-            if ((RoomStatus)createRoomDto.RoomStatusId is RoomStatus.Booked)
+            if (!Enum.IsDefined(typeof(RoomStatus), createRoomDto.RoomStatusId) || (RoomStatus)createRoomDto.RoomStatusId is RoomStatus.Booked)
                 return Result<CreatedRoomDto>.Failure(RoomError.InvalidRoomStatus);
 
             if (HasNonImageFiles(createRoomDto.Images))
