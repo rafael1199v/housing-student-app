@@ -27,7 +27,10 @@ export function RoomCard({
 	const hasMultiple = allImages.length > 1;
 	const isCurrentBroken = brokenImages.has(currentIndex);
 
-	const formattedPrice = new Intl.NumberFormat("es-BO").format(price);
+	const formattedPrice = new Intl.NumberFormat("es-BO", {
+		style: "currency",
+		currency: "BOB",
+	}).format(price);
 
 	const shortDescription =
 		description && description.length > 120
@@ -144,7 +147,7 @@ export function RoomCard({
 					<p className="text-sm text-slate-500">{subtitle}</p>
 				</div>
 
-				<p className="text-2xl font-bold text-primary">${formattedPrice}</p>
+				<p className="text-2xl font-bold text-primary">{formattedPrice}</p>
 				<p className="-mt-2 text-xs text-slate-500">por mes</p>
 
 				{shortDescription && (

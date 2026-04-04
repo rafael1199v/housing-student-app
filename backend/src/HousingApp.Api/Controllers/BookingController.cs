@@ -19,10 +19,9 @@ public class BookingController(
     IDeleteBookingUseCase deleteBookingUseCase,
     IGetStudentBookingsUseCase getStudentBookingsUseCase) : ControllerBase
 {
-    [HttpGet]
-    [Authorize(Roles = RolesDescription.Student)]
-    [ProducesResponseType(typeof(List<BookingStudentDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetStudentBookings()
+    [ApiController]
+    [Route("api/bookings")]
+    public class BookingController(ICreateBookingUseCase createBookingUseCase, IApproveBookingUseCase approveBookingUseCase, IRejectBookingUseCase rejectBookingUseCase, IRoomAlreadyBookedUseCase roomAlreadyBookedUseCase, IDeleteBookingUseCase deleteBookingUseCase, IGetStudentBookingsUseCase getStudentBookingsUseCase) : ControllerBase
     {
         string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
@@ -75,8 +74,20 @@ public class BookingController(
             return BadRequest(result.Error);
         }
 
-        return Ok(result.Value);
-    }
+        [HttpPut("reject/{bookingId:int}")]
+        [Authorize(Roles = RolesDescription.Householder)]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        public async Task<IActionResult> RejectBooking(int bookingId)
+        {
+
+            Result<bool> result = await rejectBookingUseCase.ExecuteAsync(bookingId);
+
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            return Ok(result.Value);
+        }
+
 
 
     [HttpGet("{roomId:int}")]
