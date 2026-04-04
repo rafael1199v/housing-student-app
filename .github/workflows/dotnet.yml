@@ -8,15 +8,14 @@ on:
     branches: [ 'feature/**' ]
   pull_request:
     branches: [ 'develop' ]
-
+    
+defaults:
+  run:
+    working-directory: ./backend/tests/HousingApp.Application.Tests
 jobs:
-  build-and-test:
+  build:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend/tests/HousingApp.Application.Tests
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -27,5 +26,10 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+  
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
     - name: Test
       run: dotnet test --no-build --verbosity normal
