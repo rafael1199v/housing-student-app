@@ -129,10 +129,7 @@ export function NewRoomPage() {
 			navigate("/");
 		},
 		onError: (error: Error) => {
-			toast.error(
-				error.message ??
-					"Error al crear la habitación. Por favor, intenta de nuevo.",
-			);
+			toast.error("Error al crear la habitación. " + error.message);
 		},
 	});
 
@@ -204,6 +201,7 @@ export function NewRoomPage() {
 						<input
 							id="name"
 							type="text"
+							autoComplete="off"
 							placeholder="Ej. Habitación individual cerca del campus"
 							{...register("name")}
 							className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"

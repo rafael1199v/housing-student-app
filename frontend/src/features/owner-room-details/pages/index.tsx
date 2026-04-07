@@ -40,8 +40,8 @@ export function OwnerRoomDetailsPage() {
 			setShowDialog(false);
 			setSelectedBooking(null);
 		},
-		onError: () => {
-			toast.error("Error al aprobar la reserva. Por favor, intenta de nuevo.");
+		onError: (error: Error) => {
+			toast.error("Error al aprobar la reserva. " + error.message);
 		},
 	});
 
@@ -53,8 +53,8 @@ export function OwnerRoomDetailsPage() {
 			setShowDialog(false);
 			setSelectedBooking(null);
 		},
-		onError: () => {
-			toast.error("Error al rechazar la reserva. Por favor, intenta de nuevo.");
+		onError: (error: Error) => {
+			toast.error("Error al rechazar la reserva. " + error.message);
 		},
 	});
 
