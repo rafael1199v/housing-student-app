@@ -1,12 +1,17 @@
 <Solution>
     <Configurations>
-        <Platform Name="Any CPU"/>
-        <Platform Name="x64"/>
-        <Platform Name="x86"/>
+        <Platform Name="Any CPU" />
+        <Platform Name="x64" />
+        <Platform Name="x86" />
     </Configurations>
-    <Project Path="tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj"/>
-    <Project Path="src/HousingApp.Api/HousingApp.Api.csproj"/>
-    <Project Path="src/HousingApp.Application/HousingApp.Application.csproj"/>
-    <Project Path="src/HousingApp.Domain/HousingApp.Domain.csproj"/>
-    <Project Path="src/HousingApp.Infrastructure/HousingApp.Infrastructure.csproj"/>
+    <Folder Name="/tests/">
+        <Project Path="tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj" />
+        <Project Path="tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj" />
+    </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/HousingApp.Api/HousingApp.Api.csproj" />
+        <Project Path="src/HousingApp.Application/HousingApp.Application.csproj" />
+        <Project Path="src/HousingApp.Domain/HousingApp.Domain.csproj" />
+        <Project Path="src/HousingApp.Infrastructure/HousingApp.Infrastructure.csproj" />
+    </Folder>
 </Solution>
