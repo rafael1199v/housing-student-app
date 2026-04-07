@@ -52,8 +52,8 @@ export function RoomDetails() {
 			setBookRequestSent(1);
 			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
-		onError: () => {
-			toast.error("Error al realizar la reserva. Por favor, intenta de nuevo.");
+		onError: (error: Error) => {
+			toast.error("Error al realizar la reserva. " + error.message);
 		},
 	});
 
@@ -65,17 +65,7 @@ export function RoomDetails() {
 			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
 		onError: (error: Error) => {
-			if (error.message == "booking.already.denied") {
-				toast.error(
-					"La reserva fue rechazada. No puedes solicitar esta habitación de nuevo.",
-				);
-			} else if (error.message == "booking.already.approved") {
-				toast.error("La reserva ya fue aprobada. Felicidades!");
-			} else {
-				toast.error(
-					"Error al eliminar la reserva. Por favor, intenta de nuevo.",
-				);
-			}
+			toast.error("Error al eliminar la reserva. " + error.message);
 		},
 	});
 
