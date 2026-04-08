@@ -1,14 +1,25 @@
-﻿namespace HousingApp.IntegrationTests;
+﻿using HousingApp.Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
+using Testcontainers.PostgreSql;
+
+namespace HousingApp.IntegrationTests;
 
 public class PostgresSqlContainerFixture : IAsyncLifetime
 {
-    public Task InitializeAsync()
+    public PostgreSqlContainer Postgres { get; private set; } = new PostgreSqlBuilder("postgres:18.1").Build();
+
+    public async Task InitializeAsync()
     {
-        throw new NotImplementedException();
+        await Postgres.StartAsync();
+        
+        DbContextOptions<HousingApplicationDbContext> options = new DbContextOptionsBuilder<HousingApplicationDbContext>()
+            .UseNpgsql(Postgres.GetConnectionString())
+            .UseSnakeCaseNamingConvention()
+            .Options;
+
+        await using HousingApplicationDbContext context = new(options);
+        await context.Database.MigrateAsync();
     }
 
-    public Task DisposeAsync()
-    {
-        throw new NotImplementedException();
-    }
+    public async Task DisposeAsync() => await Postgres.DisposeAsync();
 }
