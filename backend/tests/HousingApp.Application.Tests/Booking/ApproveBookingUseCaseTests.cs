@@ -4,6 +4,7 @@ using HousingApp.Application.Repositories;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Enums;
 using NSubstitute;
+using HousingApp.Domain.Error;
 
 namespace HousingApp.Application.Tests.Booking;
 
@@ -60,7 +61,7 @@ public class ApproveBookingUseCaseTests
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be("booking.not.found");
+        result.Error.Code.Should().Be(BookingError.BookingNotFound.Code);
         await _unitOfWork.DidNotReceive().CommitTransactionAsync();
     }
 
@@ -79,7 +80,7 @@ public class ApproveBookingUseCaseTests
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be("booking.already.approved");
+        result.Error.Code.Should().Be(BookingError.BookingAlreadyApproved.Code);
         await _unitOfWork.DidNotReceive().CommitTransactionAsync();
     }
 
@@ -98,7 +99,7 @@ public class ApproveBookingUseCaseTests
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be("booking.already.denied");
+        result.Error.Code.Should().Be(BookingError.BookingAlreadyDenied.Code);
         await _unitOfWork.DidNotReceive().CommitTransactionAsync();
     }
 }
