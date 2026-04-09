@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HousingApp.Infrastructure.Migrations
 {
     [DbContext(typeof(HousingApplicationDbContext))]
-    [Migration("20260314020106_Init")]
+    [Migration("20260408150132_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -606,7 +606,7 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasConstraintName("fk_bookings_booking_statuses_booking_status_id");
 
                     b.HasOne("HousingApp.Infrastructure.Persistence.Models.RoomModel", "Room")
-                        .WithMany()
+                        .WithMany("Bookings")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -723,6 +723,8 @@ namespace HousingApp.Infrastructure.Migrations
 
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomModel", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("RoomImages");
                 });
 #pragma warning restore 612, 618

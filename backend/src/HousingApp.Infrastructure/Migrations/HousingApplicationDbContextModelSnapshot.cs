@@ -603,7 +603,7 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasConstraintName("fk_bookings_booking_statuses_booking_status_id");
 
                     b.HasOne("HousingApp.Infrastructure.Persistence.Models.RoomModel", "Room")
-                        .WithMany()
+                        .WithMany("Bookings")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -720,6 +720,8 @@ namespace HousingApp.Infrastructure.Migrations
 
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomModel", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("RoomImages");
                 });
 #pragma warning restore 612, 618
