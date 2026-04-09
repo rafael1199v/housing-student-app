@@ -183,7 +183,7 @@ The project follows a **Feature-Driven Architecture (FDA)**. Each feature is a s
 
 ### Booking System
 - Students can book available rooms and cancel their bookings.
-- Householders can view all booking requests per room and approve them via a confirmation dialog.
+- Householders can view all booking requests per room and **approve or reject** them via a confirmation dialog.
 - Booking statuses are tracked and displayed with visual indicators.
 
 ### Shared Components
@@ -255,6 +255,7 @@ All HTTP requests are routed through `src/services/apiService.ts`, which provide
 | `POST`   | `/api/bookings`                  | Create a booking                |
 | `DELETE` | `/api/bookings/:roomId`          | Cancel a booking                |
 | `PUT`    | `/api/bookings/approve/:id`      | Approve a booking request       |
+| `PUT`    | `/api/bookings/reject/:id`       | Reject a booking request        |
 
 ## Authentication
 
