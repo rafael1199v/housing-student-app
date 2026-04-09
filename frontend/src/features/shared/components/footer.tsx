@@ -15,7 +15,6 @@ export function Footer() {
 	};
 	return (
 		<footer className="rounded-2xl bg-surface-container-low p-6 shadow-sm">
-			<h3 className="text-lg font-semibold text-slate-900">Pie de página</h3>
 			<div className="mt-4 grid gap-6 md:grid-cols-2">
 				<div>
 					<p className="text-sm font-medium text-slate-700">
