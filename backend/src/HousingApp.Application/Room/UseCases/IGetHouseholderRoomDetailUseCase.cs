@@ -1,9 +1,8 @@
 ﻿using HousingApp.Application.Room.DTO;
 
-namespace HousingApp.Application.Room.UseCases
+namespace HousingApp.Application.Room.UseCases;
+
+public interface IGetHouseholderRoomDetailUseCase
 {
-    public interface IGetHouseholderRoomDetailUseCase
-    {
-        Task<Result<RoomHouseholderDetailDto>> ExecuteAsync(int roomId, string userId);
-    }
+    Task<Result<RoomHouseholderDetailDto>> ExecuteAsync(int roomId, string userId);
 }

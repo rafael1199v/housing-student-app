@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { useAuthStore } from "../features/auth/store/authStore";
+import { getErrorMessage } from "../locales/errorMessages";
 import { router } from "../routers/routes";
 export interface RequestOptions extends RequestInit {
 	requiresAuth?: boolean;
@@ -51,7 +52,10 @@ export async function apiFetch<T>(
 		const error = await response
 			.json()
 			.catch(() => ({ message: response.statusText }));
-		throw new Error(error.message ?? `HTTP ${response.status}`);
+		const code: string = error.code ?? error[0]?.code;
+		throw new Error(
+			getErrorMessage(code, error.message ?? error[0]?.errorMessage),
+		);
 	}
 
 	if (response.status === 204) return undefined as T;

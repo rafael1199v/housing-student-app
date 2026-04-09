@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
+import { RoomStatusEnum } from "../../../global/enum/room-status";
 import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
 import { Footer } from "../../shared/components/footer";
@@ -40,7 +41,7 @@ export function RoomDetails() {
 
 	useEffect(() => {
 		if (room) {
-			setBooked(room.roomStatus !== "Available");
+			setBooked(room.roomStatus !== RoomStatusEnum.Available);
 		}
 	}, [room]);
 
@@ -51,8 +52,8 @@ export function RoomDetails() {
 			setBookRequestSent(1);
 			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
-		onError: () => {
-			toast.error("Error al realizar la reserva. Por favor, intenta de nuevo.");
+		onError: (error: Error) => {
+			toast.error("Error al realizar la reserva. " + error.message);
 		},
 	});
 
@@ -64,13 +65,7 @@ export function RoomDetails() {
 			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
 		onError: (error: Error) => {
-			if (error.message == "La reserva ya fue aprobada") {
-				toast.error("La reserva ya fue aprobada, felicidades!");
-			} else {
-				toast.error(
-					"Error al eliminar la reserva. Por favor, intenta de nuevo.",
-				);
-			}
+			toast.error("Error al eliminar la reserva. " + error.message);
 		},
 	});
 

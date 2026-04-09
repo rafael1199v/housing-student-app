@@ -29,7 +29,7 @@ For a detailed breakdown of each side, see:
 
 - **Role-based access**: Student and Householder roles with dedicated flows and route guards.
 - **Room search**: Full-text search with price filters, sort options, and map view.
-- **Booking system**: Students book rooms; householders approve or reject requests.
+- **Booking system**: Students book rooms; householders approve or reject requests. Householders can also explicitly reject pending requests.
 - **Image uploads**: Up to 5 images per room, stored in AWS S3.
 - **Map integration**: Google Maps for location display and map-based room creation.
 - **Rate limiting**: Per-IP rate limiting on the API to prevent abuse.
@@ -129,6 +129,23 @@ For a detailed breakdown of each side, see:
    ```
 
    The app will be available at `http://localhost:5173`.
+
+---
+
+
+## Testing
+
+The backend has currently one test project under `backend/tests/`:
+
+| Project | Type | Tools |
+|---|---|---|
+| `HousingApp.Application.Tests` | Unit | xUnit, NSubstitute, FluentAssertions |
+
+Unit tests cover all Application layer use cases (Auth, Room, Booking) in isolation with mocked dependencies.
+
+A GitHub Actions workflow runs the unit test suite on every push to `feature/**` branches and on pull requests targeting `develop`.
+
+See [backend/README.md](backend/README.md#testing) for full details on running tests and the CI setup.
 
 ---
 

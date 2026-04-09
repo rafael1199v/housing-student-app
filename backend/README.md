@@ -15,15 +15,19 @@ ASP.NET Core Web API for the Itersapiens student housing platform, built with **
     - [Prerequisites](#prerequisites)
     - [Configuration](#configuration)
     - [Running the API](#running-the-api)
+  - [Testing](#testing)
+    - [Unit Tests](#unit-tests)
+    - [Running Tests](#running-tests)
+    - [CI](#ci)
   - [Production Good Practices](#production-good-practices)
-    - [Secrets Management](#secrets-management)
-    - [Authentication \& Authorization](#authentication--authorization)
-    - [Rate Limiting](#rate-limiting)
-    - [Error Handling](#error-handling)
-    - [Database](#database)
-    - [AWS S3](#aws-s3)
-    - [CORS](#cors)
-    - [Logging \& Observability](#logging--observability)
+    - [Global Exception Handling](#global-exception-handling)
+    - [Result\<T\> — Functional Error Handling](#resultt--functional-error-handling)
+    - [JWT Authentication with Strict Validation](#jwt-authentication-with-strict-validation)
+    - [Role-Based Authorization (RBAC)](#role-based-authorization-rbac)
+    - [Per-IP Rate Limiting](#per-ip-rate-limiting)
+    - [CORS with Explicit Origin](#cors-with-explicit-origin)
+    - [AWS S3 with Presigned URLs](#aws-s3-with-presigned-urls)
+    - [Database Schema via EF Core Migrations](#database-schema-via-ef-core-migrations)
 
 ## Tech Stack
 
@@ -64,7 +68,7 @@ src/
 │   │   └── UseCases/                  # LoginUseCase, RegisterUseCase (+ interfaces)
 │   ├── Booking/
 │   │   ├── DTO/
-│   │   └── UseCases/                  # Create, Delete, Approve, GetStudentBookings
+│   │   └── UseCases/                  # Create, Delete, Approve, Reject, GetStudentBookings
 │   ├── Room/
 │   │   ├── DTO/
 │   │   └── UseCases/                  # Create, GetRooms, GetRoomDetail, GetHouseholderRooms, etc.
@@ -86,6 +90,13 @@ src/
     │   └── UnitOfWork/                # Concrete Unit of Work implementations
     ├── Storage/                       # S3StorageService (AWS S3 implementation)
     └── Migrations/                    # EF Core database migrations
+
+tests/
+├── HousingApp.Application.Tests/      # Unit tests for Application layer use cases
+│   ├── Auth/                          # LoginUseCaseTests, RegisterUseCaseTests
+│   ├── Booking/                       # CreateBookingUseCaseTests, DeleteBookingUseCaseTests,
+│   │                                  # ApproveBookingUseCaseTests, RejectBookingUseCaseTests
+│   └── Room/                          # CreateRoomUseCaseTests
 ```
 
 ## Architecture & Design Patterns
@@ -175,6 +186,50 @@ dotnet run --project src/HousingApp.Api
 ```
 
 The API will be available at `http://localhost:5065`. Interactive API docs (Scalar) are at `http://localhost:5065/docs`.
+
+## Testing
+
+The backend has two dedicated test projects under `tests/`, managed with **xUnit** and using **Central Package Management** (`Directory.Packages.props`) for consistent NuGet versions across all projects.
+
+### Unit Tests
+
+**Project:** `tests/HousingApp.Application.Tests`
+
+Tests are written against the Application layer use cases in isolation. All external dependencies (repositories, unit of work, storage) are replaced with fakes using **NSubstitute**. Assertions are written with **FluentAssertions**.
+
+| Test class | Use case under test | Scenarios covered |
+|---|---|---|
+| `LoginUseCaseTests` | `LoginUseCase` | Success, user not found, wrong password |
+| `RegisterUseCaseTests` | `RegisterUseCase` | Success, email already in use, invalid role, admin role denied |
+| `CreateBookingUseCaseTests` | `CreateBookingUseCase` | Success, room already booked, room not available |
+| `DeleteBookingUseCaseTests` | `DeleteBookingUseCase` | Success (pending), booking not found, already approved, already denied |
+| `ApproveBookingUseCaseTests` | `ApproveBookingUseCase` | Success (pending), booking not found, already approved, already cancelled |
+| `RejectBookingUseCaseTests` | `RejectBookingUseCase` | Success (pending), booking not found |
+| `CreateRoomUseCaseTests` | `CreateRoomUseCase` | Success (0–5 images), householder not found, invalid room status, booked status blocked, non-image file type, max images exceeded |
+
+Test libraries:
+
+| Library | Version | Purpose |
+|---|---|---|
+| xUnit | 2.9.3 | Test framework |
+| NSubstitute | 5.3.0 | Mocking/faking dependencies |
+| FluentAssertions | 8.9.0 | Readable assertion API |
+| coverlet.collector | 6.0.4 | Code coverage collection |
+
+### Running Tests
+
+```bash
+# All tests from the backend root
+dotnet test
+```
+
+### CI
+
+A GitHub Actions workflow (`.github/workflows/dotnet.yml`) runs the unit test suite automatically:
+- **Triggers**: pushes to `feature/**` branches and pull requests targeting `develop`.
+- **Steps**: restore → build → `dotnet test`.
+
+---
 
 ## Production Good Practices
 

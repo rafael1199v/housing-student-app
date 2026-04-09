@@ -1,17 +1,15 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HousingApp.Api.Controllers
+namespace HousingApp.Api.Controllers;
+
+[Route("api/ping")]
+[ApiController]
+public class PingController : ControllerBase
 {
-    [Route("api/ping")]
-    [ApiController]
-    public class PingController : ControllerBase
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult Ping()
     {
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult Ping()
-        {
-            return Ok("Pong");
-        }
+        return Ok("Pong");
     }
 }

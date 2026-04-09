@@ -5,53 +5,53 @@ using HousingApp.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace HousingApp.Infrastructure.Persistence.UnitOfWork
+namespace HousingApp.Infrastructure.Persistence.UnitOfWork;
+
+public class AuthUnitOfWork(HousingApplicationDbContext context, UserManager<IdentityUser> userManager)
+    : IAuthUnitOfWork
 {
-    public class AuthUnitOfWork(HousingApplicationDbContext context, UserManager<IdentityUser> userManager) : IAuthUnitOfWork
+    private IDbContextTransaction? _transaction;
+    public IPersonRepository PersonRepository { get; } = new PersonRepository(context);
+    public IUserRepository UserRepository { get; } = new UserRepository(userManager);
+
+    public async Task<int> SaveChangesAsync()
     {
-        public IPersonRepository PersonRepository { get; } = new PersonRepository(context);
-        public IUserRepository UserRepository { get; } = new UserRepository(userManager);
-        private IDbContextTransaction? _transaction = null;
+        return await context.SaveChangesAsync();
+    }
 
-        public async Task<int> SaveChangesAsync()
+    public async Task BeginTransactionAsync()
+    {
+        _transaction = await context.Database.BeginTransactionAsync();
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        if (_transaction == null)
         {
-            return await context.SaveChangesAsync();
+            throw new NullReferenceException("There is no active transaction");
         }
 
-        public async Task BeginTransactionAsync()
+        await SaveChangesAsync();
+        await _transaction.CommitAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
+    }
+
+    public async Task RollbackTransactionAsync()
+    {
+        if (_transaction == null)
         {
-            _transaction = await context.Database.BeginTransactionAsync();
+            throw new NullReferenceException("There is no active transaction");
         }
 
-        public async Task CommitTransactionAsync()
-        {
-            if (_transaction == null)
-            {
-                throw new NullReferenceException("There is no active transaction");
-            }
+        await _transaction.RollbackAsync();
+        _transaction.Dispose();
+        _transaction = null;
+    }
 
-            await SaveChangesAsync();
-            await _transaction.CommitAsync();
-            await _transaction.DisposeAsync();
-            _transaction = null;
-        }
-
-        public async Task RollbackTransactionAsync()
-        {
-            if (_transaction == null)
-            {
-                throw new NullReferenceException("There is no active transaction");
-            }
-
-            await _transaction.RollbackAsync();
-            _transaction.Dispose();
-            _transaction = null;
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        context.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

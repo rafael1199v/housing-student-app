@@ -4,38 +4,37 @@ using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HousingApp.Infrastructure.Persistence.Repositories
+namespace HousingApp.Infrastructure.Persistence.Repositories;
+
+public class PersonRepository(HousingApplicationDbContext context) : IPersonRepository
 {
-    public class PersonRepository(HousingApplicationDbContext context) : IPersonRepository
+    public async Task CreatePerson(Person person)
     {
-        public async Task CreatePerson(Person person)
-        {
-            PersonModel model = ToModel(person);
-            await context.Persons.AddAsync(model);
-        }
+        PersonModel model = ToModel(person);
+        await context.Persons.AddAsync(model);
+    }
 
-        public async Task<bool> ExistsByUserIdAsync(string userId)
-        {
-            return await context.Persons
-                .AsNoTracking()
-                .AnyAsync(person => person.UserId == userId && !person.IsDeleted);
-        }
+    public async Task<bool> ExistsByUserIdAsync(string userId)
+    {
+        return await context.Persons
+            .AsNoTracking()
+            .AnyAsync(person => person.UserId == userId && !person.IsDeleted);
+    }
 
-        private static PersonModel ToModel(Person person)
+    private static PersonModel ToModel(Person person)
+    {
+        return new PersonModel
         {
-            return new PersonModel
-            {
-                UserId = person.Id,
-                FirstName = person.FirstName,
-                LastName = person.LastName,
-                Email = person.Email,
-                PhoneNumber = person.PhoneNumber,
-                BirthDate = person.BirthDate,
-                Nationality = person.Nationality,
-                Age = person.Age,
-                Gender = person.Gender,
-                ImageUrl = string.IsNullOrEmpty(person.ImageUrl) ? null : person.ImageUrl,
-            };
-        }
+            UserId = person.Id,
+            FirstName = person.FirstName,
+            LastName = person.LastName,
+            Email = person.Email,
+            PhoneNumber = person.PhoneNumber,
+            BirthDate = person.BirthDate,
+            Nationality = person.Nationality,
+            Age = person.Age,
+            Gender = person.Gender,
+            ImageUrl = string.IsNullOrEmpty(person.ImageUrl) ? null : person.ImageUrl
+        };
     }
 }

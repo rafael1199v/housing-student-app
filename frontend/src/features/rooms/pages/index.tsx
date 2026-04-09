@@ -6,7 +6,8 @@ import {
 	Pin,
 } from "@vis.gl/react-google-maps";
 import { type FormEvent, useState } from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
+import { z } from "zod";
 import type { RoomSearchParams } from "../../../services/roomService";
 import roomService from "../../../services/roomService";
 import { CardSkeleton } from "../../home/components/skeleton";
@@ -17,6 +18,49 @@ import { RoomCard } from "../../shared/components/RoomCard";
 type OrderBy = "price-asc" | "price-desc" | "name-asc" | "name-desc";
 type MapPosition = { lat: number; lng: number };
 const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
+
+const searchFiltersSchema = z
+	.object({
+		name: z.string().max(100, "El nombre no puede superar los 100 caracteres"),
+		minPrice: z
+			.string()
+			.refine(
+				(v) => v === "" || Number(v) >= 0,
+				"El precio mínimo debe ser 0 o mayor",
+			)
+			.refine(
+				(v) => v === "" || Number(v) <= 99999,
+				"El precio no puede superar 99,999",
+			),
+		maxPrice: z
+			.string()
+			.refine(
+				(v) => v === "" || Number(v) >= 0,
+				"El precio máximo debe ser 0 o mayor",
+			)
+			.refine(
+				(v) => v === "" || Number(v) <= 99999,
+				"El precio no puede superar 99,999",
+			),
+	})
+	.refine(
+		(data) => {
+			if (data.minPrice && data.maxPrice) {
+				return Number(data.maxPrice) >= Number(data.minPrice);
+			}
+			return true;
+		},
+		{
+			message: "El precio máximo debe ser mayor o igual al precio mínimo",
+			path: ["maxPrice"],
+		},
+	);
+
+type SearchFilterErrors = {
+	name?: string;
+	minPrice?: string;
+	maxPrice?: string;
+};
 
 function sortRooms(rooms: RoomData[], orderBy: OrderBy): RoomData[] {
 	const copy = [...rooms];
@@ -62,6 +106,7 @@ export function RoomsPage() {
 			? initialPosition
 			: null,
 	);
+	const [errors, setErrors] = useState<SearchFilterErrors>({});
 
 	const [committed, setCommitted] = useState<RoomSearchParams>({
 		name: initialName,
@@ -92,6 +137,21 @@ export function RoomsPage() {
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		const result = searchFiltersSchema.safeParse({
+			name: searchText,
+			minPrice,
+			maxPrice,
+		});
+		if (!result.success) {
+			const fieldErrors: SearchFilterErrors = {};
+			for (const issue of result.error.issues) {
+				const field = issue.path[0] as keyof SearchFilterErrors;
+				if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+			}
+			setErrors(fieldErrors);
+			return;
+		}
+		setErrors({});
 		const next: RoomSearchParams = {
 			name: searchText.trim(),
 			minPrice: minPrice.trim(),
@@ -126,33 +186,38 @@ export function RoomsPage() {
 				</p>
 
 				<form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-					<div className="flex items-center gap-2 rounded-lg border border-outline-variant/25 bg-surface-container-high px-3 py-2 focus-within:ring-2 focus-within:ring-primary/40">
-						<input
-							type="search"
-							value={searchText}
-							onChange={(event) => setSearchText(event.target.value)}
-							placeholder="Buscar habitación por nombre"
-							className="w-full bg-transparent text-sm text-slate-700 outline-none"
-						/>
-						<button
-							type="submit"
-							className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
-							aria-label="Buscar habitaciones"
-						>
-							<svg
-								className="h-5 w-5"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
+					<div className="space-y-1">
+						<div className="flex items-center gap-2 rounded-lg border border-outline-variant/25 bg-surface-container-high px-3 py-2 focus-within:ring-2 focus-within:ring-primary/40">
+							<input
+								type="search"
+								value={searchText}
+								onChange={(event) => setSearchText(event.target.value)}
+								placeholder="Buscar habitación por nombre"
+								className="w-full bg-transparent text-sm text-slate-700 outline-none"
+							/>
+							<button
+								type="submit"
+								className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
+								aria-label="Buscar habitaciones"
 							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
-								/>
-							</svg>
-						</button>
+								<svg
+									className="h-5 w-5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+									/>
+								</svg>
+							</button>
+						</div>
+						{errors.name && (
+							<p className="text-xs text-red-600">{errors.name}</p>
+						)}
 					</div>
 					<div className="grid gap-2 sm:grid-cols-1">
 						<section className="hidden surface-section space-y-2">
@@ -207,24 +272,34 @@ export function RoomsPage() {
 									Rango de precio
 								</p>
 								<div className="grid gap-2 sm:grid-cols-2">
-									<input
-										type="number"
-										inputMode="numeric"
-										min={0}
-										value={minPrice}
-										onChange={(event) => setMinPrice(event.target.value)}
-										placeholder="Precio mínimo"
-										className="field-filled"
-									/>
-									<input
-										type="number"
-										inputMode="numeric"
-										min={0}
-										value={maxPrice}
-										onChange={(event) => setMaxPrice(event.target.value)}
-										placeholder="Precio máximo"
-										className="field-filled"
-									/>
+									<div className="space-y-1">
+										<input
+											type="number"
+											inputMode="numeric"
+											min={0}
+											value={minPrice}
+											onChange={(event) => setMinPrice(event.target.value)}
+											placeholder="Precio mínimo"
+											className="field-filled w-full"
+										/>
+										{errors.minPrice && (
+											<p className="text-xs text-red-600">{errors.minPrice}</p>
+										)}
+									</div>
+									<div className="space-y-1">
+										<input
+											type="number"
+											inputMode="numeric"
+											min={0}
+											value={maxPrice}
+											onChange={(event) => setMaxPrice(event.target.value)}
+											placeholder="Precio máximo"
+											className="field-filled w-full"
+										/>
+										{errors.maxPrice && (
+											<p className="text-xs text-red-600">{errors.maxPrice}</p>
+										)}
+									</div>
 								</div>
 							</div>
 

@@ -1,4 +1,3 @@
-﻿namespace HousingApp.Application.Auth.DTOs
-{
-    public record RegisterResponseDto(string UserId);
-}
+﻿namespace HousingApp.Application.Auth.DTOs;
+
+public record RegisterResponseDto(string UserId);

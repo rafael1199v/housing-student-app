@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:18.1
+    container_name: itersapiens-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-itersapiensDb}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - housing-app-data:/var/lib/postgresql
+      - ./backend/database-scripts:/docker-entrypoint-initdb.d
+
+volumes:
+  housing-app-data:

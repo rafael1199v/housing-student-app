@@ -1,7 +1,6 @@
-﻿namespace HousingApp.Application.Booking.UseCases
+﻿namespace HousingApp.Application.Booking.UseCases;
+
+public interface IDeleteBookingUseCase
 {
-    public interface IDeleteBookingUseCase
-    {
-        Task<Result<bool>> ExecuteAsync(int roomId, string studentId);
-    }
+    Task<Result<bool>> ExecuteAsync(int roomId, string studentId);
 }

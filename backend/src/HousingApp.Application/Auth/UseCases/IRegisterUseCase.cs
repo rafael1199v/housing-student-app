@@ -1,9 +1,8 @@
 using HousingApp.Application.Auth.DTOs;
 
-namespace HousingApp.Application.Auth.UseCases
+namespace HousingApp.Application.Auth.UseCases;
+
+public interface IRegisterUseCase
 {
-    public interface IRegisterUseCase
-    {
-        Task<Result<string>> ExecuteAsync(RegisterDto registerDto);
-    }
+    Task<Result<string>> ExecuteAsync(RegisterDto registerDto);
 }

@@ -1,9 +1,8 @@
-namespace HousingApp.Domain.Enums
+namespace HousingApp.Domain.Enums;
+
+public enum Roles
 {
-    public enum Roles
-    {
-        Admin,
-        Student,
-        HouseHolder
-    }
+    Admin,
+    Student,
+    HouseHolder
 }

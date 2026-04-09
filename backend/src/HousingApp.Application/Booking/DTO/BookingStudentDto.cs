@@ -1,10 +1,9 @@
-﻿namespace HousingApp.Application.Booking.DTO
-{
-    public record BookingStudentDto(
-        int Id,
-        int RoomId,
-        string BookingStatus,
-        int BookingStatusId,
-        string BookingRoomName
-    );
-}
+﻿namespace HousingApp.Application.Booking.DTO;
+
+public record BookingStudentDto(
+    int Id,
+    int RoomId,
+    string BookingStatus,
+    int BookingStatusId,
+    string BookingRoomName
+);

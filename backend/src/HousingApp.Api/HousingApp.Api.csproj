@@ -1,30 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <UserSecretsId>8c835046-ab94-4e32-8d99-d97b0ec009fe</UserSecretsId>
+    </PropertyGroup>
 
-<!--  <PropertyGroup>-->
-<!--    <TargetFramework>net10.0</TargetFramework>-->
-<!--    <Nullable>enable</Nullable>-->
-<!--    <ImplicitUsings>enable</ImplicitUsings>-->
-<!--  </PropertyGroup>-->
+    <ItemGroup>
+        <PackageReference Include="FluentValidation"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Scalar.AspNetCore"/>
+    </ItemGroup>
 
-  <PropertyGroup>
-      <UserSecretsId>8c835046-ab94-4e32-8d99-d97b0ec009fe</UserSecretsId>
-  </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../HousingApp.Application/HousingApp.Application.csproj"/>
+        <ProjectReference Include="..\HousingApp.Infrastructure\HousingApp.Infrastructure.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-    <PackageReference Include="Scalar.AspNetCore" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../HousingApp.Application/HousingApp.Application.csproj" />
-    <ProjectReference Include="..\HousingApp.Infrastructure\HousingApp.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Requests\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Requests\"/>
+    </ItemGroup>
 
 </Project>

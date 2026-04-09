@@ -41,8 +41,8 @@ function Login() {
 			toast.success("Bienvenido");
 			navigate("/");
 		},
-		onError: () => {
-			toast.error("Credenciales invalidas");
+		onError: (error: Error) => {
+			toast.error(error.message);
 		},
 	});
 

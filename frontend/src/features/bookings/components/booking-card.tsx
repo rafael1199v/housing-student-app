@@ -1,3 +1,5 @@
+import { BookingStatusEnum } from "../../../global/enum/booking-status";
+
 interface BookingCardProps {
 	name: string;
 	status: string;
@@ -25,23 +27,23 @@ export function BookingCard({ name, status, onClick }: BookingCardProps) {
 				<div className="space-y-1">
 					<h3 className="text-lg font-semibold text-slate-900">{name}</h3>
 				</div>
-				{status == "Confirmed" ? (
-					<div className="mt-1 inline-block rounded-full bg-green-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						Confirmado
-					</div>
-				) : status == "Pending" ? (
-					<div className="mt-1 inline-block rounded-full bg-secondary-fixed px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						Pendiente
-					</div>
-				) : status == "Rejected" ? (
-					<div className="mt-1 inline-block rounded-full bg-red-200 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						Rechazado
-					</div>
-				) : (
-					<div className="mt-1 inline-block rounded-full bg-gray-300 px-2 py-1 text-xs font-medium text-on-secondary-fixed">
-						Desconocido({status})
-					</div>
-				)}
+				<div className="mt-1 inline-block text-xs font-medium text-on-secondary-fixed">
+					{status == BookingStatusEnum.Confirmed ? (
+						<div className="bg-green-200 rounded-full px-2 py-1">
+							Confirmado
+						</div>
+					) : status == BookingStatusEnum.Pending ? (
+						<div className="bg-secondary-fixed rounded-full px-2 py-1">
+							Pendiente
+						</div>
+					) : status == BookingStatusEnum.Rejected ? (
+						<div className="bg-red-200 rounded-full px-2 py-1">Rechazado</div>
+					) : (
+						<div className="bg-gray-300 rounded-full px-2 py-1">
+							Desconocido({status})
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);

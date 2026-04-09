@@ -1,4 +1,3 @@
-namespace HousingApp.Application.Auth.DTOs
-{
-    public record CredentialsDto(string AccessToken);
-}
+namespace HousingApp.Application.Auth.DTOs;
+
+public record CredentialsDto(string AccessToken);

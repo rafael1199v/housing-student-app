@@ -1,19 +1,18 @@
-﻿namespace HousingApp.Application.Storage
-{
-    public interface IStorageService
-    {
-        Task<string> UploadAsync(
-            Func<Stream> openStream,
-            string fileName,
-            string contentType,
-            StorageType storageType,
-            string entityId,
-            CancellationToken cancellationToken
-        );
+﻿namespace HousingApp.Application.Storage;
 
-        string GeneratePresignedDownloadUrl(
-            string key,
-            TimeSpan? expiration = null
-        );
-    }
+public interface IStorageService
+{
+    Task<string> UploadAsync(
+        Func<Stream> openStream,
+        string fileName,
+        string contentType,
+        StorageType storageType,
+        string entityId,
+        CancellationToken cancellationToken
+    );
+
+    string GeneratePresignedDownloadUrl(
+        string key,
+        TimeSpan? expiration = null
+    );
 }
