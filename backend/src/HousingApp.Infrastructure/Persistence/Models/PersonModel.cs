@@ -16,7 +16,7 @@ public class PersonModel : AuditableModel
 
     [Required][MaxLength(150)] public string LastName { get; set; } = string.Empty;
 
-    [Required][MaxLength(300)] public string Email { get; set; } = string.Empty;
+    [Required][MaxLength(320)] public string Email { get; set; } = string.Empty;
 
     [Required][MaxLength(50)] public string PhoneNumber { get; set; } = string.Empty;
 
