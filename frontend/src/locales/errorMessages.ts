@@ -41,7 +41,8 @@ const es: Record<string, string> = {
 	"unknown.error": "Ha ocurrido un error inesperado",
 
 	// Client
-	"no.internet.connection": "No tienes conexión a internet. Inténtalo de nuevo mas tarde"
+	"no.internet.connection":
+		"No tienes conexión a internet. Inténtalo de nuevo mas tarde",
 };
 
 export const errorMessages = {

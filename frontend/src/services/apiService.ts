@@ -62,13 +62,9 @@ export async function apiFetch<T>(
 
 		if (response.status === 204) return undefined as T;
 		return response.json() as Promise<T>;
+	} catch {
+		throw new Error(getErrorMessage("unknown.error"));
 	}
-	catch {
-		throw new Error(
-			getErrorMessage("unknown.error"),
-		);
-	}
-	
 }
 
 export const api = {
