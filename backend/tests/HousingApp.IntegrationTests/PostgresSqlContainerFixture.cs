@@ -11,7 +11,7 @@ public class PostgresSqlContainerFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await Postgres.StartAsync();
-        
+
         DbContextOptions<HousingApplicationDbContext> options = new DbContextOptionsBuilder<HousingApplicationDbContext>()
             .UseNpgsql(Postgres.GetConnectionString())
             .UseSnakeCaseNamingConvention()

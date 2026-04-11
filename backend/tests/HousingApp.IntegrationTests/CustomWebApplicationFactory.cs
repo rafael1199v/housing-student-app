@@ -22,7 +22,7 @@ public class CustomWebApplicationFactory(string postgresConnectionString) : WebA
                 { "AWS:Region", "us-east-1" }
             });
         });
-        
+
         builder.ConfigureServices(services =>
         {
             services.AddDbContext<HousingApplicationDbContext>(options =>

@@ -23,7 +23,10 @@ public class DeleteBookingUseCaseTests
         // Arrange
         Domain.Entities.Booking booking = new()
         {
-            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Pending
+            Id = 1,
+            BookerId = "user-1",
+            RoomId = 10,
+            BookingStatus = BookingStatus.Pending
         };
         _bookingRepository.GetBookingByRoomAndStudentAsync(10, "user-1").Returns(booking);
 
@@ -58,7 +61,10 @@ public class DeleteBookingUseCaseTests
         // Arrange
         Domain.Entities.Booking booking = new()
         {
-            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Confirmed
+            Id = 1,
+            BookerId = "user-1",
+            RoomId = 10,
+            BookingStatus = BookingStatus.Confirmed
         };
         _bookingRepository.GetBookingByRoomAndStudentAsync(10, "user-1").Returns(booking);
 
@@ -77,7 +83,10 @@ public class DeleteBookingUseCaseTests
         // Arrange
         Domain.Entities.Booking booking = new()
         {
-            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Cancelled
+            Id = 1,
+            BookerId = "user-1",
+            RoomId = 10,
+            BookingStatus = BookingStatus.Cancelled
         };
         _bookingRepository.GetBookingByRoomAndStudentAsync(10, "user-1").Returns(booking);
 

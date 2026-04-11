@@ -14,7 +14,9 @@ public class BookingRepository(HousingApplicationDbContext context) : IBookingRe
     {
         BookingModel model = new()
         {
-            BookerId = booking.BookerId, RoomId = booking.RoomId, BookingStatusId = (int)booking.BookingStatus
+            BookerId = booking.BookerId,
+            RoomId = booking.RoomId,
+            BookingStatusId = (int)booking.BookingStatus
         };
 
         await context.Bookings.AddAsync(model);
