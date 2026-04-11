@@ -1,9 +1,10 @@
+using HousingApp.Infrastructure.Persistence.Models.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HousingApp.Infrastructure.Persistence.Models;
 
 [Table("room_images")]
-public class RoomImagesModel
+public class RoomImagesModel : AuditableModel
 {
     public int Id { get; set; }
 
@@ -11,9 +12,4 @@ public class RoomImagesModel
 
     public int RoomId { get; set; }
     public RoomModel Room { get; set; } = null!;
-
-    public DateTime? UpdatedAt { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? DeletedAt { get; set; }
-    public bool IsDeleted { get; set; } = false;
 }
