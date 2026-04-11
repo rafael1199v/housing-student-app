@@ -27,39 +27,48 @@ export async function apiFetch<T>(
 	const contentTypeHeaders: HeadersInit =
 		rest.body instanceof FormData ? {} : { "Content-Type": "application/json" };
 
-	const response = await fetch(`${baseURL}${endpoint}`, {
-		headers: {
-			...contentTypeHeaders,
-			...authHeaders,
-			...headers,
-		},
-		...rest,
-	});
+	try {
+		const response = await fetch(`${baseURL}${endpoint}`, {
+			headers: {
+				...contentTypeHeaders,
+				...authHeaders,
+				...headers,
+			},
+			...rest,
+		});
 
-	if (!response.ok) {
-		if (response.status === 401) {
-			useAuthStore.getState().actions.clearAll();
-			router.navigate("/login");
-			toast.error("Sesión expirada. Ingresa tus credenciales nuevamente");
-			throw new Error("Sesión expirada");
+		if (!response.ok) {
+			if (response.status === 401) {
+				useAuthStore.getState().actions.clearAll();
+				router.navigate("/login");
+				toast.error("Sesión expirada. Ingresa tus credenciales nuevamente");
+				throw new Error("Sesión expirada");
+			}
+
+			if (response.status === 403) {
+				router.navigate("/not-found");
+				throw new Error("forbidden.resource");
+			}
+
+			const error = await response
+				.json()
+				.catch(() => ({ message: response.statusText }));
+
+			const code: string = error.code ?? error[0]?.code;
+			throw new Error(
+				getErrorMessage(code, error.message ?? error[0]?.errorMessage),
+			);
 		}
 
-		if (response.status === 403) {
-			router.navigate("/not-found");
-			throw new Error("forbidden.resource");
-		}
-
-		const error = await response
-			.json()
-			.catch(() => ({ message: response.statusText }));
-		const code: string = error.code ?? error[0]?.code;
+		if (response.status === 204) return undefined as T;
+		return response.json() as Promise<T>;
+	}
+	catch {
 		throw new Error(
-			getErrorMessage(code, error.message ?? error[0]?.errorMessage),
+			getErrorMessage("unknown.error"),
 		);
 	}
-
-	if (response.status === 204) return undefined as T;
-	return response.json() as Promise<T>;
+	
 }
 
 export const api = {
