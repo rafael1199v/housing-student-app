@@ -12,6 +12,7 @@
     <ItemGroup>
         <Folder Include="bin\"/>
         <Folder Include="obj\"/>
+        <Folder Include="Seeder\" />
     </ItemGroup>
 
 </Project>

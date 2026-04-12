@@ -30,5 +30,20 @@ public class HousingApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
         //TODO: Decide if we are gonna create a different schema for the database
+        
+        //Room statuses
+        modelBuilder.Entity<RoomStatusModel>().HasData(
+            new RoomStatusModel { Id = 1, Name = "Available" },
+            new RoomStatusModel { Id = 2, Name = "Unavailable" },
+            new RoomStatusModel { Id = 3, Name = "Booked" }
+        );
+
+        //Booking statuses
+        modelBuilder.Entity<BookingStatusModel>().HasData(
+            new BookingStatusModel { Id = 1, Name = "Pending" },
+            new BookingStatusModel { Id = 2, Name = "Confirmed" },
+            new BookingStatusModel { Id = 3, Name = "Cancelled" },
+            new BookingStatusModel { Id = 4, Name = "Completed" }
+        );
     }
 }
