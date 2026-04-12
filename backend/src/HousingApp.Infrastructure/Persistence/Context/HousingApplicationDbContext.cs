@@ -30,7 +30,7 @@ public class HousingApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
         //TODO: Decide if we are gonna create a different schema for the database
-        
+
         //Room statuses
         modelBuilder.Entity<RoomStatusModel>().HasData(
             new RoomStatusModel { Id = 1, Name = "Available" },
