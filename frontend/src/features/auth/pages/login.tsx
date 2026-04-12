@@ -53,32 +53,6 @@ function Login() {
 	return (
 		<div className="editorial-hero min-h-screen flex items-center justify-center p-4">
 			<div className="w-full max-w-md">
-				{/* Logo Section */}
-				<div className="flex justify-center gap-4 mb-8">
-					<a
-						href="https://vite.dev"
-						target="_blank"
-						className="transition-transform hover:scale-110"
-					>
-						<img
-							src={viteLogo}
-							className="w-12 h-12 opacity-80"
-							alt="Vite logo"
-						/>
-					</a>
-					<a
-						href="https://react.dev"
-						target="_blank"
-						className="transition-transform hover:scale-110"
-					>
-						<img
-							src={reactLogo}
-							className="w-12 h-12 opacity-80"
-							alt="React logo"
-						/>
-					</a>
-				</div>
-
 				{/* Card */}
 				<div className="rounded-2xl bg-surface-container-lowest p-8 shadow-2xl">
 					{/* Header */}
