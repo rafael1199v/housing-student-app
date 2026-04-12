@@ -29,6 +29,9 @@ builder.Services.AddAuthorization();
 
 WebApplication app = builder.Build();
 
+//Apply database migrations and seed data only
+await app.ApplyMigrationsAndSeedDataAsync();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
