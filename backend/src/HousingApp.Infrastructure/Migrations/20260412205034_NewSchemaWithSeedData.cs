@@ -4,10 +4,12 @@ using System;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace HousingApp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class NewSchema : Migration
+    public partial class NewSchemaWithSeedData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -505,6 +507,27 @@ namespace HousingApp.Infrastructure.Migrations
                         principalTable: "services",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "booking_statuses",
+                columns: new[] { "id", "created_at", "deleted_at", "is_deleted", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc), null, false, "Pending", null },
+                    { 2, new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc), null, false, "Confirmed", null },
+                    { 3, new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc), null, false, "Cancelled", null },
+                    { 4, new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc), null, false, "Completed", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "rooms_statuses",
+                columns: new[] { "id", "created_at", "deleted_at", "is_deleted", "name", "updated_at" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc), null, false, "Available", null },
+                    { 2, new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc), null, false, "Unavailable", null },
+                    { 3, new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc), null, false, "Booked", null }
                 });
 
             migrationBuilder.CreateIndex(

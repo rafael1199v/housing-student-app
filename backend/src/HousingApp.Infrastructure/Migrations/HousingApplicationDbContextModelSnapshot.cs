@@ -116,28 +116,28 @@ namespace HousingApp.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             Name = "Pending"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             Name = "Confirmed"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             Name = "Cancelled"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             Name = "Completed"
                         });
@@ -653,21 +653,21 @@ namespace HousingApp.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             Name = "Available"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             Name = "Unavailable"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2026, 2, 2, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsDeleted = false,
                             Name = "Booked"
                         });
