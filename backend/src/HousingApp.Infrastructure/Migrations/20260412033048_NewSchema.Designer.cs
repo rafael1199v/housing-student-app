@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HousingApp.Infrastructure.Migrations
 {
     [DbContext(typeof(HousingApplicationDbContext))]
-    [Migration("20260408150132_Init")]
-    partial class Init
+    [Migration("20260412033048_NewSchema")]
+    partial class NewSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,16 +116,132 @@ namespace HousingApp.Infrastructure.Migrations
                     b.ToTable("booking_statuses", (string)null);
                 });
 
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ChatMessageModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("integer")
+                        .HasColumnName("chat_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("message");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)")
+                        .HasColumnName("sender_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_chat_messages");
+
+                    b.HasIndex("ChatId")
+                        .HasDatabaseName("ix_chat_messages_chat_id");
+
+                    b.HasIndex("SenderId")
+                        .HasDatabaseName("ix_chat_messages_sender_id");
+
+                    b.ToTable("chat_messages", (string)null);
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ChatModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_chats");
+
+                    b.ToTable("chats", (string)null);
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ChatParticipantModel", b =>
+                {
+                    b.Property<int>("ChatId")
+                        .HasColumnType("integer")
+                        .HasColumnName("chat_id");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("ChatId", "UserId")
+                        .HasName("pk_chat_participants");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_chat_participants_user_id");
+
+                    b.ToTable("chat_participants", (string)null);
+                });
+
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.PersonModel", b =>
                 {
                     b.Property<string>("UserId")
                         .HasMaxLength(450)
                         .HasColumnType("character varying(450)")
                         .HasColumnName("user_id");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("integer")
-                        .HasColumnName("age");
 
                     b.Property<DateOnly>("BirthDate")
                         .HasColumnType("date")
@@ -141,8 +257,8 @@ namespace HousingApp.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)")
                         .HasColumnName("email");
 
                     b.Property<string>("FirstName")
@@ -194,6 +310,91 @@ namespace HousingApp.Infrastructure.Migrations
                     b.ToTable("persons", (string)null);
                 });
 
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.PolicyModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_policies");
+
+                    b.ToTable("policies", (string)null);
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("ExpirationOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expiration_on_utc");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_revoked");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("token");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_refresh_tokens");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_refresh_tokens_user_id");
+
+                    b.ToTable("refresh_tokens", (string)null);
+                });
+
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomImagesModel", b =>
                 {
                     b.Property<int>("Id")
@@ -213,7 +414,8 @@ namespace HousingApp.Infrastructure.Migrations
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
                         .HasColumnName("image_url");
 
                     b.Property<bool>("IsDeleted")
@@ -308,6 +510,82 @@ namespace HousingApp.Infrastructure.Migrations
                     b.ToTable("rooms", (string)null);
                 });
 
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomPolicyModel", b =>
+                {
+                    b.Property<int>("RoomId")
+                        .HasColumnType("integer")
+                        .HasColumnName("room_id");
+
+                    b.Property<int>("PolicyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("policy_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("RoomId", "PolicyId")
+                        .HasName("pk_rooms_policies");
+
+                    b.HasIndex("PolicyId")
+                        .HasDatabaseName("ix_rooms_policies_policy_id");
+
+                    b.ToTable("rooms_policies", (string)null);
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomServiceModel", b =>
+                {
+                    b.Property<int>("RoomId")
+                        .HasColumnType("integer")
+                        .HasColumnName("room_id");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer")
+                        .HasColumnName("service_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("RoomId", "ServiceId")
+                        .HasName("pk_rooms_services");
+
+                    b.HasIndex("ServiceId")
+                        .HasDatabaseName("ix_rooms_services_service_id");
+
+                    b.ToTable("rooms_services", (string)null);
+                });
+
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomStatusModel", b =>
                 {
                     b.Property<int>("Id")
@@ -343,6 +621,49 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasName("pk_rooms_statuses");
 
                     b.ToTable("rooms_statuses", (string)null);
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ServiceModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_services");
+
+                    b.ToTable("services", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -619,6 +940,48 @@ namespace HousingApp.Infrastructure.Migrations
                     b.Navigation("Room");
                 });
 
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ChatMessageModel", b =>
+                {
+                    b.HasOne("HousingApp.Infrastructure.Persistence.Models.ChatModel", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_chat_messages_chats_chat_id");
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_chat_messages_users_sender_id");
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ChatParticipantModel", b =>
+                {
+                    b.HasOne("HousingApp.Infrastructure.Persistence.Models.ChatModel", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_chat_participants_chats_chat_id");
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_chat_participants_users_user_id");
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.PersonModel", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
@@ -627,6 +990,18 @@ namespace HousingApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_persons_users_user_id");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RefreshToken", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_refresh_tokens_users_user_id");
 
                     b.Navigation("User");
                 });
@@ -662,6 +1037,48 @@ namespace HousingApp.Infrastructure.Migrations
                     b.Navigation("Person");
 
                     b.Navigation("RoomStatus");
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomPolicyModel", b =>
+                {
+                    b.HasOne("HousingApp.Infrastructure.Persistence.Models.PolicyModel", "Policy")
+                        .WithMany()
+                        .HasForeignKey("PolicyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_rooms_policies_policies_policy_id");
+
+                    b.HasOne("HousingApp.Infrastructure.Persistence.Models.RoomModel", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_rooms_policies_rooms_room_id");
+
+                    b.Navigation("Policy");
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RoomServiceModel", b =>
+                {
+                    b.HasOne("HousingApp.Infrastructure.Persistence.Models.RoomModel", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_rooms_services_rooms_room_id");
+
+                    b.HasOne("HousingApp.Infrastructure.Persistence.Models.ServiceModel", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_rooms_services_services_service_id");
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

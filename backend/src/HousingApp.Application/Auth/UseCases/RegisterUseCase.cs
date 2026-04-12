@@ -45,7 +45,6 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
                 gender: registerDto.Gender,
                 imageUrl: registerDto.ImageUrl,
                 birthDate: DateOnly.ParseExact(registerDto.BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                age: registerDto.Age,
                 user: user
             );
 

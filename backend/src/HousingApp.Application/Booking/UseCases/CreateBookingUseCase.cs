@@ -33,7 +33,10 @@ public class CreateBookingUseCase(IBookingUnitOfWork unitOfWork) : ICreateBookin
 
             Domain.Entities.Booking booking = new()
             {
-                Id = 0, BookerId = bookerId, RoomId = createBookingDto.RoomId, BookingStatus = BookingStatus.Pending
+                Id = 0,
+                BookerId = bookerId,
+                RoomId = createBookingDto.RoomId,
+                BookingStatus = BookingStatus.Pending
             };
 
             await unitOfWork.BookingRepository.CreateBookingAsync(booking);

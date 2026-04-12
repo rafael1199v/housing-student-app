@@ -15,6 +15,17 @@ public class HousingApplicationDbContext : IdentityDbContext
     public DbSet<BookingModel> Bookings { get; set; }
     public DbSet<BookingStatusModel> BookingStatuses { get; set; }
 
+    public DbSet<ChatModel> Chats { get; set; }
+    public DbSet<ChatMessageModel> ChatMessages { get; set; }
+    public DbSet<ChatParticipantModel> ChatParticipants { get; set; }
+
+    public DbSet<ServiceModel> Services { get; set; }
+    public DbSet<PolicyModel> Policies { get; set; }
+    public DbSet<RoomServiceModel> RoomServices { get; set; }
+    public DbSet<RoomPolicyModel> RoomPolicies { get; set; }
+
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

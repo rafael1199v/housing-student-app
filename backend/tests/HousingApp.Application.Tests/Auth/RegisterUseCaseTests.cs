@@ -32,7 +32,7 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("o@o.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina","Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((User?)null);
         _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
@@ -50,7 +50,7 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("a@a.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns(new User());
 
@@ -68,7 +68,7 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("a@a.com", "Password!555", "invalid", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
@@ -84,7 +84,7 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("a@a.com", "Password!555", "Admin", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);

@@ -12,7 +12,7 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
     public async Task<Result<CreatedRoomDto>> ExecuteAsync(string userId, CreateRoomDto createRoomDto,
         CancellationToken cancellationToken)
     {
-        
+
         if (!await unitOfWork.PersonRepository.ExistsByUserIdAsync(userId))
             return Result<CreatedRoomDto>.Failure(RoomError.HouseholderNotFound);
 
@@ -91,7 +91,7 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
             await unitOfWork.RollbackTransactionAsync();
             throw;
         }
-    
+
     }
 
 

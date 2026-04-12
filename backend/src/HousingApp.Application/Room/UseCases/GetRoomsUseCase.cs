@@ -45,7 +45,6 @@ public class GetRoomsUseCase(IRoomRepository roomRepository, IStorageService sto
                 r.Person!.Email,
                 r.Person!.PhoneNumber,
                 r.Person!.Nationality,
-                r.Person!.Age,
                 r.Person!.Gender,
                 r.Person!.ImageUrl ?? "",
                 [.. r.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))]

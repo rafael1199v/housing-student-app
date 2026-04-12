@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HousingApp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class NewSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,6 +69,40 @@ namespace HousingApp.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "chats",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chats", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "policies",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_policies", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "rooms_statuses",
                 columns: table => new
                 {
@@ -83,6 +117,24 @@ namespace HousingApp.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_rooms_statuses", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "services",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_services", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -198,23 +250,104 @@ namespace HousingApp.Infrastructure.Migrations
                     user_id = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
                     first_name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     last_name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
-                    email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: false),
                     phone_number = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     nationality = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    age = table.Column<int>(type: "integer", nullable: false),
                     gender = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     image_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     birth_date = table.Column<DateOnly>(type: "date", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_persons", x => x.user_id);
                     table.ForeignKey(
                         name: "fk_persons_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "refresh_tokens",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    token = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    expiration_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    user_id = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
+                    is_revoked = table.Column<bool>(type: "boolean", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_refresh_tokens", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_refresh_tokens_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "chat_messages",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    chat_id = table.Column<int>(type: "integer", nullable: false),
+                    sender_id = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
+                    message = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chat_messages", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_chat_messages_chats_chat_id",
+                        column: x => x.chat_id,
+                        principalTable: "chats",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_chat_messages_users_sender_id",
+                        column: x => x.sender_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "chat_participants",
+                columns: table => new
+                {
+                    chat_id = table.Column<int>(type: "integer", nullable: false),
+                    user_id = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chat_participants", x => new { x.chat_id, x.user_id });
+                    table.ForeignKey(
+                        name: "fk_chat_participants_chats_chat_id",
+                        column: x => x.chat_id,
+                        principalTable: "chats",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_chat_participants_users_user_id",
                         column: x => x.user_id,
                         principalTable: "AspNetUsers",
                         principalColumn: "id",
@@ -299,7 +432,7 @@ namespace HousingApp.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    image_url = table.Column<string>(type: "text", nullable: false),
+                    image_url = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
                     room_id = table.Column<int>(type: "integer", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -313,6 +446,63 @@ namespace HousingApp.Infrastructure.Migrations
                         name: "fk_room_images_rooms_room_id",
                         column: x => x.room_id,
                         principalTable: "rooms",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "rooms_policies",
+                columns: table => new
+                {
+                    room_id = table.Column<int>(type: "integer", nullable: false),
+                    policy_id = table.Column<int>(type: "integer", nullable: false),
+                    description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_rooms_policies", x => new { x.room_id, x.policy_id });
+                    table.ForeignKey(
+                        name: "fk_rooms_policies_policies_policy_id",
+                        column: x => x.policy_id,
+                        principalTable: "policies",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_rooms_policies_rooms_room_id",
+                        column: x => x.room_id,
+                        principalTable: "rooms",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "rooms_services",
+                columns: table => new
+                {
+                    room_id = table.Column<int>(type: "integer", nullable: false),
+                    service_id = table.Column<int>(type: "integer", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_rooms_services", x => new { x.room_id, x.service_id });
+                    table.ForeignKey(
+                        name: "fk_rooms_services_rooms_room_id",
+                        column: x => x.room_id,
+                        principalTable: "rooms",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_rooms_services_services_service_id",
+                        column: x => x.service_id,
+                        principalTable: "services",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -370,6 +560,26 @@ namespace HousingApp.Infrastructure.Migrations
                 column: "room_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_chat_messages_chat_id",
+                table: "chat_messages",
+                column: "chat_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_chat_messages_sender_id",
+                table: "chat_messages",
+                column: "sender_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_chat_participants_user_id",
+                table: "chat_participants",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_refresh_tokens_user_id",
+                table: "refresh_tokens",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_room_images_room_id",
                 table: "room_images",
                 column: "room_id");
@@ -383,6 +593,16 @@ namespace HousingApp.Infrastructure.Migrations
                 name: "ix_rooms_room_status_id",
                 table: "rooms",
                 column: "room_status_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_rooms_policies_policy_id",
+                table: "rooms_policies",
+                column: "policy_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_rooms_services_service_id",
+                table: "rooms_services",
+                column: "service_id");
         }
 
         /// <inheritdoc />
@@ -407,7 +627,22 @@ namespace HousingApp.Infrastructure.Migrations
                 name: "bookings");
 
             migrationBuilder.DropTable(
+                name: "chat_messages");
+
+            migrationBuilder.DropTable(
+                name: "chat_participants");
+
+            migrationBuilder.DropTable(
+                name: "refresh_tokens");
+
+            migrationBuilder.DropTable(
                 name: "room_images");
+
+            migrationBuilder.DropTable(
+                name: "rooms_policies");
+
+            migrationBuilder.DropTable(
+                name: "rooms_services");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -416,7 +651,16 @@ namespace HousingApp.Infrastructure.Migrations
                 name: "booking_statuses");
 
             migrationBuilder.DropTable(
+                name: "chats");
+
+            migrationBuilder.DropTable(
+                name: "policies");
+
+            migrationBuilder.DropTable(
                 name: "rooms");
+
+            migrationBuilder.DropTable(
+                name: "services");
 
             migrationBuilder.DropTable(
                 name: "persons");
