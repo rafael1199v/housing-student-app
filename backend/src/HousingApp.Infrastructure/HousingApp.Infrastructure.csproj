@@ -11,6 +11,7 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="bin\"/>
+        <Folder Include="Migrations\" />
         <Folder Include="obj\"/>
     </ItemGroup>
 

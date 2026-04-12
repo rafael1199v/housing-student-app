@@ -30,5 +30,20 @@ public class HousingApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
         //TODO: Decide if we are gonna create a different schema for the database
+
+        //Room statuses
+        modelBuilder.Entity<RoomStatusModel>().HasData(
+            new RoomStatusModel { Id = 1, Name = "Available", CreatedAt = DateTime.SpecifyKind(new DateTime(year: 2026, month: 2, day: 2), DateTimeKind.Utc) },
+            new RoomStatusModel { Id = 2, Name = "Unavailable", CreatedAt = DateTime.SpecifyKind(new DateTime(year: 2026, month: 2, day: 2), DateTimeKind.Utc) },
+            new RoomStatusModel { Id = 3, Name = "Booked", CreatedAt = DateTime.SpecifyKind(new DateTime(year: 2026, month: 2, day: 2), DateTimeKind.Utc) }
+        );
+
+        //Booking statuses
+        modelBuilder.Entity<BookingStatusModel>().HasData(
+            new BookingStatusModel { Id = 1, Name = "Pending", CreatedAt = DateTime.SpecifyKind(new DateTime(year: 2026, month: 2, day: 2), DateTimeKind.Utc) },
+            new BookingStatusModel { Id = 2, Name = "Confirmed", CreatedAt = DateTime.SpecifyKind(new DateTime(year: 2026, month: 2, day: 2), DateTimeKind.Utc) },
+            new BookingStatusModel { Id = 3, Name = "Cancelled", CreatedAt = DateTime.SpecifyKind(new DateTime(year: 2026, month: 2, day: 2), DateTimeKind.Utc) },
+            new BookingStatusModel { Id = 4, Name = "Completed", CreatedAt = DateTime.SpecifyKind(new DateTime(year: 2026, month: 2, day: 2), DateTimeKind.Utc) }
+        );
     }
 }

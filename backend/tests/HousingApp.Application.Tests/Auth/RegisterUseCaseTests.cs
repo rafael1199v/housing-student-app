@@ -32,7 +32,7 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("o@o.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
-            "Argentina","Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((User?)null);
         _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");

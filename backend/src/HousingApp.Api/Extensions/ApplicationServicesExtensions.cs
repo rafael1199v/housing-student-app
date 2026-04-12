@@ -5,6 +5,7 @@ using HousingApp.Application.Room.UseCases;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Infrastructure.Persistence.Repositories;
 using HousingApp.Infrastructure.Persistence.UnitOfWork;
+using HousingApp.Infrastructure.Seeders;
 
 namespace HousingApp.Api.Extensions;
 
@@ -12,15 +13,18 @@ public static class ApplicationServicesExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        //Repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
 
+        //Unit of work
         services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
         services.AddScoped<IBookingUnitOfWork, BookingUnitOfWork>();
         services.AddScoped<IRoomUnitOfWork, RoomUnitOfWork>();
 
+        //Use cases
         services.AddScoped<ILoginUseCase, LoginUseCase>();
         services.AddScoped<IRegisterUseCase, RegisterUseCase>();
         services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
@@ -34,6 +38,9 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
         services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
         services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
+
+        //Seeders
+        services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();
 
         return services;
     }
