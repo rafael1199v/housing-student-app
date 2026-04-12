@@ -24,6 +24,8 @@ public class HousingApplicationDbContext : IdentityDbContext
     public DbSet<RoomServiceModel> RoomServices { get; set; }
     public DbSet<RoomPolicyModel> RoomPolicies { get; set; }
 
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
