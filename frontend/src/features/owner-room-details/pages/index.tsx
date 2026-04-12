@@ -237,6 +237,7 @@ export function OwnerRoomDetailsPage() {
 												{booking.bookerName}
 											</h3>
 											<p className="text-sm text-slate-600">
+												Número: {booking.bookerPhoneNumber}, Email:{" "}
 												{booking.bookerEmail}
 											</p>
 											{booking.bookingStatus == BookingStatusEnum.Confirmed ? (
