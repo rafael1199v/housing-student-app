@@ -1,10 +1,12 @@
 ﻿using HousingApp.Infrastructure.Persistence.Models.Common;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HousingApp.Infrastructure.Persistence.Models;
 
 [Table("rooms_policies")]
+[PrimaryKey(nameof(RoomId), nameof(PolicyId))]
 public class RoomPolicyModel : AuditableModel
 {
     public int RoomId { get; set; }
