@@ -10,9 +10,6 @@ public class HousingAppSeeder(HousingApplicationDbContext housingDbContext, Role
 {
     public async Task SeedAsync()
     {
-        if (!await housingDbContext.Database.CanConnectAsync())
-            return;
-
         //Seeding room statuses and booking statuses with "HasData"
         await housingDbContext.Database.MigrateAsync();
 
