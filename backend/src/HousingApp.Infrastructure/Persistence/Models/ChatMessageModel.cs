@@ -13,7 +13,7 @@ public class ChatMessageModel : AuditableModel
     public int ChatId { get; set; }
     public ChatModel Chat { get; set; } = null!;
 
-    [Required][MaxLength(450)] private string SenderId { get; set; } = string.Empty;
+    [Required][MaxLength(450)] public string SenderId { get; set; } = string.Empty;
     public IdentityUser Sender { get; set; } = null!;
 
     [Required][MaxLength(1024)] public string Message { get; set; } = string.Empty;

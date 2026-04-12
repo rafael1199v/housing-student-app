@@ -53,12 +53,6 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
             .NotEmpty()
             .WithMessage("El género es obligatorio.");
 
-        RuleFor(x => x.Age)
-            .GreaterThan(0)
-            .WithMessage("La edad debe ser mayor a 0.")
-            .LessThan(200)
-            .WithMessage("La edad debe ser menor a 200.");
-
         RuleFor(x => x.BirthDate)
             .NotEmpty()
             .WithMessage("La fecha de nacimiento es obligatoria.");

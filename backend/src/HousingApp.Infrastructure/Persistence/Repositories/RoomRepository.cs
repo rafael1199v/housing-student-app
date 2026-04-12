@@ -78,7 +78,6 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                     Email = model.Person.Email,
                     PhoneNumber = model.Person.PhoneNumber,
                     Nationality = model.Person.Nationality,
-                    Age = model.Person.Age,
                     Gender = model.Person.Gender,
                     ImageUrl = model.Person.ImageUrl,
                     BirthDate = model.Person.BirthDate
@@ -113,7 +112,6 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                     Email = model.Person.Email,
                     PhoneNumber = model.Person.PhoneNumber,
                     Nationality = model.Person.Nationality,
-                    Age = model.Person.Age,
                     Gender = model.Person.Gender,
                     ImageUrl = model.Person.ImageUrl,
                     BirthDate = model.Person.BirthDate
@@ -207,7 +205,6 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                         Email = b.Booker.Email,
                         PhoneNumber = b.Booker.PhoneNumber,
                         Nationality = b.Booker.Nationality,
-                        Age = b.Booker.Age,
                         Gender = b.Booker.Gender,
                         ImageUrl = b.Booker.ImageUrl,
                         BirthDate = b.Booker.BirthDate

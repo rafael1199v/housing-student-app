@@ -14,7 +14,6 @@ public record RoomDto(
     string Email,
     string PhoneNumber,
     string Nationality,
-    int Age,
     string Gender,
     string ImageUrl,
     List<string> ImageRoomUrls

@@ -22,8 +22,6 @@ public class PersonModel : AuditableModel
 
     [Required][MaxLength(50)] public string Nationality { get; set; } = string.Empty;
 
-    public int Age { get; set; }
-
     [Required][MaxLength(30)] public string Gender { get; set; } = string.Empty;
 
     [MaxLength(500)] public string? ImageUrl { get; set; }
