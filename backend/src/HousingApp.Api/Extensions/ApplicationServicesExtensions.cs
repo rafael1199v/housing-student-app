@@ -38,7 +38,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
         services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
         services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
-        
+
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();
 

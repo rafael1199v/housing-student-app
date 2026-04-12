@@ -33,17 +33,17 @@ public class HousingApplicationDbContext : IdentityDbContext
 
         //Room statuses
         modelBuilder.Entity<RoomStatusModel>().HasData(
-            new RoomStatusModel { Id = 1, Name = "Available" },
-            new RoomStatusModel { Id = 2, Name = "Unavailable" },
-            new RoomStatusModel { Id = 3, Name = "Booked" }
+            new RoomStatusModel { Id = 1, Name = "Available", CreatedAt = new DateTime(year: 2026, month: 2, day: 2) },
+            new RoomStatusModel { Id = 2, Name = "Unavailable", CreatedAt = new DateTime(year: 2026, month: 2, day: 2) },
+            new RoomStatusModel { Id = 3, Name = "Booked", CreatedAt = new DateTime(year: 2026, month: 2, day: 2) }
         );
 
         //Booking statuses
         modelBuilder.Entity<BookingStatusModel>().HasData(
-            new BookingStatusModel { Id = 1, Name = "Pending" },
-            new BookingStatusModel { Id = 2, Name = "Confirmed" },
-            new BookingStatusModel { Id = 3, Name = "Cancelled" },
-            new BookingStatusModel { Id = 4, Name = "Completed" }
+            new BookingStatusModel { Id = 1, Name = "Pending", CreatedAt = new DateTime(year: 2026, month: 2, day: 2) },
+            new BookingStatusModel { Id = 2, Name = "Confirmed", CreatedAt = new DateTime(year: 2026, month: 2, day: 2) },
+            new BookingStatusModel { Id = 3, Name = "Cancelled", CreatedAt = new DateTime(year: 2026, month: 2, day: 2) },
+            new BookingStatusModel { Id = 4, Name = "Completed", CreatedAt = new DateTime(year: 2026, month: 2, day: 2) }
         );
     }
 }
