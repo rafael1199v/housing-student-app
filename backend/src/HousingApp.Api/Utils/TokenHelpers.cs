@@ -37,10 +37,4 @@ public static class TokenHelpers
 
         return accessToken;
     }
-
-    public static string GenerateRefreshToken()
-    {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-    }
-
 }
