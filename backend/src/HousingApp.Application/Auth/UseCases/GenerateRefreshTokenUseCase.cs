@@ -1,9 +1,15 @@
+using HousingApp.Application.Repositories;
+using HousingApp.Domain.Entities;
+
 namespace HousingApp.Application.Auth.UseCases;
 
-public class GenerateRefreshTokenUseCase : IGenerateRefreshTokenUseCase
+public class GenerateRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRepository) : IGenerateRefreshTokenUseCase
 {
-    public string GenerateRefreshToken()
+    public async Task<Result<string>> GenerateRefreshToken(string userId)
     {
-        throw new NotImplementedException();
+        RefreshToken refreshToken = RefreshToken.Create(userId: userId);
+        await refreshTokenRepository.SaveToken(refreshToken);
+        
+        return Result<string>.Success(refreshToken.Token);
     }
 }
