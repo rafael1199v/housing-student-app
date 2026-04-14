@@ -9,40 +9,44 @@ import {
 import type { DragEvent } from "react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
+import i18n from "../../../i18n";
 import roomService from "../../../services/roomService";
 import type { CreateRoomDto } from "../types/createRoomDto";
 
 const MAX_IMAGES = 5;
 const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
 
+const v = (key: string) => i18n.t(key, { ns: "validation" });
+
 const ROOM_STATUS_OPTIONS = [
-	{ value: 1, label: "Disponible" },
-	{ value: 2, label: "No disponible" },
+	{ value: 1, labelKey: "newRoom.statusAvailable" },
+	{ value: 2, labelKey: "newRoom.statusUnavailable" },
 ] as const;
 
 const createRoomSchema = z.object({
-	name: z.string().trim().min(1, "El nombre de la habitación es obligatorio"),
+	name: z.string().trim().min(1, v("room.nameRequired")),
 	description: z
 		.string()
 		.trim()
-		.min(1, "La descripción es obligatoria")
-		.max(300, "La descripción es demasiado larga"),
+		.min(1, v("room.descriptionRequired"))
+		.max(300, v("room.descriptionTooLong")),
 	price: z.coerce
-		.number({ error: "El precio es obligatorio" })
-		.positive("El precio debe ser mayor a 0")
-		.max(99999, "El precio es demasiado alto"),
+		.number({ error: v("room.priceRequired") })
+		.positive(v("room.priceTooLow"))
+		.max(99999, v("room.priceTooHigh")),
 	roomStatus: z.coerce.number().int().min(1).max(3),
 	latitude: z
-		.number({ error: "Por favor, selecciona una ubicación en el mapa" })
-		.min(-90, "La latitud debe estar entre -90 y 90")
-		.max(90, "La latitud debe estar entre -90 y 90"),
+		.number({ error: v("room.locationRequired") })
+		.min(-90, v("room.latitudeRange"))
+		.max(90, v("room.latitudeRange")),
 	longitude: z
-		.number({ error: "Por favor, selecciona una ubicación en el mapa" })
-		.min(-180, "La longitud debe estar entre -180 y 180")
-		.max(180, "La longitud debe estar entre -180 y 180"),
+		.number({ error: v("room.locationRequired") })
+		.min(-180, v("room.longitudeRange"))
+		.max(180, v("room.longitudeRange")),
 });
 
 type CreateRoomFormValues = z.input<typeof createRoomSchema>;
@@ -50,6 +54,7 @@ type CreateRoomFormOutput = z.output<typeof createRoomSchema>;
 type MapPosition = { lat: number; lng: number };
 
 export function NewRoomPage() {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -97,7 +102,6 @@ export function NewRoomPage() {
 		);
 		setImageFiles((prev) => {
 			const merged = [...prev, ...valid].slice(0, MAX_IMAGES);
-			// Rebuild previews in sync
 			setPreviews(merged.map((f) => URL.createObjectURL(f)));
 			return merged;
 		});
@@ -125,11 +129,11 @@ export function NewRoomPage() {
 	const mutation = useMutation({
 		mutationFn: (dto: CreateRoomDto) => roomService.createRoom(dto),
 		onSuccess: () => {
-			toast.success("¡Habitación creada exitosamente!");
+			toast.success(t("newRoom.successToast"));
 			navigate("/");
 		},
 		onError: (error: Error) => {
-			toast.error("Error al crear la habitación. " + error.message);
+			toast.error(t("newRoom.errorToast", { message: error.message }));
 		},
 	});
 
@@ -169,15 +173,12 @@ export function NewRoomPage() {
 					>
 						<path d="m15 18-6-6 6-6" />
 					</svg>
-					Volver al inicio
+					{t("newRoom.backButton")}
 				</button>
 				<h1 className="text-2xl font-semibold text-slate-900">
-					Crear nueva habitación
+					{t("newRoom.title")}
 				</h1>
-				<p className="mt-1 text-sm text-slate-500">
-					Completa los datos a continuación para publicar tu habitación para
-					estudiantes.
-				</p>
+				<p className="mt-1 text-sm text-slate-500">{t("newRoom.subtitle")}</p>
 			</div>
 
 			<form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
@@ -187,7 +188,7 @@ export function NewRoomPage() {
 				{/* Section: Room Details */}
 				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-						Detalles de la habitación
+						{t("newRoom.detailsSection")}
 					</h2>
 
 					{/* Name */}
@@ -196,13 +197,13 @@ export function NewRoomPage() {
 							htmlFor="name"
 							className="block text-sm font-medium text-slate-700"
 						>
-							Nombre de la habitación
+							{t("newRoom.nameLabel")}
 						</label>
 						<input
 							id="name"
 							type="text"
 							autoComplete="off"
-							placeholder="Ej. Habitación individual cerca del campus"
+							placeholder={t("newRoom.namePlaceholder")}
 							{...register("name")}
 							className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 						/>
@@ -217,12 +218,12 @@ export function NewRoomPage() {
 							htmlFor="description"
 							className="block text-sm font-medium text-slate-700"
 						>
-							Descripción
+							{t("newRoom.descriptionLabel")}
 						</label>
 						<textarea
 							id="description"
 							rows={4}
-							placeholder="Describe la habitación, servicios, reglas, lugares cercanos…"
+							placeholder={t("newRoom.descriptionPlaceholder")}
 							{...register("description")}
 							className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 						/>
@@ -237,7 +238,7 @@ export function NewRoomPage() {
 				{/* Section: Pricing & Availability */}
 				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-						Precio y disponibilidad
+						{t("newRoom.pricingSection")}
 					</h2>
 
 					<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -247,7 +248,7 @@ export function NewRoomPage() {
 								htmlFor="price"
 								className="block text-sm font-medium text-slate-700"
 							>
-								Precio mensual (BOB)
+								{t("newRoom.priceLabel")}
 							</label>
 							<div className="relative">
 								<span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-slate-400">
@@ -274,7 +275,7 @@ export function NewRoomPage() {
 								htmlFor="roomStatus"
 								className="block text-sm font-medium text-slate-700"
 							>
-								Estado
+								{t("newRoom.statusLabel")}
 							</label>
 							<select
 								id="roomStatus"
@@ -283,7 +284,7 @@ export function NewRoomPage() {
 							>
 								{ROOM_STATUS_OPTIONS.map((opt) => (
 									<option key={opt.value} value={opt.value}>
-										{opt.label}
+										{t(opt.labelKey)}
 									</option>
 								))}
 							</select>
@@ -299,11 +300,10 @@ export function NewRoomPage() {
 				{/* Section: Location */}
 				<section className="surface-section space-y-5">
 					<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-						Ubicación
+						{t("newRoom.locationSection")}
 					</h2>
 					<p className="text-xs text-slate-500 -mt-2">
-						Haz clic en el mapa para colocar un marcador en la ubicación de la
-						habitación.
+						{t("newRoom.locationHint")}
 					</p>
 
 					<div className="overflow-hidden rounded-xl border border-outline-variant/35">
@@ -330,11 +330,13 @@ export function NewRoomPage() {
 					<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
 						{selectedPosition ? (
 							<p>
-								Ubicación seleccionada: {selectedPosition.lat.toFixed(6)},
-								{selectedPosition.lng.toFixed(6)}
+								{t("newRoom.locationSelected", {
+									lat: selectedPosition.lat.toFixed(6),
+									lng: selectedPosition.lng.toFixed(6),
+								})}
 							</p>
 						) : (
-							<p>No se ha seleccionado ubicación.</p>
+							<p>{t("newRoom.noLocation")}</p>
 						)}
 
 						{selectedPosition && (
@@ -342,16 +344,12 @@ export function NewRoomPage() {
 								type="button"
 								onClick={() => {
 									setSelectedPosition(null);
-									resetField("latitude", {
-										keepDirty: true,
-									});
-									resetField("longitude", {
-										keepDirty: true,
-									});
+									resetField("latitude", { keepDirty: true });
+									resetField("longitude", { keepDirty: true });
 								}}
 								className="text-primary underline underline-offset-2"
 							>
-								Quitar marcador
+								{t("newRoom.removeMarker")}
 							</button>
 						)}
 					</div>
@@ -365,14 +363,14 @@ export function NewRoomPage() {
 				<section className="surface-section space-y-5">
 					<div>
 						<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-							Imágenes
+							{t("newRoom.imagesSection")}
 						</h2>
 						<p className="mt-1 text-xs text-slate-500">
-							Hasta {MAX_IMAGES} imágenes. Opcional.
+							{t("newRoom.imagesLimit", { max: MAX_IMAGES })}
 						</p>
 					</div>
 
-					{/* Drop zone — only shown when under the limit */}
+					{/* Drop zone */}
 					{imageFiles.length < MAX_IMAGES && (
 						<button
 							type="button"
@@ -404,18 +402,19 @@ export function NewRoomPage() {
 								<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
 							</svg>
 							<p className="text-sm font-medium text-slate-700">
-								{isDragging
-									? "Suelta las imágenes aquí"
-									: "Arrastra y suelta imágenes aquí"}
+								{isDragging ? t("newRoom.dropDragging") : t("newRoom.dropIdle")}
 							</p>
 							<p className="mt-1 text-xs text-slate-500">
 								o{" "}
 								<span className="text-primary underline underline-offset-2">
-									haz clic para explorar
+									{t("newRoom.dropClickText")}
 								</span>
 							</p>
 							<p className="mt-2 text-xs text-slate-400">
-								PNG, JPG, WEBP — {imageFiles.length}/{MAX_IMAGES} agregadas
+								{t("newRoom.dropFormats", {
+									count: imageFiles.length,
+									max: MAX_IMAGES,
+								})}
 							</p>
 						</button>
 					)}
@@ -442,13 +441,15 @@ export function NewRoomPage() {
 								>
 									<img
 										src={src}
-										alt={`Vista previa ${index + 1}`}
+										alt={t("newRoom.imagePreviewAlt", { n: index + 1 })}
 										className="h-full w-full object-cover"
 									/>
 									<button
 										type="button"
 										onClick={() => removeImage(index)}
-										aria-label={`Eliminar imagen ${index + 1}`}
+										aria-label={t("newRoom.removeImageAriaLabel", {
+											n: index + 1,
+										})}
 										className="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1 text-white opacity-0 transition group-hover:opacity-100 hover:bg-black/80 focus:opacity-100 focus:outline-none"
 									>
 										<svg
@@ -480,14 +481,16 @@ export function NewRoomPage() {
 						onClick={() => navigate("/")}
 						className="rounded-full bg-surface-container-high px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-surface-container"
 					>
-						Cancelar
+						{t("newRoom.cancelButton")}
 					</button>
 					<button
 						type="submit"
 						disabled={mutation.isPending}
 						className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
 					>
-						{mutation.isPending ? "Creando…" : "Crear habitación"}
+						{mutation.isPending
+							? t("newRoom.submitPending")
+							: t("newRoom.submitButton")}
 					</button>
 				</div>
 			</form>

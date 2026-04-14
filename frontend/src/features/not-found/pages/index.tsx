@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
 export function NotFoundPage() {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	return (
 		<div className="space-y-8">
@@ -9,18 +11,17 @@ export function NotFoundPage() {
 					<h1 className="md:text-[20rem] text-9xl">404</h1>
 					<h1 className="text-7xl font-bold">Oops!</h1>
 					<h1 className="text-3xl font-semibold text-slate-900">
-						Página no encontrada (404)
+						{t("notFound.title")}
 					</h1>
 					<p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-900">
-						Parece que la página que buscas no existe. Regrese al inicio y
-						vuelva a intentar su búsqueda.
+						{t("notFound.message")}
 					</p>
 					<button
 						type="button"
 						onClick={() => navigate("/")}
 						className="shrink-0 rounded-full bg-secondary-fixed px-4 py-2 text-sm font-medium text-on-secondary-fixed transition hover:brightness-95"
 					>
-						Volver al inicio
+						{t("notFound.backButton")}
 					</button>
 				</section>
 			</div>
