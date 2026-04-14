@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.Results;
+using HousingApp.Api.Utils;
 using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
@@ -34,36 +35,7 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
             return BadRequest(result.Error);
         }
 
-        CredentialsDto credentials = new(GenerateToken(result.Value!));
+        CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration));
         return Ok(credentials);
-    }
-
-    private string GenerateToken(UserDto user)
-    {
-        SymmetricSecurityKey signInKey =
-            new(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]!));
-
-        SigningCredentials credentials = new(signInKey, SecurityAlgorithms.HmacSha256);
-
-        List<Claim> claims =
-        [
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email),
-            ..user.Roles.Select(r => new Claim("role", r))
-        ];
-
-        SecurityTokenDescriptor tokenDescriptor = new()
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
-            SigningCredentials = credentials,
-            Audience = configuration["Jwt:Audience"],
-            Issuer = configuration["Jwt:Issuer"]
-        };
-
-        JsonWebTokenHandler tokenHandler = new();
-        string accessToken = tokenHandler.CreateToken(tokenDescriptor);
-
-        return accessToken;
     }
 }
