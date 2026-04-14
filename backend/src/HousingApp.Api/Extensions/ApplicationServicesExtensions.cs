@@ -18,6 +18,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         //Unit of work
         services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
@@ -38,6 +39,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
         services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
         services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
+        services.AddScoped<IGenerateRefreshTokenUseCase, GenerateRefreshTokenUseCase>();
 
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();
