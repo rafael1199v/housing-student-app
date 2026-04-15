@@ -14,7 +14,7 @@ public class RefreshToken
 
     public bool IsValid()
     {
-        return ExpirationOnUtc > DateTime.UtcNow;
+        return ExpirationOnUtc > DateTime.UtcNow || !IsRevoked;
     }
 
     public static RefreshToken Create(string userId)
@@ -26,6 +26,18 @@ public class RefreshToken
             ExpirationOnUtc = DateTime.UtcNow.AddDays(7),
             UserId = userId,
             IsRevoked = false
+        };
+    }
+
+    public RefreshToken Renew()
+    {
+        return new RefreshToken
+        {
+            Id = Id,
+            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+            ExpirationOnUtc = DateTime.UtcNow.AddDays(7),
+            UserId = UserId,
+            IsRevoked = IsRevoked
         };
     }
 }

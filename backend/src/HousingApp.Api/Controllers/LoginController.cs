@@ -5,10 +5,6 @@ using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
 
 namespace HousingApp.Api.Controllers;
 
