@@ -10,7 +10,7 @@ namespace HousingApp.Api.Controllers;
 
 [ApiController]
 [Route("api/login")]
-public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration, IValidator<LoginDto> validator)
+public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration, ILoginWithRefreshTokenUseCase loginWithRefreshTokenUseCase, IValidator<LoginDto> validator)
     : ControllerBase
 {
     [HttpPost]
@@ -35,9 +35,17 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
         return Ok(credentials);
     }
 
-    [HttpPost]
+    [HttpPost("refresh-token")]
     public async Task<IActionResult> LoginWithRefreshToken([FromBody] RefreshTokenDto refreshToken)
     {
-        return Ok();
+        Result<UserDto> result = await loginWithRefreshTokenUseCase.ExecuteAsync(refreshToken);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+
+        CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration), result.Value!.RefreshToken);
+        return Ok(credentials);
     }
 }
