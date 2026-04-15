@@ -67,9 +67,14 @@ export async function apiFetch<T>(
 
 		if (response.status === 204) return undefined as T;
 		return response.json() as Promise<T>;
-	} catch {
-		throw new Error(i18n.t("unknown_error", { ns: "errors" }));
+	} catch (error: unknown) {
+		throw new Error(i18n.t(error.message ?? "unknown_error", { ns: "errors" }));
 	}
+	/*
+	Este es un failsafe tan, pero tan redundante que siento que afectará el
+	rendimiento del frontend, pero es necesario en caso de que exista un error
+	verdaderamente inesperado. Se debe corregir después D:
+	*/
 }
 
 export const api = {
