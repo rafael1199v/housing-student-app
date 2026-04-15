@@ -19,6 +19,8 @@ public class LoginWithRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRe
         }
 
         RefreshToken renewedRefreshToken = refreshToken.Renew();
+        
+        await refreshTokenRepository.UpdateRefreshToken(renewedRefreshToken);
 
         UserDto userDto = new(
             Id: renewedRefreshToken.UserId,
