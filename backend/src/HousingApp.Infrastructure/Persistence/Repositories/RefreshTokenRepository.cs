@@ -20,6 +20,7 @@ public class RefreshTokenRepository(HousingApplicationDbContext context, UserMan
     public async Task<RefreshToken?> FindRefreshToken(string refreshToken)
     {
         RefreshTokenModel? refreshTokenModel = await context.RefreshTokens
+            .AsNoTracking()
             .Include(r => r.User)
             .Where(r => r.Token == refreshToken)
             .FirstOrDefaultAsync();
@@ -43,6 +44,19 @@ public class RefreshTokenRepository(HousingApplicationDbContext context, UserMan
                 roles: roles
             )
         };
+    }
+
+    public async Task UpdateRefreshToken(RefreshToken refreshToken)
+    {
+        RefreshTokenModel? refreshTokenModel = await context.RefreshTokens.FindAsync(refreshToken.Id);
+
+        if (refreshTokenModel == null)
+            return;
+        
+        refreshTokenModel.Token = refreshToken.Token;
+        refreshTokenModel.ExpirationOnUtc = refreshToken.ExpirationOnUtc;
+        
+        await context.SaveChangesAsync();
     }
 
     private static RefreshTokenModel ToModel(RefreshToken refreshToken)
