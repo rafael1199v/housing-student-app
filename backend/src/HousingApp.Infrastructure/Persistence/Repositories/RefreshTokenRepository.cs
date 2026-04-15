@@ -2,10 +2,12 @@ using HousingApp.Application.Repositories;
 using HousingApp.Domain.Entities;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories;
 
-public class RefreshTokenRepository(HousingApplicationDbContext context) : IRefreshTokenRepository
+public class RefreshTokenRepository(HousingApplicationDbContext context, UserManager<IdentityUser> userManager) : IRefreshTokenRepository
 {
     public async Task SaveToken(RefreshToken token)
     {
@@ -13,6 +15,34 @@ public class RefreshTokenRepository(HousingApplicationDbContext context) : IRefr
 
         await context.RefreshTokens.AddAsync(refreshTokenModel);
         await context.SaveChangesAsync();
+    }
+
+    public async Task<RefreshToken?> FindRefreshToken(string refreshToken)
+    {
+        RefreshTokenModel? refreshTokenModel = await context.RefreshTokens
+            .Include(r => r.User)
+            .Where(r => r.Token == refreshToken)
+            .FirstOrDefaultAsync();
+
+        if (refreshTokenModel == null)
+            return null;
+
+        List<string> roles = [.. await userManager.GetRolesAsync(refreshTokenModel.User)];
+
+        return new RefreshToken
+        {
+            Id = refreshTokenModel.Id,
+            Token = refreshTokenModel.Token,
+            ExpirationOnUtc = refreshTokenModel.ExpirationOnUtc,
+            UserId = refreshTokenModel.UserId,
+            IsRevoked = refreshTokenModel.IsRevoked,
+            User = User.CreateUser(
+                uuid: refreshTokenModel.UserId,
+                email: refreshTokenModel.User.Email!,
+                password: refreshTokenModel.User.PasswordHash!,
+                roles: roles
+            )
+        };
     }
 
     private static RefreshTokenModel ToModel(RefreshToken refreshToken)
