@@ -7,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class LoginWithRefreshToken(IRefreshTokenRepository refreshTokenRepository) : ILoginWithRefreshToken
+public class LoginWithRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRepository) : ILoginWithRefreshTokenUseCase
 {
     public async Task<Result<UserDto>> ExecuteAsync(RefreshTokenDto refreshTokenDto)
     {

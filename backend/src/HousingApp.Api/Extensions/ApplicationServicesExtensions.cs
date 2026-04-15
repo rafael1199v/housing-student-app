@@ -40,6 +40,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
         services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
         services.AddScoped<IGenerateRefreshTokenUseCase, GenerateRefreshTokenUseCase>();
+        services.AddScoped<ILoginWithRefreshTokenUseCase, LoginWithRefreshTokenUseCase>();
 
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();
