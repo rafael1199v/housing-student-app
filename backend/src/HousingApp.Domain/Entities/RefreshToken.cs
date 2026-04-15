@@ -37,7 +37,8 @@ public class RefreshToken
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
             ExpirationOnUtc = DateTime.UtcNow.AddDays(7),
             UserId = UserId,
-            IsRevoked = IsRevoked
+            IsRevoked = IsRevoked,
+            User = User
         };
     }
 }

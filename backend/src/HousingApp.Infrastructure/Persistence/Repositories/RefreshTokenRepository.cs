@@ -52,10 +52,10 @@ public class RefreshTokenRepository(HousingApplicationDbContext context, UserMan
 
         if (refreshTokenModel == null)
             return;
-        
+
         refreshTokenModel.Token = refreshToken.Token;
         refreshTokenModel.ExpirationOnUtc = refreshToken.ExpirationOnUtc;
-        
+
         await context.SaveChangesAsync();
     }
 
