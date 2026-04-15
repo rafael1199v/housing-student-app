@@ -33,8 +33,8 @@ public class LoginUseCaseTests
             "password-hash",
             ["student"]
         );
-        
-        string refreshTokenReturned = "refresh-token-returned";
+
+        const string refreshTokenReturned = "refresh-token-returned";
 
         _userRepository.FindUserByEmailAsync(loginDto.Email).Returns(returnedUser);
         _userRepository.CheckPassword(loginDto.Email, loginDto.Password).Returns(true);

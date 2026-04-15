@@ -9,7 +9,7 @@ public class RefreshToken
     public DateTime ExpirationOnUtc { get; init; }
     public string UserId { get; init; } = string.Empty;
     public bool IsRevoked { get; init; }
-    
+
     public bool IsValid()
     {
         return ExpirationOnUtc > DateTime.UtcNow;

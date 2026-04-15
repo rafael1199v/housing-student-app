@@ -35,7 +35,7 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
             return BadRequest(result.Error);
         }
 
-        CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration));
+        CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration), result.Value!.RefreshToken);
         return Ok(credentials);
     }
 }

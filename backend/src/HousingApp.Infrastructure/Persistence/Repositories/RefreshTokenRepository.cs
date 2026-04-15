@@ -10,7 +10,7 @@ public class RefreshTokenRepository(HousingApplicationDbContext context) : IRefr
     public async Task SaveToken(RefreshToken token)
     {
         RefreshTokenModel refreshTokenModel = ToModel(token);
-        
+
         await context.RefreshTokens.AddAsync(refreshTokenModel);
         await context.SaveChangesAsync();
     }

@@ -15,7 +15,7 @@ public class GenerateRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRep
 
         RefreshToken refreshToken = RefreshToken.Create(userId: userId);
         await refreshTokenRepository.SaveToken(refreshToken);
-        
+
         return Result<string>.Success(refreshToken.Token);
     }
 }
