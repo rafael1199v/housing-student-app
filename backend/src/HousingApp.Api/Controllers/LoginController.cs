@@ -38,4 +38,10 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
         CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration), result.Value!.RefreshToken);
         return Ok(credentials);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> LoginWithRefreshToken([FromBody] RefreshTokenDto refreshToken)
+    {
+        return Ok();
+    }
 }
