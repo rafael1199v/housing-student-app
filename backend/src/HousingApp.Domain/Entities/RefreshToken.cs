@@ -10,6 +10,8 @@ public class RefreshToken
     public string UserId { get; init; } = string.Empty;
     public bool IsRevoked { get; init; }
 
+    public User? User { get; init; }
+
     public bool IsValid()
     {
         return ExpirationOnUtc > DateTime.UtcNow;
