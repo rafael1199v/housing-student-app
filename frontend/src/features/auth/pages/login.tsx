@@ -5,8 +5,6 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
-import viteLogo from "/vite.svg";
-import reactLogo from "../../../assets/react.svg";
 import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
 import authService from "../../../services/authService";
@@ -31,13 +29,14 @@ function Login() {
 	const { register, handleSubmit, formState } = useForm<IFormInput>({
 		resolver: zodResolver(loginSchema),
 	});
-	const { setAccessToken } = useAuthActions();
+	const { setAccessToken, setRefreshToken } = useAuthActions();
 	const navigate = useNavigate();
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: authService.login,
 		onSuccess: (response) => {
 			setAccessToken(response.accessToken);
+			setRefreshToken(response.refreshToken);
 			toast.success("Bienvenido");
 			navigate("/");
 		},
