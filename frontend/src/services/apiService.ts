@@ -1,13 +1,14 @@
 import { toast } from "sonner";
+import { API_BASE_URL } from "../config/constants";
 import { useAuthStore } from "../features/auth/store/authStore";
 import { getErrorMessage } from "../locales/errorMessages";
 import { router } from "../routers/routes";
+import { refreshAccessToken } from "./refreshToken";
 export interface RequestOptions extends RequestInit {
 	requiresAuth?: boolean;
 	baseURL?: string;
+	isRetry?: boolean;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function getToken(): string {
 	return useAuthStore.getState().accessToken;
@@ -19,6 +20,7 @@ export async function apiFetch<T>(
 		requiresAuth = true,
 		baseURL = API_BASE_URL,
 		headers,
+		isRetry = false,
 		...rest
 	}: RequestOptions = {},
 ): Promise<T> {
@@ -27,44 +29,50 @@ export async function apiFetch<T>(
 	const contentTypeHeaders: HeadersInit =
 		rest.body instanceof FormData ? {} : { "Content-Type": "application/json" };
 
-	try {
-		const response = await fetch(`${baseURL}${endpoint}`, {
-			headers: {
-				...contentTypeHeaders,
-				...authHeaders,
-				...headers,
-			},
-			...rest,
-		});
+	const response = await fetch(`${baseURL}${endpoint}`, {
+		headers: {
+			...contentTypeHeaders,
+			...authHeaders,
+			...headers,
+		},
+		...rest,
+	});
 
-		if (!response.ok) {
-			if (response.status === 401) {
-				useAuthStore.getState().actions.clearAll();
-				router.navigate("/login");
-				toast.error("Sesión expirada. Ingresa tus credenciales nuevamente");
-				throw new Error("Sesión expirada");
-			}
+	if (response.status === 204) return undefined as T;
 
-			if (response.status === 403) {
-				router.navigate("/not-found");
-				throw new Error("forbidden.resource");
-			}
+	if (response.ok) return response.json() as Promise<T>;
 
-			const error = await response
-				.json()
-				.catch(() => ({ message: response.statusText }));
-
-			const code: string = error.code ?? error[0]?.code;
-			throw new Error(
-				getErrorMessage(code, error.message ?? error[0]?.errorMessage),
-			);
+	if (response.status === 401 && requiresAuth && !isRetry) {
+		if (!(await refreshAccessToken())) {
+			useAuthStore.getState().actions.clearAll();
+			router.navigate("/login");
+			toast.error("Sesión expirada. Ingresa tus credenciales nuevamente");
+			throw new Error("Sesión expirada");
 		}
 
-		if (response.status === 204) return undefined as T;
-		return response.json() as Promise<T>;
-	} catch {
-		throw new Error(getErrorMessage("unknown.error"));
+		return apiFetch<T>(endpoint, {
+			requiresAuth: requiresAuth,
+			baseURL: baseURL,
+			headers: headers,
+			isRetry: true,
+			...rest,
+		});
 	}
+
+	if (response.status === 403) {
+		router.navigate("/not-found");
+		throw new Error("forbidden.resource");
+	}
+
+	const error = await response
+		.json()
+		.catch(() => ({ message: response.statusText }));
+
+	const code: string = error.code ?? error[0]?.code;
+
+	throw new Error(
+		getErrorMessage(code, error.message ?? error[0]?.errorMessage),
+	);
 }
 
 export const api = {
