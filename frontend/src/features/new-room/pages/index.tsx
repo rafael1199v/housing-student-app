@@ -312,7 +312,9 @@ export function NewRoomPage() {
 							style={{ height: "360px", width: "100%" }}
 							defaultCenter={DEFAULT_MAP_CENTER}
 							defaultZoom={13}
-							gestureHandling="greedy"
+							gestureHandling="cooperative"
+							disableDefaultUI={true}
+							zoomControl={true}
 							onClick={handleMapClick}
 						>
 							{selectedPosition && (
