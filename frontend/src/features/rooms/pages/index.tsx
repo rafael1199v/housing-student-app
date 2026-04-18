@@ -6,13 +6,14 @@ import {
 	Pin,
 } from "@vis.gl/react-google-maps";
 import { type FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { z } from "zod";
+import i18n from "../../../i18n";
 import type { RoomSearchParams } from "../../../services/roomService";
 import roomService from "../../../services/roomService";
 import { CardSkeleton } from "../../home/components/skeleton";
 import type { RoomData } from "../../home/types/roomDataDto";
-import { Footer } from "../../shared/components/footer";
 import { RoomCard } from "../../shared/components/RoomCard";
 
 type OrderBy = "price-asc" | "price-desc" | "name-asc" | "name-desc";
@@ -21,26 +22,28 @@ const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
 
 const searchFiltersSchema = z
 	.object({
-		name: z.string().max(100, "El nombre no puede superar los 100 caracteres"),
+		name: z
+			.string()
+			.max(100, i18n.t("search.nameTooLong", { ns: "validation" })),
 		minPrice: z
 			.string()
 			.refine(
 				(v) => v === "" || Number(v) >= 0,
-				"El precio mínimo debe ser 0 o mayor",
+				i18n.t("search.minPriceTooLow", { ns: "validation" }),
 			)
 			.refine(
 				(v) => v === "" || Number(v) <= 99999,
-				"El precio no puede superar 99,999",
+				i18n.t("search.priceTooHigh", { ns: "validation" }),
 			),
 		maxPrice: z
 			.string()
 			.refine(
 				(v) => v === "" || Number(v) >= 0,
-				"El precio máximo debe ser 0 o mayor",
+				i18n.t("search.maxPriceTooLow", { ns: "validation" }),
 			)
 			.refine(
 				(v) => v === "" || Number(v) <= 99999,
-				"El precio no puede superar 99,999",
+				i18n.t("search.priceTooHigh", { ns: "validation" }),
 			),
 	})
 	.refine(
@@ -51,7 +54,7 @@ const searchFiltersSchema = z
 			return true;
 		},
 		{
-			message: "El precio máximo debe ser mayor o igual al precio mínimo",
+			message: i18n.t("search.priceRangeInvalid", { ns: "validation" }),
 			path: ["maxPrice"],
 		},
 	);
@@ -77,6 +80,7 @@ function sortRooms(rooms: RoomData[], orderBy: OrderBy): RoomData[] {
 }
 
 export function RoomsPage() {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -179,11 +183,9 @@ export function RoomsPage() {
 		<div className="space-y-8">
 			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">
-					Buscar habitaciones
+					{t("rooms.title")}
 				</h1>
-				<p className="mt-2 text-sm text-slate-600">
-					Filtra por nombre, rango de precio y preferencia de orden.
-				</p>
+				<p className="mt-2 text-sm text-slate-600">{t("rooms.subtitle")}</p>
 
 				<form className="mt-6 space-y-4" onSubmit={handleSubmit}>
 					<div className="space-y-1">
@@ -192,13 +194,13 @@ export function RoomsPage() {
 								type="search"
 								value={searchText}
 								onChange={(event) => setSearchText(event.target.value)}
-								placeholder="Buscar habitación por nombre"
+								placeholder={t("rooms.searchPlaceholder")}
 								className="w-full bg-transparent text-sm text-slate-700 outline-none"
 							/>
 							<button
 								type="submit"
 								className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
-								aria-label="Buscar habitaciones"
+								aria-label={t("rooms.searchAriaLabel")}
 							>
 								<svg
 									className="h-5 w-5"
@@ -221,7 +223,9 @@ export function RoomsPage() {
 					</div>
 					<div className="grid gap-2 sm:grid-cols-1">
 						<section className="hidden surface-section space-y-2">
-							<p className="text-sm font-medium text-slate-700">Ubicación</p>
+							<p className="text-sm font-medium text-slate-700">
+								{t("rooms.locationLabel")}
+							</p>
 							<div className="overflow-hidden rounded-xl border border-outline-variant/35">
 								<GoogleMap
 									mapId={import.meta.env.VITE_GOOGLE_MAPS_ID}
@@ -246,11 +250,13 @@ export function RoomsPage() {
 							<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
 								{selectedPosition ? (
 									<p>
-										Ubicación seleccionada: {selectedPosition.lat.toFixed(6)},
-										{selectedPosition.lng.toFixed(6)}
+										{t("rooms.locationSelected", {
+											lat: selectedPosition.lat.toFixed(6),
+											lng: selectedPosition.lng.toFixed(6),
+										})}
 									</p>
 								) : (
-									<p>No se ha seleccionado ubicación.</p>
+									<p>{t("rooms.noLocation")}</p>
 								)}
 
 								{selectedPosition && (
@@ -261,7 +267,7 @@ export function RoomsPage() {
 										}}
 										className="text-primary underline underline-offset-2"
 									>
-										Quitar marcador
+										{t("rooms.removeMarker")}
 									</button>
 								)}
 							</div>
@@ -269,7 +275,7 @@ export function RoomsPage() {
 						<div className="flex flex-col justify-around">
 							<div className="space-y-2">
 								<p className="text-sm font-medium text-slate-700">
-									Rango de precio
+									{t("rooms.priceRange")}
 								</p>
 								<div className="grid gap-2 sm:grid-cols-2">
 									<div className="space-y-1">
@@ -279,7 +285,7 @@ export function RoomsPage() {
 											min={0}
 											value={minPrice}
 											onChange={(event) => setMinPrice(event.target.value)}
-											placeholder="Precio mínimo"
+											placeholder={t("rooms.minPricePlaceholder")}
 											className="field-filled w-full"
 										/>
 										{errors.minPrice && (
@@ -293,7 +299,7 @@ export function RoomsPage() {
 											min={0}
 											value={maxPrice}
 											onChange={(event) => setMaxPrice(event.target.value)}
-											placeholder="Precio máximo"
+											placeholder={t("rooms.maxPricePlaceholder")}
 											className="field-filled w-full"
 										/>
 										{errors.maxPrice && (
@@ -305,7 +311,7 @@ export function RoomsPage() {
 
 							<div className="space-y-2">
 								<p className="text-sm font-medium text-slate-700">
-									Ordenar por
+									{t("rooms.sortBy")}
 								</p>
 								<select
 									value={orderBy}
@@ -314,29 +320,31 @@ export function RoomsPage() {
 									}
 									className="field-filled w-full"
 								>
-									<option value="price-asc">Precio (ascendente)</option>
-									<option value="price-desc">Precio (descendente)</option>
-									<option value="name-asc">A-Z</option>
-									<option value="name-desc">Z-A</option>
+									<option value="price-asc">{t("rooms.sortPriceAsc")}</option>
+									<option value="price-desc">{t("rooms.sortPriceDesc")}</option>
+									<option value="name-asc">{t("rooms.sortNameAsc")}</option>
+									<option value="name-desc">{t("rooms.sortNameDesc")}</option>
 								</select>
 							</div>
 						</div>
 					</div>
 
 					<button type="submit" className="btn-primary w-full">
-						Buscar
+						{t("rooms.searchButton")}
 					</button>
 				</form>
 			</section>
 
 			<section className="space-y-4">
 				<div>
-					<h2 className="text-xl font-semibold text-slate-900">Resultados</h2>
+					<h2 className="text-xl font-semibold text-slate-900">
+						{t("rooms.resultsTitle")}
+					</h2>
 					{!isLoading && !isError && (
 						<p className="text-sm text-slate-500">
 							{sortedRooms.length === 0
-								? "No se encontraron habitaciones."
-								: `${sortedRooms.length} ${sortedRooms.length !== 1 ? "habitaciones encontradas" : "habitación encontrada"}.`}
+								? t("rooms.noResults")
+								: t("rooms.resultsCount", { count: sortedRooms.length })}
 						</p>
 					)}
 				</div>
@@ -345,13 +353,11 @@ export function RoomsPage() {
 					<CardSkeleton quantity={6} />
 				) : isError ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-						No se pudieron cargar las habitaciones. Por favor, intenta de nuevo
-						más tarde.
+						{t("rooms.loadError")}
 					</div>
 				) : sortedRooms.length === 0 ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
-						No hay habitaciones que coincidan con los filtros actuales. Intenta
-						ajustar tu búsqueda.
+						{t("rooms.noMatch")}
 					</div>
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -372,17 +378,11 @@ export function RoomsPage() {
 			{!isLoading && !isError && rooms.length >= 20 && (
 				<div className="rounded-xl bg-surface-container-low p-5 text-sm text-slate-600 shadow-sm">
 					<p className="font-medium text-slate-800">
-						Mostrando hasta 20 resultados.
+						{t("rooms.maxResultsTitle")}
 					</p>
-					<p className="mt-1">
-						¿No encontraste lo que buscabas? Intenta acotar tu búsqueda con un
-						nombre más específico o un rango de precio más ajustado para obtener
-						resultados más relevantes.
-					</p>
+					<p className="mt-1">{t("rooms.maxResultsHint")}</p>
 				</div>
 			)}
-
-			<Footer />
 		</div>
 	);
 }

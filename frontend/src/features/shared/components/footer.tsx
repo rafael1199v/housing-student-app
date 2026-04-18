@@ -1,39 +1,43 @@
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useAccessToken, useAuthActions } from "../../auth/store/authStore";
 import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
 
 export function Footer() {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { clearAll } = useAuthActions();
 	const token = useAccessToken();
 	const role = getRoleFromAccessToken(token);
 	const handleLogout = () => {
 		clearAll();
-		toast.success("Sesión cerrada");
+		toast.success(t("nav.loggedOut"));
 		navigate("/login");
 	};
 	return (
-		<footer className="rounded-2xl bg-surface-container-low p-6 shadow-sm">
+		<footer className="w-full bg-surface-container-low p-6 shadow-sm">
 			<div className="mt-4 grid gap-6 md:grid-cols-2">
-				<div>
+				<div className="items-center flex flex-nowrap flex-col">
 					<p className="text-sm font-medium text-slate-700">
-						Información de contacto
+						{t("footer.contactInfo")}
 					</p>
 					<p className="mt-2 text-sm text-slate-600">
-						Correo: contact@studenthousing.app
+						{t("footer.contactEmail")}
 					</p>
-					<p className="text-sm text-slate-600">Teléfono: +591 70000000</p>
+					<p className="text-sm text-slate-600">{t("footer.contactPhone")}</p>
 				</div>
-				<div>
-					<p className="text-sm font-medium text-slate-700">Páginas</p>
+				<div className="items-center flex flex-nowrap flex-col">
+					<p className="text-sm font-medium text-slate-700">
+						{t("footer.pages")}
+					</p>
 					<div className="mt-2 flex flex-wrap gap-2">
 						<button
 							type="button"
 							onClick={() => navigate("/")}
 							className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
 						>
-							Inicio
+							{t("footer.home")}
 						</button>
 						{role === "Student" ? (
 							<>
@@ -42,14 +46,14 @@ export function Footer() {
 									onClick={() => navigate("/rooms")}
 									className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
 								>
-									Habitaciones
+									{t("nav.rooms")}
 								</button>
 								<button
 									type="button"
 									onClick={() => navigate("/bookings")}
 									className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
 								>
-									Reservas
+									{t("nav.bookings")}
 								</button>
 							</>
 						) : (
@@ -58,7 +62,7 @@ export function Footer() {
 								onClick={() => navigate("/owner/rooms/new")}
 								className="rounded-full bg-surface-container-high px-3 py-1.5 text-sm text-slate-700 transition hover:bg-surface-container"
 							>
-								Crear habitación
+								{t("nav.createRoom")}
 							</button>
 						)}
 						<button
@@ -66,7 +70,7 @@ export function Footer() {
 							onClick={handleLogout}
 							className="rounded-full bg-secondary-fixed px-3 py-1.5 text-sm text-on-secondary-fixed transition hover:brightness-95"
 						>
-							Cerrar sesión
+							{t("nav.logout")}
 						</button>
 					</div>
 				</div>

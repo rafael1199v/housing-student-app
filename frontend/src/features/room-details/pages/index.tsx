@@ -5,15 +5,16 @@ import {
 	Pin,
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
 import { RoomStatusEnum } from "../../../global/enum/room-status";
 import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
-import { Footer } from "../../shared/components/footer";
 
 export function RoomDetails() {
+	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const queryClient = useQueryClient();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -48,31 +49,31 @@ export function RoomDetails() {
 	const bookingMutation = useMutation({
 		mutationFn: () => bookingService.createBooking(String(room!.id)),
 		onSuccess: () => {
-			toast.success("Reserva realizada con éxito.");
+			toast.success(t("roomDetails.bookSuccess"));
 			setBookRequestSent(1);
 			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
 		onError: (error: Error) => {
-			toast.error("Error al realizar la reserva. " + error.message);
+			toast.error(t("roomDetails.bookError", { message: error.message }));
 		},
 	});
 
 	const bookingDeletion = useMutation({
 		mutationFn: () => bookingService.deleteBooking(String(room!.id)),
 		onSuccess: () => {
-			toast.success("Reserva eliminada con éxito.");
+			toast.success(t("roomDetails.deleteSuccess"));
 			setBookRequestSent(0);
 			queryClient.invalidateQueries({ queryKey: ["user-booking", id] });
 		},
 		onError: (error: Error) => {
-			toast.error("Error al eliminar la reserva. " + error.message);
+			toast.error(t("roomDetails.deleteError", { message: error.message }));
 		},
 	});
 
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center py-24 text-slate-500 text-sm">
-				Cargando habitación...
+				{t("roomDetails.loading")}
 			</div>
 		);
 	}
@@ -80,7 +81,7 @@ export function RoomDetails() {
 	if (isError || !room) {
 		return (
 			<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-				No se pudo cargar la habitación. Por favor, intenta de nuevo más tarde.
+				{t("roomDetails.loadError")}
 			</div>
 		);
 	}
@@ -117,7 +118,7 @@ export function RoomDetails() {
 						/>
 					) : (
 						<div className="w-full h-96 flex items-center justify-center text-sm text-slate-400">
-							Sin imagen disponible
+							{t("roomDetails.noImage")}
 						</div>
 					)}
 
@@ -126,7 +127,7 @@ export function RoomDetails() {
 							<button
 								onClick={prevImage}
 								className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
-								aria-label="Imagen anterior"
+								aria-label={t("roomDetails.prevImage")}
 							>
 								<svg
 									className="w-6 h-6"
@@ -146,7 +147,7 @@ export function RoomDetails() {
 							<button
 								onClick={nextImage}
 								className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-2 text-slate-800 backdrop-blur-sm transition hover:bg-surface-container-lowest"
-								aria-label="Siguiente imagen"
+								aria-label={t("roomDetails.nextImage")}
 							>
 								<svg
 									className="w-6 h-6"
@@ -173,7 +174,7 @@ export function RoomDetails() {
 												? "w-7 bg-surface-container-lowest"
 												: "bg-surface-container-lowest/50 hover:bg-surface-container-lowest/80"
 										}`}
-										aria-label={`Ver imagen ${index + 1}`}
+										aria-label={t("roomDetails.viewImage", { n: index + 1 })}
 									/>
 								))}
 							</div>
@@ -185,13 +186,14 @@ export function RoomDetails() {
 					<div className="space-y-3">
 						<h1 className="text-4xl font-bold text-slate-900">{room.name}</h1>
 						<div className="inline-block rounded-full bg-primary px-4 py-2 text-lg font-semibold text-on-primary">
-							{formattedPrice}/mes
+							{formattedPrice}
+							{t("roomDetails.perMonth")}
 						</div>
 					</div>
 
 					<div className="space-y-2">
 						<h2 className="text-lg font-semibold text-slate-900">
-							Descripción
+							{t("roomDetails.descriptionTitle")}
 						</h2>
 						<p className="text-slate-600 leading-relaxed">{room.description}</p>
 					</div>
@@ -225,7 +227,7 @@ export function RoomDetails() {
 							/>
 							<div>
 								<p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-									Dueño de la propiedad
+									{t("roomDetails.ownerTitle")}
 								</p>
 								<p className="text-lg font-semibold text-slate-900">
 									{room.firstName} {room.lastName}
@@ -243,7 +245,7 @@ export function RoomDetails() {
 								disabled={true}
 								className="flex-1 rounded-full bg-primary py-3 font-semibold text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								Reserva no disponible, prueba a buscar otra habitación.
+								{t("roomDetails.notAvailable")}
 							</button>
 						) : bookRequestSent || userAlreadyBookedQuery.data ? (
 							<button
@@ -251,7 +253,7 @@ export function RoomDetails() {
 								className="flex-1 rounded-full bg-secondary-fixed py-3 font-semibold text-red-800 transition hover:bg-red-800 hover:text-white"
 								onClick={() => bookingDeletion.mutate()}
 							>
-								Eliminar solicitud
+								{t("roomDetails.deleteRequest")}
 							</button>
 						) : (
 							<button
@@ -263,14 +265,13 @@ export function RoomDetails() {
 								onClick={() => bookingMutation.mutate()}
 							>
 								{bookingMutation.isPending
-									? "Reservando..."
-									: "Reservar habitación"}
+									? t("roomDetails.bookPending")
+									: t("roomDetails.bookButton")}
 							</button>
 						)}
 					</div>
 				</div>
 			</section>
-			<Footer />
 		</div>
 	);
 }
