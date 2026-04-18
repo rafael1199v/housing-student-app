@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { API_BASE_URL } from "../config/constants";
 import { useAuthStore } from "../features/auth/store/authStore";
-import { getErrorMessage } from "../locales/errorMessages";
+import i18n from "../i18n";
 import { router } from "../routers/routes";
 import { refreshAccessToken } from "./refreshToken";
 export interface RequestOptions extends RequestInit {
@@ -12,6 +12,15 @@ export interface RequestOptions extends RequestInit {
 
 function getToken(): string {
 	return useAuthStore.getState().accessToken;
+}
+
+function translateError(code: string | undefined): string {
+	if (!code) return i18n.t("errors:fallback", { ns: "errors" });
+	const key = code.replace(/\./g, "_");
+	return i18n.t(key, {
+		ns: "errors",
+		defaultValue: i18n.t("errors:fallback", { ns: "errors" }),
+	});
 }
 
 export async function apiFetch<T>(
@@ -46,8 +55,8 @@ export async function apiFetch<T>(
 		if (!(await refreshAccessToken())) {
 			useAuthStore.getState().actions.clearAll();
 			router.navigate("/login");
-			toast.error("Sesión expirada. Ingresa tus credenciales nuevamente");
-			throw new Error("Sesión expirada");
+			toast.error(i18n.t("auth.login.sessionExpired"));
+			throw new Error(i18n.t("auth.login.sessionExpired"));
 		}
 
 		return apiFetch<T>(endpoint, {

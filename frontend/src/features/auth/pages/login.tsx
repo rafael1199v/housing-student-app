@@ -2,11 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
+import i18n from "../../../i18n";
 import authService from "../../../services/authService";
 import { useAuthActions } from "../store/authStore";
 
@@ -14,17 +16,18 @@ const loginSchema = z.object({
 	email: z
 		.string()
 		.trim()
-		.min(1, "El email es requerido")
-		.email("Por favor ingresa un email válido"),
+		.min(1, i18n.t("email.required", { ns: "validation" }))
+		.email(i18n.t("email.invalid", { ns: "validation" })),
 	password: z
 		.string()
-		.min(1, "La contraseña es requerida")
-		.min(8, "La contraseña debe tener al menos 8 caracteres"),
+		.min(1, i18n.t("password.required", { ns: "validation" }))
+		.min(8, i18n.t("password.tooShort", { ns: "validation" })),
 });
 
 type IFormInput = z.infer<typeof loginSchema>;
 
 function Login() {
+	const { t } = useTranslation();
 	const [showPassword, setShowPassword] = useState(false);
 	const { register, handleSubmit, formState } = useForm<IFormInput>({
 		resolver: zodResolver(loginSchema),
@@ -37,7 +40,7 @@ function Login() {
 		onSuccess: (response) => {
 			setAccessToken(response.accessToken);
 			setRefreshToken(response.refreshToken);
-			toast.success("Bienvenido");
+			toast.success(t("auth.login.successToast"));
 			navigate("/");
 		},
 		onError: (error: Error) => {
@@ -57,9 +60,9 @@ function Login() {
 					{/* Header */}
 					<div className="mb-8">
 						<h1 className="text-3xl font-semibold text-slate-900 mb-2">
-							Bienvenido
+							{t("auth.login.title")}
 						</h1>
-						<p className="text-slate-500 text-sm">Inicia sesión en tu cuenta</p>
+						<p className="text-slate-500 text-sm">{t("auth.login.subtitle")}</p>
 					</div>
 
 					{/* Form */}
@@ -67,13 +70,13 @@ function Login() {
 						{/* Email Input */}
 						<div>
 							<label className="block text-sm font-medium text-slate-700 mb-2">
-								Correo electrónico
+								{t("auth.login.emailLabel")}
 							</label>
 							<input
 								className="field-filled w-full px-4 py-2.5"
 								type="email"
-								placeholder="tu@email.com"
-								{...register("email", { required: "El email es requerido" })}
+								placeholder={t("auth.login.emailPlaceholder")}
+								{...register("email")}
 							/>
 							{formState.errors.email && (
 								<p className="text-red-500 text-xs mt-1">
@@ -85,7 +88,7 @@ function Login() {
 						{/* Password Input */}
 						<div>
 							<label className="block text-sm font-medium text-slate-700 mb-2">
-								Contraseña
+								{t("auth.login.passwordLabel")}
 							</label>
 							<div className="relative">
 								<input
@@ -101,7 +104,9 @@ function Login() {
 									}
 									className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 hover:text-slate-800"
 									aria-label={
-										showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+										showPassword
+											? t("auth.login.hidePassword")
+											: t("auth.login.showPassword")
 									}
 								>
 									{showPassword ? (
@@ -124,7 +129,9 @@ function Login() {
 							type="submit"
 							disabled={isPending}
 						>
-							{isPending ? "Iniciando..." : "Iniciar sesión"}
+							{isPending
+								? t("auth.login.submitPending")
+								: t("auth.login.submit")}
 						</button>
 					</form>
 
@@ -132,7 +139,7 @@ function Login() {
 					<div className="my-6 flex items-center">
 						<div className="flex-1 border-t border-outline-variant/15"></div>
 						<span className="px-3 text-xs text-slate-500">
-							¿No tienes cuenta?
+							{t("auth.login.noAccount")}
 						</span>
 						<div className="flex-1 border-t border-outline-variant/15"></div>
 					</div>
@@ -142,7 +149,7 @@ function Login() {
 						href="/register"
 						className="block w-full rounded-full bg-secondary-fixed px-4 py-2.5 text-center font-medium text-on-secondary-fixed transition hover:brightness-95"
 					>
-						Crea una cuenta
+						{t("auth.login.createAccount")}
 					</a>
 				</div>
 			</div>
