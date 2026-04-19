@@ -7,6 +7,7 @@ import {
 } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { Footer } from "../features/shared/components/footer";
+import { LanguageSelector } from "../features/shared/components/LanguageSelector";
 import { RoleEnum } from "../global/enum/role";
 
 export function MainLayout() {
@@ -75,6 +76,7 @@ export function MainLayout() {
 								{t("nav.createRoom")}
 							</button>
 						)}
+						<LanguageSelector />
 						<button
 							type="button"
 							onClick={handleLogout}
