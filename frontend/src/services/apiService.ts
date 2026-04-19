@@ -70,7 +70,7 @@ export async function apiFetch<T>(
 
 	if (response.status === 403) {
 		router.navigate("/not-found");
-		throw new Error(translateError("forbidden.resource"));
+		throw new Error("forbidden.resource");
 	}
 
 	const error = await response
@@ -79,7 +79,9 @@ export async function apiFetch<T>(
 
 	const code: string = error.code ?? error[0]?.code;
 
-	throw new Error(translateError(code));
+	throw new Error(
+		getErrorMessage(code, error.message ?? error[0]?.errorMessage),
+	);
 }
 
 export const api = {
