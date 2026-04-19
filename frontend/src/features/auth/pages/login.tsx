@@ -32,13 +32,14 @@ function Login() {
 	const { register, handleSubmit, formState } = useForm<IFormInput>({
 		resolver: zodResolver(loginSchema),
 	});
-	const { setAccessToken } = useAuthActions();
+	const { setAccessToken, setRefreshToken } = useAuthActions();
 	const navigate = useNavigate();
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: authService.login,
 		onSuccess: (response) => {
 			setAccessToken(response.accessToken);
+			setRefreshToken(response.refreshToken);
 			toast.success(t("auth.login.successToast"));
 			navigate("/");
 		},

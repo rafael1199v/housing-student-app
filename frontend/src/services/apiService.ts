@@ -1,13 +1,14 @@
 import { toast } from "sonner";
+import { API_BASE_URL } from "../config/constants";
 import { useAuthStore } from "../features/auth/store/authStore";
 import i18n from "../i18n";
 import { router } from "../routers/routes";
+import { refreshAccessToken } from "./refreshToken";
 export interface RequestOptions extends RequestInit {
 	requiresAuth?: boolean;
 	baseURL?: string;
+	isRetry?: boolean;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 function getToken(): string {
 	return useAuthStore.getState().accessToken;
@@ -28,6 +29,7 @@ export async function apiFetch<T>(
 		requiresAuth = true,
 		baseURL = API_BASE_URL,
 		headers,
+		isRetry = false,
 		...rest
 	}: RequestOptions = {},
 ): Promise<T> {
@@ -36,45 +38,50 @@ export async function apiFetch<T>(
 	const contentTypeHeaders: HeadersInit =
 		rest.body instanceof FormData ? {} : { "Content-Type": "application/json" };
 
-	try {
-		const response = await fetch(`${baseURL}${endpoint}`, {
-			headers: {
-				...contentTypeHeaders,
-				...authHeaders,
-				...headers,
-			},
-			...rest,
-		});
+	const response = await fetch(`${baseURL}${endpoint}`, {
+		headers: {
+			...contentTypeHeaders,
+			...authHeaders,
+			...headers,
+		},
+		...rest,
+	});
 
-		if (!response.ok) {
-			if (response.status === 401) {
-				useAuthStore.getState().actions.clearAll();
-				router.navigate("/login");
-				toast.error(i18n.t("auth.login.sessionExpired"));
-				throw new Error(i18n.t("auth.login.sessionExpired"));
-			}
+	if (response.status === 204) return undefined as T;
 
-			if (response.status === 403) {
-				router.navigate("/not-found");
-				throw new Error("forbidden.resource");
-			}
+	if (response.ok) return response.json() as Promise<T>;
 
-			const error = await response.json().catch(() => ({ code: undefined }));
-
-			const code: string = error.code ?? error[0]?.code;
-			throw new Error(translateError(code));
+	if (response.status === 401 && requiresAuth && !isRetry) {
+		if (!(await refreshAccessToken())) {
+			useAuthStore.getState().actions.clearAll();
+			router.navigate("/login");
+			toast.error(i18n.t("auth.login.sessionExpired"));
+			throw new Error(i18n.t("auth.login.sessionExpired"));
 		}
 
-		if (response.status === 204) return undefined as T;
-		return response.json() as Promise<T>;
-	} catch (error: unknown) {
-		throw new Error(i18n.t(error.message ?? "unknown_error", { ns: "errors" }));
+		return apiFetch<T>(endpoint, {
+			requiresAuth: requiresAuth,
+			baseURL: baseURL,
+			headers: headers,
+			isRetry: true,
+			...rest,
+		});
 	}
-	/*
-	Este es un failsafe tan, pero tan redundante que siento que afectará el
-	rendimiento del frontend, pero es necesario en caso de que exista un error
-	verdaderamente inesperado. Se debe corregir después D:
-	*/
+
+	if (response.status === 403) {
+		router.navigate("/not-found");
+		throw new Error("forbidden.resource");
+	}
+
+	const error = await response
+		.json()
+		.catch(() => ({ message: response.statusText }));
+
+	const code: string = error.code ?? error[0]?.code;
+
+	throw new Error(
+		translateError(code),
+	);
 }
 
 export const api = {

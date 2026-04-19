@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace HousingApp.Infrastructure.Persistence.Models;
 
 [Table("refresh_tokens")]
-public class RefreshToken
+public class RefreshTokenModel
 {
     public int Id { get; set; }
 
