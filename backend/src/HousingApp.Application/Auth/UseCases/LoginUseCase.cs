@@ -24,7 +24,7 @@ public class LoginUseCase(IUserRepository userRepository, IGenerateRefreshTokenU
         }
 
         UserDto userDto = new(
-            Id: user.Id, Email: user.Email, PasswordHash: user.Password, RefreshToken: refreshTokenResult.Value!, Roles: user.Roles);
+            Id: user.Id, Email: user.Email, RefreshToken: refreshTokenResult.Value!, Roles: user.Roles);
 
         return Result<UserDto>.Success(userDto);
     }
