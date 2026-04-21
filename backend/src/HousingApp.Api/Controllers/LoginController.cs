@@ -48,4 +48,11 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
         CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration), result.Value!.RefreshToken);
         return Ok(credentials);
     }
+
+    [HttpPost("google")]
+    public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginDto googleLoginDto)
+    {
+        Console.WriteLine(googleLoginDto);
+        return Ok();
+    }
 }
