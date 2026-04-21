@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -133,6 +134,13 @@ function Login() {
 								? t("auth.login.submitPending")
 								: t("auth.login.submit")}
 						</button>
+
+						<GoogleLogin
+							onSuccess={(credentialResponse) => {
+								console.log(credentialResponse);
+							}}
+							shape="pill"
+						/>
 					</form>
 
 					{/* Divider */}
