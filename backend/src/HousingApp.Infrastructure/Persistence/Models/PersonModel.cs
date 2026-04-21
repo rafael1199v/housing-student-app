@@ -14,17 +14,17 @@ public class PersonModel : AuditableModel
 
     [Required][MaxLength(150)] public string FirstName { get; set; } = string.Empty;
 
-    [Required][MaxLength(150)] public string LastName { get; set; } = string.Empty;
+    [MaxLength(150)] public string? LastName { get; set; }
 
     [Required][MaxLength(320)] public string Email { get; set; } = string.Empty;
 
-    [Required][MaxLength(50)] public string PhoneNumber { get; set; } = string.Empty;
+    [MaxLength(50)] public string? PhoneNumber { get; set; }
 
-    [Required][MaxLength(50)] public string Nationality { get; set; } = string.Empty;
+    [MaxLength(50)] public string? Nationality { get; set; }
 
-    [Required][MaxLength(30)] public string Gender { get; set; } = string.Empty;
+    [MaxLength(30)] public string? Gender { get; set; }
 
     [MaxLength(500)] public string? ImageUrl { get; set; }
 
-    public DateOnly BirthDate { get; set; }
+    public DateOnly? BirthDate { get; set; }
 }

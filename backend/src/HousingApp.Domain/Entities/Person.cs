@@ -4,13 +4,13 @@ public class Person
 {
     public string Id { get; init; } = string.Empty;
     public string FirstName { get; init; } = string.Empty;
-    public string LastName { get; init; } = string.Empty;
+    public string? LastName { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
-    public string PhoneNumber { get; init; } = string.Empty;
-    public string Nationality { get; init; } = string.Empty;
-    public string Gender { get; init; } = string.Empty;
+    public string? PhoneNumber { get; init; } = string.Empty;
+    public string? Nationality { get; init; } = string.Empty;
+    public string? Gender { get; init; } = string.Empty;
     public string? ImageUrl { get; init; } = string.Empty;
-    public DateOnly BirthDate { get; init; }
+    public DateOnly? BirthDate { get; init; }
 
     public User? User { get; init; }
 
