@@ -5,12 +5,13 @@ using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace HousingApp.Api.Controllers;
 
 [ApiController]
 [Route("api/login")]
-public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration, ILoginWithRefreshTokenUseCase loginWithRefreshTokenUseCase, IValidator<LoginDto> validator)
+public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration, ILoginWithRefreshTokenUseCase loginWithRefreshTokenUseCase, IGoogleLoginUseCase googleLoginUseCase, IValidator<LoginDto> validator)
     : ControllerBase
 {
     [HttpPost]
@@ -31,8 +32,7 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
             return BadRequest(result.Error);
         }
 
-        CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration), result.Value!.RefreshToken);
-        return Ok(credentials);
+        return Ok(TokenHelpers.GenerateCredentials(result.Value!, configuration));
     }
 
     [HttpPost("refresh-token")]
@@ -45,14 +45,20 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
             return BadRequest(result.Error);
         }
 
-        CredentialsDto credentials = new(TokenHelpers.GenerateAccessToken(result.Value!, configuration), result.Value!.RefreshToken);
-        return Ok(credentials);
+        return Ok(TokenHelpers.GenerateCredentials(result.Value!, configuration));
     }
 
     [HttpPost("google")]
     public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginDto googleLoginDto)
     {
-        Console.WriteLine(googleLoginDto);
-        return Ok();
+        Result<GoogleAuthDto> result = await googleLoginUseCase.ExecuteAsync(googleLoginDto);
+
+        if (!result.IsSuccess)
+        {   
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value!.IsNewUser ?
+            new GoogleAuthResponseDto(result.Value!.IsNewUser) : new GoogleAuthResponseDto(result.Value!.IsNewUser, TokenHelpers.GenerateCredentials(result.Value!.UserDto!, configuration)));
     }
 }

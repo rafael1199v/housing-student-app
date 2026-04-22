@@ -1,6 +1,6 @@
 ﻿namespace HousingApp.Application.Auth.DTOs;
 
-public class GoogleAuthResponseDto
-{
-    
-}
+public record GoogleAuthResponseDto(
+    bool IsNewUser,
+    CredentialsDto? Credentials = null
+);

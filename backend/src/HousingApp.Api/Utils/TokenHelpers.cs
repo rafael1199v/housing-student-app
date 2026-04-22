@@ -1,4 +1,5 @@
 using HousingApp.Application.Auth.DTOs;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -36,5 +37,10 @@ public static class TokenHelpers
         string accessToken = tokenHandler.CreateToken(tokenDescriptor);
 
         return accessToken;
+    }
+
+    public static CredentialsDto GenerateCredentials(UserDto user, IConfiguration configuration)
+    {
+        return new CredentialsDto(GenerateAccessToken(user, configuration), user.RefreshToken);
     }
 }

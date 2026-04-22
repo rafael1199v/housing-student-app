@@ -4,5 +4,5 @@ namespace HousingApp.Application.Auth.UseCases;
 
 public interface IGoogleLoginUseCase
 {
-    Task<Result<GoogleAuthResponseDto>> ExecuteAsync(GoogleLoginDto googleLoginDto);
+    Task<Result<GoogleAuthDto>> ExecuteAsync(GoogleLoginDto googleLoginDto);
 }

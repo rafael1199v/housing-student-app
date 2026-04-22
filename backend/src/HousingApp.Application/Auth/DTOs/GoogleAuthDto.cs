@@ -1,6 +1,6 @@
 ﻿namespace HousingApp.Application.Auth.DTOs;
 
-public record GoogleAuthResponseDto(
+public record GoogleAuthDto(
     bool IsNewUser,
     UserDto? UserDto
 );
