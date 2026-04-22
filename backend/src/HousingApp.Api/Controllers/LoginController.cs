@@ -54,7 +54,7 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
         Result<GoogleAuthDto> result = await googleLoginUseCase.ExecuteAsync(googleLoginDto);
 
         if (!result.IsSuccess)
-        {   
+        {
             return BadRequest(result.Error);
         }
 

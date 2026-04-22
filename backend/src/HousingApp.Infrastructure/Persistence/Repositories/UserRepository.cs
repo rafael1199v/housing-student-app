@@ -43,6 +43,35 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
         return await userManager.CheckPasswordAsync(user, password);
     }
 
+    public async Task<User?> GetUserByIdAsync(string userId)
+    {
+        IdentityUser? user = await userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        List<string> roles = [.. await userManager.GetRolesAsync(user)];
+        return ToDomain(user, roles);
+    }
+
+    public async Task<string> RegisterExternalUser(User newUser, Roles role)
+    {
+        IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email };
+
+        IdentityResult identityResult = await userManager.CreateAsync(user);
+
+        if (!identityResult.Succeeded)
+        {
+            throw new Exception("Error al crear el usuario");
+        }
+
+        IdentityResult addToRolResult = await userManager.AddToRoleAsync(user, role.ToString());
+
+        return !addToRolResult.Succeeded ? throw new Exception("Error al crear el rol") : user.Id;
+    }
+
 
     private static User ToDomain(IdentityUser user, List<string> roles)
     {

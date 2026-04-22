@@ -16,13 +16,13 @@ public class Person
 
     public static Person CreatePerson(
         string firstName,
-        string lastName,
+        string? lastName,
         string email,
-        string phoneNumber,
-        string nationality,
-        string gender,
-        string imageUrl,
-        DateOnly birthDate)
+        string? phoneNumber,
+        string? nationality,
+        string? gender,
+        string? imageUrl,
+        DateOnly? birthDate)
     {
         return new Person
         {
@@ -40,13 +40,13 @@ public class Person
     public static Person CreatePerson(
         string id,
         string firstName,
-        string lastName,
+        string? lastName,
         string email,
-        string phoneNumber,
-        string nationality,
-        string gender,
-        string imageUrl,
-        DateOnly birthDate,
+        string? phoneNumber,
+        string? nationality,
+        string? gender,
+        string? imageUrl,
+        DateOnly? birthDate,
         User? user)
     {
         return new Person
