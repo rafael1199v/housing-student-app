@@ -22,4 +22,6 @@ public class User
     {
         return new User { Id = "uuid", Email = email, Password = null };
     }
+    
+    public bool IsExternalLogin => Password is null;
 }

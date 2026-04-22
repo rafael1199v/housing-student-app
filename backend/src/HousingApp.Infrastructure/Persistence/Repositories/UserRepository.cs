@@ -11,7 +11,7 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
     {
         IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email };
 
-        IdentityResult identityResult = await userManager.CreateAsync(user, newUser.Password);
+        IdentityResult identityResult = await userManager.CreateAsync(user, newUser.Password!);
 
         if (!identityResult.Succeeded)
         {
