@@ -1,12 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LANG_STORAGE_KEY } from "../../../i18n";
-
-const LANGUAGES = [
-	{ code: "es", flag: "🇧🇴", label: "ES" },
-	{ code: "en", flag: "🇺🇸", label: "EN" },
-	{ code: "pt", flag: "🇧🇷", label: "PT" },
-] as const;
+import { LANG_STORAGE_KEY, LANGUAGES, loadLanguage } from "../../../i18n";
 
 export function LanguageSelector() {
 	const { i18n } = useTranslation();
@@ -16,7 +10,8 @@ export function LanguageSelector() {
 	const current =
 		LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[0];
 
-	const handleChange = (code: string) => {
+	const handleChange = async (code: string) => {
+		await loadLanguage(code);
 		i18n.changeLanguage(code);
 		localStorage.setItem(LANG_STORAGE_KEY, code);
 		setOpen(false);
