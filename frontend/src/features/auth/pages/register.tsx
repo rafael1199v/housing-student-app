@@ -6,14 +6,13 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
-import viteLogo from "/vite.svg";
-import reactLogo from "../../../assets/react.svg";
 import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
 import i18n from "../../../i18n";
 import authService from "../../../services/authService";
 import { LATIN_AMERICAN_COUNTRIES } from "../components/NationalitySelector";
 import type { RegisterDto } from "../types/registerDto";
+import { useGoogleAuthentication } from "../hooks/google-hooks";
 
 const v = (key: string) => i18n.t(key, { ns: "validation" });
 
@@ -108,6 +107,8 @@ function Register() {
 			toast.error(error.message);
 		},
 	});
+
+	const { loginWithGoogle, selectedRole, setSelectedRole, showRoleSelection, setShowRoleSelection } = useGoogleAuthentication();
 
 	const onSubmit: SubmitHandler<RegisterFormOutput> = (data) => {
 		const newRegister: RegisterDto = {

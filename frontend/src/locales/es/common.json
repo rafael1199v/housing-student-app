@@ -27,7 +27,14 @@
 			"noAccount": "¿No tienes cuenta?",
 			"createAccount": "Crea una cuenta",
 			"successToast": "Bienvenido",
-			"sessionExpired": "Sesión expirada. Ingresa tus credenciales nuevamente"
+			"sessionExpired": "Sesión expirada. Ingresa tus credenciales nuevamente",
+			"googleLoginError": "Error al iniciar sesión con Google.",
+			"googleRegisterError": "Error al registrarte con Google.",
+			"roleModalTitle": "Completa tu perfil",
+			"roleModalSubtitle": "Selecciona tu rol para finalizar la creación de tu cuenta.",
+			"roleModalCancel": "Cancelar",
+			"roleModalSubmit": "Continuar",
+			"roleModalSubmitPending": "Creando cuenta..."
 		},
 		"register": {
 			"title": "Crea tu cuenta",
