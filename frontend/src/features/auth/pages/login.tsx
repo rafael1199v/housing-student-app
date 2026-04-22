@@ -11,6 +11,7 @@ import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
 import i18n from "../../../i18n";
 import authService from "../../../services/authService";
+import { useGoogleAuthentication } from "../hooks/google-hooks";
 import { useAuthActions } from "../store/authStore";
 
 const loginSchema = z.object({
@@ -49,15 +50,7 @@ function Login() {
 		},
 	});
 
-	const loginWithGoogle = useMutation({
-		mutationFn: authService.googleLogin,
-		onSuccess: (response) => {
-			console.log(response);
-		},
-		onError: (error: Error) => {
-			console.error(error.message);
-		},
-	});
+	const { loginWithGoogle } = useGoogleAuthentication();
 
 	const onSubmit: SubmitHandler<IFormInput> = (data) => {
 		mutate({ email: data.email, password: data.password });
