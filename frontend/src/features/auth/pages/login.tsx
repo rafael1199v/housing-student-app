@@ -49,6 +49,16 @@ function Login() {
 		},
 	});
 
+	const loginWithGoogle = useMutation({
+		mutationFn: authService.googleLogin,
+		onSuccess: (response) => {
+			console.log(response);
+		},
+		onError: (error: Error) => {
+			console.error(error.message);
+		},
+	});
+
 	const onSubmit: SubmitHandler<IFormInput> = (data) => {
 		mutate({ email: data.email, password: data.password });
 	};
@@ -137,7 +147,9 @@ function Login() {
 
 						<GoogleLogin
 							onSuccess={(credentialResponse) => {
-								console.log(credentialResponse);
+								loginWithGoogle.mutate({
+									idToken: credentialResponse.credential ?? "",
+								});
 							}}
 							shape="pill"
 						/>

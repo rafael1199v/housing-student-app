@@ -1,5 +1,7 @@
 import type { AuthResponse } from "../features/auth/types/authResponse";
+import type { GoogleAuthResponse } from "../features/auth/types/googleAuthResponse";
 import type { LoginRequest } from "../features/auth/types/loginRequest";
+import type { LoginWithGoogleRequest } from "../features/auth/types/loginWithGoogleRequest";
 import type { RegisterDto } from "../features/auth/types/registerDto";
 import { api } from "./apiService";
 
@@ -8,6 +10,10 @@ const authService = {
 		api.post<AuthResponse>("/api/login", data, { requiresAuth: false }),
 	register: (user: RegisterDto) =>
 		api.post<void>("/api/register", user, { requiresAuth: false }),
+	googleLogin: (data: LoginWithGoogleRequest) =>
+		api.post<GoogleAuthResponse>("/api/login/google", data, {
+			requiresAuth: false,
+		}),
 };
 
 export default authService;
