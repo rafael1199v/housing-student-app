@@ -1,17 +1,28 @@
-FROM node:24.14-alpine3.23
+# ── Stage 1: Build ──
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json .
+# Copy dependency files first for layer caching
+COPY package.json package-lock.json ./
 
+# Install all dependencies (including devDependencies for build)
 RUN npm ci
 
-RUN npm i -g serve
-
+# Copy the rest of the source code
 COPY . .
 
+# Build the production bundle
 RUN npm run build
 
-EXPOSE 3000
+# ── Stage 2: Production ──
+FROM nginx:alpine
 
-CMD [ "serve", "-s", "dist" ]
+# Copy built assets from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# NGINX runs as non-root by default in recent alpine images
+CMD ["nginx", "-g", "daemon off;"]
