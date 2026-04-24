@@ -16,14 +16,25 @@ services:
       target: build         # Stop at the SDK stage → full tooling available
     container_name: housing-api-dev
     ports:
-      - "8080:8080"
+      - "8082:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080   # dotnet run defaults to 5000; force 8080
       ConnectionStrings__DefaultConnection: >-
         Host=db;Port=5432;Database=${DB_NAME:-housingDb};
         Username=${DB_USER};Password=${DB_PASSWORD}
+      # JWT — required by AuthExtensions (null value crashes startup)
+      Jwt__SecretKey: ${JWT_SECRET_KEY}
+      Jwt__Issuer: http://localhost:8082
+      Jwt__Audience: http://localhost:5173
+      Jwt__ExpirationInMinutes: 60
+      # AWS S3 — required by AwsExtensions (use dummy values locally if not needed)
+      AWS__AccessKey: ${AWS_ACCESS_KEY:-dummy}
+      AWS__SecretKey: ${AWS_SECRET_KEY:-dummy}
+      AWS__Region: ${AWS_REGION:-us-east-1}
+      Storage__BucketName: ${STORAGE_BUCKET_NAME:-dev-bucket}
     volumes:
-      - ./backend/src:/src   # Bind mount → changes visible without rebuild
+      - ./backend/src:/workspace/src   # Bind mount → props safe at /workspace/
     depends_on:
       db:
         condition: service_healthy
