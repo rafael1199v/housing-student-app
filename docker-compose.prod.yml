@@ -28,11 +28,11 @@ services:
       Jwt__SecretKey: ${JWT_SECRET_KEY}
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
-      Jwt__ExpirationInMinutes: ${JWT_EXPIRATION_MINUTES:-60}
+      Jwt__ExpirationInMinutes: ${JWT_EXPIRATION_MINUTES}
       # AWS S3
       AWS__AccessKey: ${AWS_ACCESS_KEY}
       AWS__SecretKey: ${AWS_SECRET_KEY}
-      AWS__Region: ${AWS_REGION:-us-east-1}
+      AWS__Region: ${AWS_REGION}
       Storage__BucketName: ${STORAGE_BUCKET_NAME}
     # No volumes: image is self-contained (Part 8 — Production)
     restart: unless-stopped

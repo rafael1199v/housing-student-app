@@ -13,33 +13,30 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: build         # Stop at the SDK stage → full tooling available
+      target: build # Stop at the SDK stage → full tooling available
     container_name: housing-api-dev
     ports:
       - "8082:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8080   # dotnet run defaults to 5000; force 8080
+      ASPNETCORE_URLS: http://+:8080 # dotnet run defaults to 5000; force 8080
       ConnectionStrings__DefaultConnection: >-
-        Host=db;Port=5432;Database=${DB_NAME:-housingDb};
-        Username=${DB_USER};Password=${DB_PASSWORD}
+        Host=db;Port=5432;Database=${DB_NAME}; Username=${DB_USER};Password=${DB_PASSWORD}
       # JWT — required by AuthExtensions (null value crashes startup)
       Jwt__SecretKey: ${JWT_SECRET_KEY}
-      Jwt__Issuer: http://localhost:8082
-      Jwt__Audience: http://localhost:5173
-      Jwt__ExpirationInMinutes: 60
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__ExpirationInMinutes: ${JWT_EXPIRATION_MINUTES}
       # AWS S3 — required by AwsExtensions (use dummy values locally if not needed)
-      AWS__AccessKey: ${AWS_ACCESS_KEY:-dummy}
-      AWS__SecretKey: ${AWS_SECRET_KEY:-dummy}
-      AWS__Region: ${AWS_REGION:-us-east-1}
-      Storage__BucketName: ${STORAGE_BUCKET_NAME:-dev-bucket}
+      AWS__AccessKey: ${AWS_ACCESS_KEY}
+      AWS__SecretKey: ${AWS_SECRET_KEY}
+      AWS__Region: ${AWS_REGION}
+      Storage__BucketName: ${STORAGE_BUCKET_NAME}
     volumes:
-      - ./backend/src:/workspace/src   # Bind mount → props safe at /workspace/
+      - ./backend/src:/workspace/src # Bind mount → props safe at /workspace/
     depends_on:
       db:
         condition: service_healthy
-
-
   # ── Frontend ─────────────────────────────────────────────────────────────────
   # TODO: configure once frontend Dockerfile is finalized.
   # Suggested config when ready:
