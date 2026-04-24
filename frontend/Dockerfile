@@ -16,13 +16,14 @@ COPY . .
 RUN npm run build
 
 # ── Stage 2: Production ──
-FROM nginx:alpine
+# Using unprivileged NGINX image (runs as non-root user by default)
+FROM nginxinc/nginx-unprivileged:alpine
 
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+# Port 8080 (non-root can't bind to ports below 1024)
+EXPOSE 8080
 
-# NGINX runs as non-root by default in recent alpine images
+# Start NGINX in the foreground
 CMD ["nginx", "-g", "daemon off;"]
