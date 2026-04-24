@@ -1,0 +1,50 @@
+# Production overrides.
+# Run with: docker compose -f docker-compose.yaml -f docker-compose.prod.yml up -d
+#
+# Key behaviours:
+#   - Full multi-stage builds → smallest possible images, no dev tooling
+#   - NO bind mounts: the image is fully self-contained
+#   - Non-root user enforced inside each image
+#   - Restart policy ensures services recover automatically
+
+services:
+
+  # ── Backend API ─────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      # No `target` → goes all the way to the final `runtime` stage
+    container_name: housing-api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: >-
+        Host=db;Port=5432;Database=${DB_NAME:-housingDb};
+        Username=${DB_USER};Password=${DB_PASSWORD}
+    # No volumes: image is self-contained (Part 8 — Production)
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  # TODO: configure once frontend Dockerfile is finalized.
+  # Suggested config when ready:
+  #
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #     # No `target` → full multi-stage build (builder + runtime)
+  #   container_name: itersapiens-frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     NODE_ENV: production
+  #   # No volumes: dist is baked into the image
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - api

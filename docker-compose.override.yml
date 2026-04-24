@@ -1,0 +1,51 @@
+# Development overrides — auto-loaded by Docker Compose.
+# Run with: docker compose up [--build]
+#
+# Key behaviours:
+#   - Bind mounts for hot-reload (code changes are reflected instantly)
+#   - All dev dependencies and debug tools included
+#   - Secrets never baked into the image (passed via environment)
+
+services:
+
+  # ── Backend API ─────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: build         # Stop at the SDK stage → full tooling available
+    container_name: housing-api-dev
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: >-
+        Host=db;Port=5432;Database=${DB_NAME:-housingDb};
+        Username=${DB_USER};Password=${DB_PASSWORD}
+    volumes:
+      - ./backend/src:/src   # Bind mount → changes visible without rebuild
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  # TODO: configure once frontend Dockerfile is finalized.
+  # Suggested config when ready:
+  #
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #     target: builder       # Stop at the Node build stage → vite dev server
+  #   container_name: itersapiens-frontend-dev
+  #   ports:
+  #     - "5173:5173"
+  #   environment:
+  #     NODE_ENV: development
+  #   volumes:
+  #     - ./frontend/src:/app/src    # Source hot-reload
+  #     - /app/node_modules          # Anonymous volume: preserve container's modules
+  #   command: ["npm", "run", "dev", "--", "--host"]
+  #   depends_on:
+  #     - api
