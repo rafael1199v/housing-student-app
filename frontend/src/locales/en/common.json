@@ -27,7 +27,14 @@
 			"noAccount": "Don't have an account?",
 			"createAccount": "Create an account",
 			"successToast": "Welcome",
-			"sessionExpired": "Session expired. Please sign in again."
+			"sessionExpired": "Session expired. Please sign in again.",
+			"googleLoginError": "Google sign in failed.",
+			"googleRegisterError": "Google registration failed.",
+			"roleModalTitle": "Complete your profile",
+			"roleModalSubtitle": "Select your role to finish account creation.",
+			"roleModalCancel": "Cancel",
+			"roleModalSubmit": "Continue",
+			"roleModalSubmitPending": "Creating account..."
 		},
 		"register": {
 			"title": "Create your account",

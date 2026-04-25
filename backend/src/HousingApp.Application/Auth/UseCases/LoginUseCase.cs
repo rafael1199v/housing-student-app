@@ -11,7 +11,7 @@ public class LoginUseCase(IUserRepository userRepository, IGenerateRefreshTokenU
     {
         User? user = await userRepository.FindUserByEmailAsync(loginDto.Email);
 
-        if (user is null || !await userRepository.CheckPassword(loginDto.Email, loginDto.Password))
+        if (user is null || user.IsExternalLogin ||!await userRepository.CheckPassword(loginDto.Email, loginDto.Password))
         {
             return Result<UserDto>.Failure(AuthError.InvalidCredentials);
         }
@@ -24,7 +24,7 @@ public class LoginUseCase(IUserRepository userRepository, IGenerateRefreshTokenU
         }
 
         UserDto userDto = new(
-            Id: user.Id, Email: user.Email, PasswordHash: user.Password, RefreshToken: refreshTokenResult.Value!, Roles: user.Roles);
+            Id: user.Id, Email: user.Email, RefreshToken: refreshTokenResult.Value!, Roles: user.Roles);
 
         return Result<UserDto>.Success(userDto);
     }

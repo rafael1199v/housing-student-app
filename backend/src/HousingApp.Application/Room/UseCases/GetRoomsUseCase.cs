@@ -15,7 +15,7 @@ public class GetRoomsUseCase(IRoomRepository roomRepository, IStorageService sto
             return Result<List<RoomDto>>.Failure(RoomError.InvalidFilterValue("price"));
         }
 
-        if (filters.MinPrice.HasValue && filters.MaxPrice.HasValue && filters.MinPrice > filters.MaxPrice)
+        if (filters is { MinPrice: not null, MaxPrice: not null } && filters.MinPrice > filters.MaxPrice)
         {
             return Result<List<RoomDto>>.Failure(RoomError.InvalidPriceRange);
         }
@@ -41,11 +41,11 @@ public class GetRoomsUseCase(IRoomRepository roomRepository, IStorageService sto
                 r.PersonId,
                 r.RoomStatus.ToString(),
                 r.Person!.FirstName,
-                r.Person!.LastName,
+                r.Person!.LastName ?? "",
                 r.Person!.Email,
-                r.Person!.PhoneNumber,
-                r.Person!.Nationality,
-                r.Person!.Gender,
+                r.Person!.PhoneNumber ?? "",
+                r.Person!.Nationality ?? "",
+                r.Person!.Gender ?? "",
                 r.Person!.ImageUrl ?? "",
                 [.. r.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))]
             ))

@@ -9,4 +9,8 @@ public interface IUserRepository
     Task<User?> FindUserByEmailAsync(string email);
 
     Task<bool> CheckPassword(string email, string password);
+
+    Task<User?> GetUserByIdAsync(string userId);
+
+    Task<string> RegisterExternalUser(User newUser, Domain.Enums.Roles role);
 }

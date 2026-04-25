@@ -2,10 +2,12 @@ using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.UseCases;
+using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Infrastructure.Persistence.Repositories;
 using HousingApp.Infrastructure.Persistence.UnitOfWork;
 using HousingApp.Infrastructure.Seeders;
+using HousingApp.Infrastructure.Services;
 
 namespace HousingApp.Api.Extensions;
 
@@ -41,9 +43,14 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
         services.AddScoped<IGenerateRefreshTokenUseCase, GenerateRefreshTokenUseCase>();
         services.AddScoped<ILoginWithRefreshTokenUseCase, LoginWithRefreshTokenUseCase>();
+        services.AddScoped<IGoogleLoginUseCase, GoogleLoginUseCase>();
+        services.AddScoped<IGoogleRegistrationUseCase, GoogleRegistrationUseCase>();
 
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();
+
+        //Services
+        services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
         return services;
     }

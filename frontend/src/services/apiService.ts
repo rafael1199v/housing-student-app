@@ -79,9 +79,7 @@ export async function apiFetch<T>(
 
 	const code: string = error.code ?? error[0]?.code;
 
-	throw new Error(
-		translateError(code),
-	);
+	throw new Error(translateError(code));
 }
 
 export const api = {

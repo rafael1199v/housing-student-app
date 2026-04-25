@@ -43,7 +43,6 @@ public class LoginUseCaseTests
         UserDto userDtoExpected = new(
             Id: returnedUser.Id,
             Email: loginDto.Email,
-            PasswordHash: returnedUser.Password,
             RefreshToken: refreshTokenReturned,
             Roles: returnedUser.Roles
         );

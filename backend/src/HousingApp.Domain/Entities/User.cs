@@ -4,7 +4,7 @@ public class User
 {
     public string Id { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
-    public string Password { get; private set; } = string.Empty;
+    public string? Password { get; private set; } = string.Empty;
 
     public List<string> Roles { get; private set; } = [];
 
@@ -17,4 +17,11 @@ public class User
     {
         return new User { Id = uuid, Email = email, Password = password, Roles = roles };
     }
+
+    public static User CreateExternalLoginUser(string email)
+    {
+        return new User { Id = "uuid", Email = email, Password = null };
+    }
+    
+    public bool IsExternalLogin => Password is null;
 }

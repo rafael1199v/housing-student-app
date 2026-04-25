@@ -11,7 +11,7 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
     {
         IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email };
 
-        IdentityResult identityResult = await userManager.CreateAsync(user, newUser.Password);
+        IdentityResult identityResult = await userManager.CreateAsync(user, newUser.Password!);
 
         if (!identityResult.Succeeded)
         {
@@ -41,6 +41,35 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
         IdentityUser? user = await userManager.FindByEmailAsync(email) ??
                              throw new NullReferenceException("No se encontro el usuario");
         return await userManager.CheckPasswordAsync(user, password);
+    }
+
+    public async Task<User?> GetUserByIdAsync(string userId)
+    {
+        IdentityUser? user = await userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        List<string> roles = [.. await userManager.GetRolesAsync(user)];
+        return ToDomain(user, roles);
+    }
+
+    public async Task<string> RegisterExternalUser(User newUser, Roles role)
+    {
+        IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email };
+
+        IdentityResult identityResult = await userManager.CreateAsync(user);
+
+        if (!identityResult.Succeeded)
+        {
+            throw new Exception("Error al crear el usuario");
+        }
+
+        IdentityResult addToRolResult = await userManager.AddToRoleAsync(user, role.ToString());
+
+        return !addToRolResult.Succeeded ? throw new Exception("Error al crear el rol") : user.Id;
     }
 
 
