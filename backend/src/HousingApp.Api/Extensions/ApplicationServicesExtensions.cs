@@ -44,6 +44,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IGenerateRefreshTokenUseCase, GenerateRefreshTokenUseCase>();
         services.AddScoped<ILoginWithRefreshTokenUseCase, LoginWithRefreshTokenUseCase>();
         services.AddScoped<IGoogleLoginUseCase, GoogleLoginUseCase>();
+        services.AddScoped<IGoogleRegistrationUseCase, GoogleRegistrationUseCase>();
 
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();
