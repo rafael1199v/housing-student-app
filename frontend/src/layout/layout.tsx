@@ -76,6 +76,17 @@ export function MainLayout() {
 								{t("nav.createRoom")}
 							</button>
 						)}
+						<button
+							type="button"
+							onClick={() => navigate("/profile-settings")}
+							className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+								location.pathname.startsWith("/profile-settings")
+									? "bg-primary text-on-primary"
+									: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
+							}`}
+						>
+							{t("nav.profileSettings")}
+						</button>
 						<LanguageSelector />
 						<button
 							type="button"

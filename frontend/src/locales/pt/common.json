@@ -7,6 +7,7 @@
 		"rooms": "Quartos",
 		"bookings": "Reservas",
 		"createRoom": "Criar quarto",
+		"profileSettings": "Configurações de perfil",
 		"logout": "Sair",
 		"loggedOut": "Sessão encerrada"
 	},

@@ -7,6 +7,7 @@
 		"rooms": "Rooms",
 		"bookings": "Bookings",
 		"createRoom": "Create Room",
+		"profileSettings": "Profile Settings",
 		"logout": "Log out",
 		"loggedOut": "Logged out"
 	},
