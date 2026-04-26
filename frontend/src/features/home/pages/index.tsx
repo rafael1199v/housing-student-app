@@ -5,7 +5,6 @@ import { useNavigate, useSearchParams } from "react-router";
 import { z } from "zod";
 import i18n from "../../../i18n";
 import roomService from "../../../services/roomService";
-import { useUser } from "../../auth/store/authStore";
 import { RoomCard } from "../../shared/components/RoomCard";
 import { CardSkeleton } from "../components/skeleton";
 
@@ -58,7 +57,6 @@ export function HomePage() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
-	const user = useUser();
 
 	const initialSearch = searchParams.get("name") ?? "";
 	const initialMinPrice = searchParams.get("minPrice") ?? "";
@@ -118,13 +116,11 @@ export function HomePage() {
 		handleSearchRedirect();
 	};
 
-	const welcomeName = user?.email?.split("@")[0] ?? "estudiante";
-
 	return (
 		<div className="space-y-8">
 			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">
-					{t("home.welcome", { name: welcomeName })}
+					{t("home.welcome", { name: t(`roles.Student`) })}
 				</h1>
 				<p className="mt-2 text-sm text-slate-600">{t("home.subtitle")}</p>
 
