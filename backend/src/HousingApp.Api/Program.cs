@@ -24,6 +24,7 @@ builder.Services.AddAwsStorage(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddRateLimiterPolicy();
 builder.Services.AddFluentValidation();
+builder.Services.AddEmailConfiguration(builder.Configuration);
 
 builder.Services.AddAuthorization();
 
