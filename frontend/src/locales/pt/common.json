@@ -1,4 +1,8 @@
 {
+	"roles": {
+		"Student": "Estudante",
+		"Householder": "Proprietário"
+	},
 	"nav": {
 		"rooms": "Quartos",
 		"bookings": "Reservas",
@@ -231,5 +235,40 @@
 		"nextImage": "Próxima imagem",
 		"defaultSubtitle": "Quarto para estudantes",
 		"perMonth": "por mês"
+	},
+	"profileSettings": {
+		"title": "Configurações de perfil",
+		"subtitle": "Atualize suas informações pessoais.",
+		"emailLabel": "E-mail",
+		"roleLabel": "Papel",
+		"firstNameLabel": "Nome",
+		"lastNameLabel": "Sobrenome",
+		"phoneNumberLabel": "Número de telefone",
+		"nationalityLabel": "Nacionalidade",
+		"genderLabel": "Gênero",
+		"genderMale": "Masculino",
+		"genderFemale": "Feminino",
+		"genderOther": "Outro",
+		"birthdateLabel": "Data de nascimento",
+		"saveButton": "Salvar alterações",
+		"savePending": "Salvando...",
+		"saveSuccess": "Perfil atualizado com sucesso.",
+		"saveError": "Erro ao atualizar o perfil. {{message}}",
+		"changePasswordButton": "Alterar senha",
+		"changePassword": {
+			"title": "Alterar senha",
+			"subtitle": "Digite sua senha atual e escolha uma nova.",
+			"backButton": "Voltar ao perfil",
+			"cancelButton": "Cancelar",
+			"currentPasswordLabel": "Senha atual",
+			"newPasswordLabel": "Nova senha",
+			"confirmPasswordLabel": "Confirmar nova senha",
+			"showPassword": "Mostrar senha",
+			"hidePassword": "Ocultar senha",
+			"submitButton": "Alterar senha",
+			"submitPending": "Alterando...",
+			"successToast": "Senha alterada com sucesso.",
+			"errorToast": "Erro ao alterar a senha. {{message}}"
+		}
 	}
 }

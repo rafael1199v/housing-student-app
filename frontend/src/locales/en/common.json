@@ -1,4 +1,8 @@
 {
+	"roles": {
+		"Student": "Student",
+		"Householder": "Landlord"
+	},
 	"nav": {
 		"rooms": "Rooms",
 		"bookings": "Bookings",
@@ -231,5 +235,40 @@
 		"nextImage": "Next image",
 		"defaultSubtitle": "Room for students",
 		"perMonth": "per month"
+	},
+	"profileSettings": {
+		"title": "Profile Settings",
+		"subtitle": "Update your personal information.",
+		"emailLabel": "Email",
+		"roleLabel": "Role",
+		"firstNameLabel": "First name",
+		"lastNameLabel": "Last name",
+		"phoneNumberLabel": "Phone number",
+		"nationalityLabel": "Nationality",
+		"genderLabel": "Gender",
+		"genderMale": "Male",
+		"genderFemale": "Female",
+		"genderOther": "Other",
+		"birthdateLabel": "Date of birth",
+		"saveButton": "Save changes",
+		"savePending": "Saving...",
+		"saveSuccess": "Profile updated successfully.",
+		"saveError": "Error updating profile. {{message}}",
+		"changePasswordButton": "Change password",
+		"changePassword": {
+			"title": "Change Password",
+			"subtitle": "Enter your current password and choose a new one.",
+			"backButton": "Back to profile",
+			"cancelButton": "Cancel",
+			"currentPasswordLabel": "Current password",
+			"newPasswordLabel": "New password",
+			"confirmPasswordLabel": "Confirm new password",
+			"showPassword": "Show password",
+			"hidePassword": "Hide password",
+			"submitButton": "Change password",
+			"submitPending": "Changing...",
+			"successToast": "Password changed successfully.",
+			"errorToast": "Error changing password. {{message}}"
+		}
 	}
 }

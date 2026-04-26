@@ -10,6 +10,8 @@ import { NewRoomPage } from "../features/new-room/pages";
 import { NotFoundPage } from "../features/not-found/pages";
 import { OwnerHomePage } from "../features/owner-home/pages";
 import { OwnerRoomDetailsPage } from "../features/owner-room-details/pages";
+import { ProfileSettings } from "../features/profile-settings/pages";
+import { ChangePasswordPage } from "../features/profile-settings/pages/change-password";
 import { RoomDetails } from "../features/room-details/pages";
 import { RoomsPage } from "../features/rooms/pages";
 import { MainLayout } from "../layout/layout";
@@ -54,6 +56,14 @@ export const router = createBrowserRouter([
 							{
 								index: true,
 								Component: HomeRoutePage,
+							},
+							{
+								path: "profile-settings",
+								Component: ProfileSettings,
+							},
+							{
+								path: "profile-settings/change-password",
+								Component: ChangePasswordPage,
 							},
 							{
 								path: "",

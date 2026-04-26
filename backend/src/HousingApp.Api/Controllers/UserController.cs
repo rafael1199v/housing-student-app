@@ -1,0 +1,84 @@
+using FluentValidation;
+using FluentValidation.Results;
+using HousingApp.Application;
+using HousingApp.Application.User.DTOs;
+using HousingApp.Application.User.UseCases;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
+namespace HousingApp.Api.Controllers;
+
+[ApiController]
+[Route("api/user")]
+public class UserController(
+    IGetUserDataUseCase getUserDataUseCase,
+    IUpdateUserDataUseCase updateUserDataUseCase,
+    IValidator<UpdateUserDTO> updateUserDtoValidator
+    ) : ControllerBase
+{
+    [HttpGet("data")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserDataDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UserDataDto>> GetUserData()
+    {
+        string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+        Result<UserDataDto> result = await getUserDataUseCase.ExecuteAsync(userId);
+        if (!result.IsSuccess)
+        {
+            if (result.Error.Code == "user.not.found" || result.Error.Code == "person.not.found")
+            {
+                return NotFound(result.Error);
+            }
+
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpPut("data")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateUserData([FromBody] UpdateUserDTO updateUserDto)
+    {
+        ValidationResult validationResult = await updateUserDtoValidator.ValidateAsync(updateUserDto);
+
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
+        string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        Result<bool> result = await updateUserDataUseCase.ExecuteAsync(userId, updateUserDto);
+
+        if (!result.IsSuccess)
+        {
+            if (result.Error.Code == "user.not.found" || result.Error.Code == "person.not.found")
+            {
+                return NotFound(result.Error);
+            }
+
+            return BadRequest(result.Error);
+        }
+
+        return NoContent();
+    }
+}
