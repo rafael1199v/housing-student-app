@@ -21,6 +21,29 @@ public class PersonRepository(HousingApplicationDbContext context) : IPersonRepo
             .AnyAsync(person => person.UserId == userId && !person.IsDeleted);
     }
 
+    public async Task<bool> UpdateUserDataAsync(
+        string userId,
+        string firstName,
+        string lastName,
+        string phoneNumber,
+        string nationality,
+        string gender,
+        DateOnly birthDate)
+    {
+        int affectedRows = await context.Persons
+            .Where(person => person.UserId == userId && !person.IsDeleted)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(person => person.FirstName, firstName)
+                .SetProperty(person => person.LastName, lastName)
+                .SetProperty(person => person.PhoneNumber, phoneNumber)
+                .SetProperty(person => person.Nationality, nationality)
+                .SetProperty(person => person.Gender, gender)
+                .SetProperty(person => person.BirthDate, birthDate)
+                .SetProperty(person => person.UpdatedAt, DateTime.UtcNow));
+
+        return affectedRows == 1;
+    }
+
     private static PersonModel ToModel(Person person)
     {
         return new PersonModel
