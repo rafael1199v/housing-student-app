@@ -34,8 +34,8 @@ public class RegisterUseCaseTests
         RegisterDto registerDto = new("o@o.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
             "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
-        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((User?)null);
-        _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
+        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((Domain.Entities.User?)null);
+        _userRepository.RegisterUser(Arg.Any<Domain.Entities.User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
@@ -52,7 +52,7 @@ public class RegisterUseCaseTests
         RegisterDto registerDto = new("a@a.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
             "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
-        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns(new User());
+        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns(new Domain.Entities.User());
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);

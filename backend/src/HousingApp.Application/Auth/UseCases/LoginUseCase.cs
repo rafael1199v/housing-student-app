@@ -9,7 +9,7 @@ public class LoginUseCase(IUserRepository userRepository, IGenerateRefreshTokenU
 {
     public async Task<Result<UserDto>> Login(LoginDto loginDto)
     {
-        User? user = await userRepository.FindUserByEmailAsync(loginDto.Email);
+        Domain.Entities.User? user = await userRepository.FindUserByEmailAsync(loginDto.Email);
 
         if (user is null || !await userRepository.CheckPassword(loginDto.Email, loginDto.Password))
         {

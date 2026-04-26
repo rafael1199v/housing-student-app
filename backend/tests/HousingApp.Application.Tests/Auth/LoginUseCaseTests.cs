@@ -27,7 +27,7 @@ public class LoginUseCaseTests
         //Arrange
         LoginDto loginDto = new("rafael@gmail.com", "Password!555");
 
-        User returnedUser = User.CreateUser(
+        Domain.Entities.User returnedUser = Domain.Entities.User.CreateUser(
             "uuid",
             loginDto.Email,
             "password-hash",
@@ -61,7 +61,7 @@ public class LoginUseCaseTests
         //Arrange
         LoginDto loginDto = new("rafael@gmail.com", "Password!555");
 
-        _userRepository.FindUserByEmailAsync(loginDto.Email).Returns((User?)null);
+        _userRepository.FindUserByEmailAsync(loginDto.Email).Returns((Domain.Entities.User?)null);
 
         //Act
         Result<UserDto> result = await _loginUseCase.Login(loginDto);
@@ -76,7 +76,7 @@ public class LoginUseCaseTests
     {
         //Arrange
         LoginDto loginDto = new("rafael@gmail.com", "Password!555");
-        User returnedUser = User.CreateUser(
+        Domain.Entities.User returnedUser = Domain.Entities.User.CreateUser(
             "uuid",
             loginDto.Email,
             "password-hash",

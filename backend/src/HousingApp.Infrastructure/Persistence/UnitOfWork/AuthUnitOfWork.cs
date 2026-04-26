@@ -12,7 +12,7 @@ public class AuthUnitOfWork(HousingApplicationDbContext context, UserManager<Ide
 {
     private IDbContextTransaction? _transaction;
     public IPersonRepository PersonRepository { get; } = new PersonRepository(context);
-    public IUserRepository UserRepository { get; } = new UserRepository(userManager);
+    public IUserRepository UserRepository { get; } = new UserRepository(userManager, context);
 
     public async Task<int> SaveChangesAsync()
     {
