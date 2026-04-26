@@ -1,12 +1,14 @@
 using HousingApp.Application.Auth.DTOs;
+using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
+using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
 using System.Globalization;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
+public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailService) : IRegisterUseCase
 {
     public async Task<Result<string>> ExecuteAsync(RegisterDto registerDto)
     {
@@ -29,10 +31,10 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
 
         User user = User.CreateUser(registerDto.Email, registerDto.Password);
 
+        await unitOfWork.BeginTransactionAsync();
+
         try
         {
-            await unitOfWork.BeginTransactionAsync();
-
             string userId = await unitOfWork.UserRepository.RegisterUser(user, role);
 
             Person person = Person.CreatePerson(
@@ -51,6 +53,8 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
             await unitOfWork.PersonRepository.CreatePerson(person);
 
             await unitOfWork.CommitTransactionAsync();
+
+            await emailService.SendEmailAsync(person.Email, "Confirm your email", "<strong>Welcome to Itersapiens app. Please confirm your email</strong>");
 
             return Result<string>.Success(userId);
         }

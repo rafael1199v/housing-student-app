@@ -2,6 +2,7 @@ using FluentAssertions;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Repositories;
+using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
 using NSubstitute;
@@ -14,6 +15,7 @@ public class RegisterUseCaseTests
     private readonly RegisterUseCase _registerUseCase;
     private readonly IAuthUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly IEmailService _emailService;
 
     public RegisterUseCaseTests()
     {
@@ -24,7 +26,9 @@ public class RegisterUseCaseTests
         _unitOfWork.UserRepository.Returns(_userRepository);
         _unitOfWork.PersonRepository.Returns(_personRepository);
 
-        _registerUseCase = new RegisterUseCase(_unitOfWork);
+        _emailService = Substitute.For<IEmailService>();
+
+        _registerUseCase = new RegisterUseCase(_unitOfWork, _emailService);
     }
 
     [Fact]

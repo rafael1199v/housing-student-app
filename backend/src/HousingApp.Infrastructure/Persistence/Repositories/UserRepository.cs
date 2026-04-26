@@ -2,6 +2,8 @@ using HousingApp.Application.Repositories;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
+using System.Buffers.Text;
+using System.Text;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories;
 
@@ -9,7 +11,7 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
 {
     public async Task<string> RegisterUser(User newUser, Roles role)
     {
-        IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email };
+        IdentityUser user = ToModel(newUser);
 
         IdentityResult identityResult = await userManager.CreateAsync(user, newUser.Password!);
 
@@ -58,7 +60,8 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
 
     public async Task<string> RegisterExternalUser(User newUser, Roles role)
     {
-        IdentityUser user = new() { UserName = newUser.Email, Email = newUser.Email };
+        IdentityUser user = ToModel(newUser);
+        user.EmailConfirmed = true;
 
         IdentityResult identityResult = await userManager.CreateAsync(user);
 
@@ -72,6 +75,22 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
         return !addToRolResult.Succeeded ? throw new Exception("Error al crear el rol") : user.Id;
     }
 
+    public async Task<string> GenerateEmailConfirmationLink(User user)
+    {
+        IdentityUser identityUser = await userManager.FindByIdAsync(user.Id) ?? throw new InvalidOperationException("User not found.");
+        string token = await userManager.GenerateEmailConfirmationTokenAsync(identityUser);
+        return Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
+    }
+
+    public async Task<bool> ConfirmEmail(string userId, string token)
+    {
+        IdentityUser identityUser = await userManager.FindByIdAsync(userId) ?? throw new InvalidOperationException("User not found.");
+        string decodedToken = Encoding.UTF8.GetString(Base64Url.DecodeFromChars(token));
+        IdentityResult result = await userManager.ConfirmEmailAsync(identityUser, decodedToken);
+
+        return result.Succeeded;
+    }
+
 
     private static User ToDomain(IdentityUser user, List<string> roles)
     {
@@ -81,5 +100,10 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
             user.PasswordHash!,
             roles
         );
+    }
+
+    private static IdentityUser ToModel(User user)
+    {
+        return new IdentityUser { UserName = user.Email, Email = user.Email };
     }
 }

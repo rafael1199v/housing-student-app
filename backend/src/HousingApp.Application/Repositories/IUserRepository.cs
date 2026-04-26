@@ -13,4 +13,8 @@ public interface IUserRepository
     Task<User?> GetUserByIdAsync(string userId);
 
     Task<string> RegisterExternalUser(User newUser, Domain.Enums.Roles role);
+
+    Task<string> GenerateEmailConfirmationLink(User user);
+
+    Task<bool> ConfirmEmail(string userId, string token);
 }
