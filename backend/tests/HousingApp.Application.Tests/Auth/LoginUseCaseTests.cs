@@ -31,7 +31,8 @@ public class LoginUseCaseTests
             "uuid",
             loginDto.Email,
             "password-hash",
-            ["student"]
+            ["student"],
+            isEmailConfirmed: true
         );
 
         const string refreshTokenReturned = "refresh-token-returned";
