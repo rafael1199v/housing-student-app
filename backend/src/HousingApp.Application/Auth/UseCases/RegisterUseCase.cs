@@ -2,13 +2,13 @@ using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
-using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailService) : IRegisterUseCase
+public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailService, IAccountService accountService, ILogger<RegisterUseCase> logger) : IRegisterUseCase
 {
     public async Task<Result<string>> ExecuteAsync(RegisterDto registerDto)
     {
@@ -31,13 +31,16 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
 
         User user = User.CreateUser(registerDto.Email, registerDto.Password);
 
+        //Register user and person flow
         await unitOfWork.BeginTransactionAsync();
+        Person person;
+        string userId;
 
         try
         {
-            string userId = await unitOfWork.UserRepository.RegisterUser(user, role);
+            userId = await unitOfWork.UserRepository.RegisterUser(user, role);
 
-            Person person = Person.CreatePerson(
+            person = Person.CreatePerson(
                 userId,
                 registerDto.FirstName,
                 registerDto.LastName,
@@ -51,17 +54,30 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
             );
 
             await unitOfWork.PersonRepository.CreatePerson(person);
-
             await unitOfWork.CommitTransactionAsync();
-
-            await emailService.SendEmailAsync(person.Email, "Confirm your email", "<strong>Welcome to Itersapiens app. Please confirm your email</strong>");
-
-            return Result<string>.Success(userId);
         }
         catch (Exception ex)
         {
             await unitOfWork.RollbackTransactionAsync();
-            throw new Exception(ex.Message);
+            throw;
         }
+
+        //Send confirmation email
+        try
+        {
+            string confirmationToken = await unitOfWork.UserRepository.GenerateEmailConfirmationToken(userId);
+            string confirmationLink =
+                accountService.GenerateEmailConfirmationLinkAsync(email: person.Email, token: confirmationToken);
+
+            await emailService.SendConfirmationEmailAsync(to: person.Email, firstName: person.FirstName,
+                confirmationLink: confirmationLink);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error sending confirmation email {Message}", ex.Message);
+        }
+
+
+        return Result<string>.Success(userId);
     }
 }

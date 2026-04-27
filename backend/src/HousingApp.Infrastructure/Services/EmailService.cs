@@ -1,6 +1,7 @@
 ﻿using HousingApp.Application.Services;
-using HousingApp.Domain.Enums;
+using HousingApp.Application.Utils;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Resend;
 
 namespace HousingApp.Infrastructure.Services;
@@ -21,5 +22,11 @@ public class EmailService(IResend resend, IConfiguration configuration) : IEmail
 
         message.To.Add(to);
         await resend.EmailSendAsync(message);
+    }
+
+    public async Task SendConfirmationEmailAsync(string to, string firstName, string confirmationLink)
+    {
+        string body = EmailTemplateUtil.BuildConfirmationTemplateContent(firstName, confirmationLink);
+        await SendEmailAsync(to: to, subject: "Confirm your email", body: body);
     }
 }

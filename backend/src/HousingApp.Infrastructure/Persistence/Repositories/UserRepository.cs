@@ -75,9 +75,9 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
         return !addToRolResult.Succeeded ? throw new Exception("Error al crear el rol") : user.Id;
     }
 
-    public async Task<string> GenerateEmailConfirmationLink(User user)
+    public async Task<string> GenerateEmailConfirmationToken(string userId)
     {
-        IdentityUser identityUser = await userManager.FindByIdAsync(user.Id) ?? throw new InvalidOperationException("User not found.");
+        IdentityUser identityUser = await userManager.FindByIdAsync(userId) ?? throw new InvalidOperationException("User not found.");
         string token = await userManager.GenerateEmailConfirmationTokenAsync(identityUser);
         return Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
     }

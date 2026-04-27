@@ -16,6 +16,7 @@ public class RegisterUseCaseTests
     private readonly IAuthUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
     private readonly IEmailService _emailService;
+    private readonly IAccountService _accountService;
 
     public RegisterUseCaseTests()
     {
@@ -27,8 +28,9 @@ public class RegisterUseCaseTests
         _unitOfWork.PersonRepository.Returns(_personRepository);
 
         _emailService = Substitute.For<IEmailService>();
+        _accountService = Substitute.For<IAccountService>();
 
-        _registerUseCase = new RegisterUseCase(_unitOfWork, _emailService);
+        _registerUseCase = new RegisterUseCase(_unitOfWork, _emailService, _accountService);
     }
 
     [Fact]
@@ -40,6 +42,8 @@ public class RegisterUseCaseTests
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((User?)null);
         _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
+        _userRepository.GenerateEmailConfirmationToken(Arg.Any<string>()).Returns("token");
+        _accountService.GenerateEmailConfirmationLinkAsync(Arg.Any<string>(), Arg.Any<string>()).Returns("http://localhost:5000/confirm-email");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);

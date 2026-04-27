@@ -14,7 +14,8 @@ public static class IdentityExtensions
                 options.User.RequireUniqueEmail = true;
             })
             .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<HousingApplicationDbContext>();
+            .AddEntityFrameworkStores<HousingApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
         return services;
     }

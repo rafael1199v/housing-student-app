@@ -14,7 +14,7 @@ public interface IUserRepository
 
     Task<string> RegisterExternalUser(User newUser, Domain.Enums.Roles role);
 
-    Task<string> GenerateEmailConfirmationLink(User user);
+    Task<string> GenerateEmailConfirmationToken(string userId);
 
     Task<bool> ConfirmEmail(string userId, string token);
 }
