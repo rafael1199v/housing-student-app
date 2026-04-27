@@ -16,7 +16,7 @@ public class ConfirmEmailUseCase(IUserRepository userRepository) : IConfirmEmail
         if (user.IsEmailConfirmed)
             return Result<bool>.Failure(ConfirmEmailError.EmailAlreadyConfirmed);
 
-        if(!await userRepository.ConfirmEmail(user.Id, token))
+        if (!await userRepository.ConfirmEmail(user.Id, token))
             return Result<bool>.Failure(ConfirmEmailError.InvalidEmailConfirmationToken);
 
         return Result<bool>.Success(true);

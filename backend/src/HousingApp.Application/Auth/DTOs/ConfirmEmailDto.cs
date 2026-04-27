@@ -1,3 +1,6 @@
 ﻿namespace HousingApp.Application.Auth.DTOs;
 
-public record ConfirmEmailDto();
+public record ConfirmEmailDto(
+    string UserId,
+    string Token
+);

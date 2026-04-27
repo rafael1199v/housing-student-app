@@ -16,6 +16,11 @@ public class LoginUseCase(IUserRepository userRepository, IGenerateRefreshTokenU
             return Result<UserDto>.Failure(AuthError.InvalidCredentials);
         }
 
+        if (!user.IsEmailConfirmed)
+        {
+            return Result<UserDto>.Failure(AuthError.EmailNotConfirmed);
+        }
+
         Result<string> refreshTokenResult = await generateRefreshTokenUseCase.ExecuteAsync(user.Id);
 
         if (!refreshTokenResult.IsSuccess)

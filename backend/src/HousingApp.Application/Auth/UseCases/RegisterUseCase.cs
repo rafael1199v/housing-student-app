@@ -56,7 +56,7 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
             await unitOfWork.PersonRepository.CreatePerson(person);
             await unitOfWork.CommitTransactionAsync();
         }
-        catch (Exception ex)
+        catch
         {
             await unitOfWork.RollbackTransactionAsync();
             throw;
