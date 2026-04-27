@@ -1,4 +1,5 @@
 import type { AuthResponse } from "../features/auth/types/authResponse";
+import type { ConfirmEmailRequest } from "../features/auth/types/confirmEmailRequest";
 import type { GoogleAuthResponse } from "../features/auth/types/googleAuthResponse";
 import type { LoginRequest } from "../features/auth/types/loginRequest";
 import type { LoginWithGoogleRequest } from "../features/auth/types/loginWithGoogleRequest";
@@ -17,6 +18,10 @@ const authService = {
 		}),
 	googleRegister: (data: RegisterGoogleRequest) =>
 		api.post<AuthResponse>("/api/register/google", data, {
+			requiresAuth: false,
+		}),
+	confirmEmail: (data: ConfirmEmailRequest) =>
+		api.patch<void>("/api/auth/confirm-email", data, {
 			requiresAuth: false,
 		}),
 };
