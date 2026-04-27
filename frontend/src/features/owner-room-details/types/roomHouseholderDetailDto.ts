@@ -3,6 +3,7 @@ export interface BookingDto {
 	bookerId: string;
 	bookerName: string;
 	bookerEmail: string;
+	bookerPhoneNumber: string;
 	bookingStatus: string;
 	roomId: number;
 }

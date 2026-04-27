@@ -1,4 +1,5 @@
 import { type ReactNode, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface RoomCardProps {
 	name: string;
@@ -14,11 +15,12 @@ export function RoomCard({
 	name,
 	price,
 	images,
-	subtitle = "Habitación para estudiantes",
+	subtitle,
 	description,
 	onClick,
 	children,
 }: RoomCardProps) {
+	const { t } = useTranslation();
 	const allImages = images?.length ? images : [];
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
@@ -77,7 +79,7 @@ export function RoomCard({
 					/>
 				) : (
 					<div className="flex h-full items-center justify-center text-sm font-medium text-slate-400">
-						Sin imagen disponible
+						{t("roomCard.noImage")}
 					</div>
 				)}
 
@@ -85,7 +87,7 @@ export function RoomCard({
 					<>
 						<button
 							type="button"
-							aria-label="Imagen anterior"
+							aria-label={t("roomCard.prevImage")}
 							onClick={handlePrev}
 							disabled={currentIndex === 0}
 							className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-surface-container-lowest disabled:cursor-not-allowed disabled:opacity-40"
@@ -107,7 +109,7 @@ export function RoomCard({
 
 						<button
 							type="button"
-							aria-label="Siguiente imagen"
+							aria-label={t("roomCard.nextImage")}
 							onClick={handleNext}
 							disabled={currentIndex === allImages.length - 1}
 							className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-surface-container-lowest/80 p-1 text-slate-700 shadow backdrop-blur-sm transition hover:bg-surface-container-lowest disabled:cursor-not-allowed disabled:opacity-40"
@@ -144,11 +146,13 @@ export function RoomCard({
 			<div className="space-y-3 p-5">
 				<div className="space-y-1">
 					<h3 className="text-lg font-semibold text-slate-900">{name}</h3>
-					<p className="text-sm text-slate-500">{subtitle}</p>
+					<p className="text-sm text-slate-500">
+						{subtitle ?? t("roomCard.defaultSubtitle")}
+					</p>
 				</div>
 
 				<p className="text-2xl font-bold text-primary">{formattedPrice}</p>
-				<p className="-mt-2 text-xs text-slate-500">por mes</p>
+				<p className="-mt-2 text-xs text-slate-500">{t("roomCard.perMonth")}</p>
 
 				{shortDescription && (
 					<p className="text-sm leading-relaxed text-slate-600">

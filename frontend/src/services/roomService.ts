@@ -3,6 +3,7 @@ import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
 import type { RoomHouseholderDetailDto } from "../features/owner-room-details/types/roomHouseholderDetailDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
+import { compressImages } from "../global/utils/image-compressor";
 import { api, apiFetch } from "./apiService";
 
 export interface RoomSearchParams {
@@ -48,7 +49,8 @@ const roomService = {
 		formData.append("price", String(dto.price));
 		formData.append("roomStatusId", String(dto.roomStatus));
 
-		for (const imageFile of dto.imageRoomFiles) {
+		const compressedImages = await compressImages(dto.imageRoomFiles);
+		for (const imageFile of compressedImages) {
 			formData.append("images", imageFile);
 		}
 

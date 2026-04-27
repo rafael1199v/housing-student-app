@@ -1,0 +1,67 @@
+{
+	"email": {
+		"required": "O e-mail é obrigatório",
+		"invalid": "Por favor, insira um e-mail válido",
+		"tooLong": "E-mail muito longo"
+	},
+	"password": {
+		"required": "A senha é obrigatória",
+		"tooShort": "A senha deve ter pelo menos 8 caracteres",
+		"complexity": "A senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo",
+		"tooLong": "A senha é muito longa"
+	},
+	"confirmPassword": {
+		"required": "Você deve confirmar a senha",
+		"mismatch": "As senhas não coincidem"
+	},
+	"role": {
+		"required": "O papel é obrigatório"
+	},
+	"firstName": {
+		"required": "O nome é obrigatório",
+		"tooLong": "Nome muito longo"
+	},
+	"lastName": {
+		"required": "O sobrenome é obrigatório",
+		"tooLong": "Sobrenome muito longo"
+	},
+	"phone": {
+		"required": "O telefone é obrigatório",
+		"onlyDigits": "O telefone deve conter apenas dígitos",
+		"tooShort": "O telefone deve ter pelo menos 7 dígitos",
+		"tooLong": "O telefone não pode ter mais de 15 caracteres"
+	},
+	"phoneExtension": {
+		"required": "A extensão é obrigatória"
+	},
+	"nationality": {
+		"required": "A nacionalidade é obrigatória"
+	},
+	"gender": {
+		"required": "O gênero é obrigatório"
+	},
+	"profilePhoto": {
+		"invalidUrl": "A foto de perfil deve ser uma URL válida"
+	},
+	"birthDate": {
+		"required": "A data de nascimento é obrigatória"
+	},
+	"search": {
+		"nameTooLong": "O nome não pode superar 100 caracteres",
+		"minPriceTooLow": "O preço mínimo deve ser 0 ou maior",
+		"maxPriceTooLow": "O preço máximo deve ser 0 ou maior",
+		"priceTooHigh": "O preço não pode superar 99.999",
+		"priceRangeInvalid": "O preço máximo deve ser maior ou igual ao preço mínimo"
+	},
+	"room": {
+		"nameRequired": "O nome do quarto é obrigatório",
+		"descriptionRequired": "A descrição é obrigatória",
+		"descriptionTooLong": "A descrição é muito longa",
+		"priceRequired": "O preço é obrigatório",
+		"priceTooLow": "O preço deve ser maior que 0",
+		"priceTooHigh": "O preço é muito alto",
+		"locationRequired": "Por favor, selecione uma localização no mapa",
+		"latitudeRange": "A latitude deve estar entre -90 e 90",
+		"longitudeRange": "A longitude deve estar entre -180 e 180"
+	}
+}

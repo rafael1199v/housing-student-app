@@ -1,4 +1,5 @@
 using HousingApp.Infrastructure.Persistence.Context;
+using HousingApp.Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
 
 namespace HousingApp.Api.Extensions;
@@ -14,5 +15,15 @@ public static class DatabaseExtensions
         });
 
         return services;
+    }
+
+    public static async Task ApplyMigrationsAndSeedDataAsync(this WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            using IServiceScope scope = app.Services.CreateScope();
+            IHousingAppSeeder housingAppSeeder = scope.ServiceProvider.GetRequiredService<IHousingAppSeeder>();
+            await housingAppSeeder.SeedAsync();
+        }
     }
 }

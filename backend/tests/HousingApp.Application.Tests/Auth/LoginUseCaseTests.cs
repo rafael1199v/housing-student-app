@@ -12,11 +12,13 @@ public class LoginUseCaseTests
 {
     private readonly LoginUseCase _loginUseCase;
     private readonly IUserRepository _userRepository;
+    private readonly IGenerateRefreshTokenUseCase _generateRefreshTokenUseCase;
 
     public LoginUseCaseTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _loginUseCase = new LoginUseCase(_userRepository);
+        _generateRefreshTokenUseCase = Substitute.For<IGenerateRefreshTokenUseCase>();
+        _loginUseCase = new LoginUseCase(_userRepository, _generateRefreshTokenUseCase);
     }
 
     [Fact]
@@ -32,14 +34,18 @@ public class LoginUseCaseTests
             ["student"]
         );
 
+        const string refreshTokenReturned = "refresh-token-returned";
+
         _userRepository.FindUserByEmailAsync(loginDto.Email).Returns(returnedUser);
         _userRepository.CheckPassword(loginDto.Email, loginDto.Password).Returns(true);
+        _generateRefreshTokenUseCase.ExecuteAsync(returnedUser.Id).Returns(Result<string>.Success(refreshTokenReturned));
 
         UserDto userDtoExpected = new(
-            returnedUser.Id,
-            loginDto.Email,
-            returnedUser.Password,
-            returnedUser.Roles
+            Id: returnedUser.Id,
+            Email: loginDto.Email,
+            PasswordHash: returnedUser.Password,
+            RefreshToken: refreshTokenReturned,
+            Roles: returnedUser.Roles
         );
 
         //Act

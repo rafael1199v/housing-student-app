@@ -32,7 +32,6 @@ public class PersonRepository(HousingApplicationDbContext context) : IPersonRepo
             PhoneNumber = person.PhoneNumber,
             BirthDate = person.BirthDate,
             Nationality = person.Nationality,
-            Age = person.Age,
             Gender = person.Gender,
             ImageUrl = string.IsNullOrEmpty(person.ImageUrl) ? null : person.ImageUrl
         };

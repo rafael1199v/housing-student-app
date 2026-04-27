@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -9,60 +10,62 @@ import viteLogo from "/vite.svg";
 import reactLogo from "../../../assets/react.svg";
 import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
+import i18n from "../../../i18n";
 import authService from "../../../services/authService";
 import { LATIN_AMERICAN_COUNTRIES } from "../components/NationalitySelector";
 import type { RegisterDto } from "../types/registerDto";
+
+const v = (key: string) => i18n.t(key, { ns: "validation" });
 
 const registerSchema = z
 	.object({
 		email: z
 			.string()
 			.trim()
-			.min(1, "El email es requerido")
-			.email("Por favor ingresa un email válido")
-			.max(150, "Email muy largo"),
+			.min(1, v("email.required"))
+			.email(v("email.invalid"))
+			.max(150, v("email.tooLong")),
 		password: z
 			.string()
-			.min(1, "La contraseña es requerida")
-			.min(8, "La contraseña debe tener al menos 8 caracteres")
+			.min(1, v("password.required"))
+			.min(8, v("password.tooShort"))
 			.regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/, {
-				message:
-					"La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo",
+				message: v("password.complexity"),
 			})
-			.max(150, "La contraseña es excesivamente larga"),
-		confirmPassword: z.string().min(1, "Debe confirmar la contraseña"),
-		role: z.string().min(1, "El rol es requerido"),
+			.max(150, v("password.tooLong")),
+		confirmPassword: z.string().min(1, v("confirmPassword.required")),
+		role: z.string().min(1, v("role.required")),
 		firstName: z
 			.string()
 			.trim()
-			.min(1, "El nombre es requerido")
-			.max(150, "Nombre muy largo"),
+			.min(1, v("firstName.required"))
+			.max(150, v("firstName.tooLong")),
 		lastName: z
 			.string()
 			.trim()
-			.min(1, "El apellido es requerido")
-			.max(150, "Apellido demasiado largo"),
+			.min(1, v("lastName.required"))
+			.max(150, v("lastName.tooLong")),
 		phoneNumber: z
 			.string()
 			.trim()
-			.min(1, "El teléfono es requerido")
-			.regex(/^\d+$/, "El teléfono solo debe contener números")
-			.min(7, "El teléfono debe tener al menos 7 dígitos")
-			.max(15, "El nombre no puede tener más de 15 caracteres"),
-		phoneExtension: z.string().min(1, "La extensión es requerida"),
-		nationality: z.string().min(1, "La nacionalidad es requerida"),
-		gender: z.string().min(1, "El género es requerido"),
+			.min(1, v("phone.required"))
+			.regex(/^\d+$/, v("phone.onlyDigits"))
+			.min(7, v("phone.tooShort"))
+			.max(15, v("phone.tooLong")),
+		phoneExtension: z.string().min(1, v("phoneExtension.required")),
+		nationality: z.string().min(1, v("nationality.required")),
+		gender: z.string().min(1, v("gender.required")),
 		imageUrl: z.union([
 			z.literal(""),
-			z.string().url("La foto de perfil debe ser una URL válida"),
+			z.string().url(v("profilePhoto.invalidUrl")),
 		]),
-		birthDate: z.string().min(1, "La fecha de nacimiento es requerida"),
+		birthDate: z.string().min(1, v("birthDate.required")),
 	})
 	.superRefine((data, context) => {
 		if (data.password !== data.confirmPassword) {
 			context.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: "Las contraseñas no coinciden",
+				message: v("confirmPassword.mismatch"),
 				path: ["confirmPassword"],
 			});
 		}
@@ -77,6 +80,7 @@ type RegisterFormInput = z.input<typeof registerSchema>;
 type RegisterFormOutput = z.output<typeof registerSchema>;
 
 function Register() {
+	const { t } = useTranslation();
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const { register, handleSubmit, formState } = useForm<
@@ -97,7 +101,7 @@ function Register() {
 	const { mutate, isPending } = useMutation({
 		mutationFn: authService.register,
 		onSuccess: () => {
-			toast.success("Cuenta creada con éxito");
+			toast.success(t("auth.register.successToast"));
 			nav("/login");
 		},
 		onError: (error: Error) => {
@@ -106,17 +110,6 @@ function Register() {
 	});
 
 	const onSubmit: SubmitHandler<RegisterFormOutput> = (data) => {
-		const birthDate = new Date(data.birthDate);
-		const today = new Date();
-		let age = today.getFullYear() - birthDate.getFullYear();
-		const monthDiff = today.getMonth() - birthDate.getMonth();
-		if (
-			monthDiff < 0 ||
-			(monthDiff === 0 && today.getDate() < birthDate.getDate())
-		) {
-			age--;
-		}
-
 		const newRegister: RegisterDto = {
 			email: data.email,
 			password: data.password,
@@ -125,7 +118,6 @@ function Register() {
 			lastName: data.lastName,
 			phoneNumber: `${data.phoneExtension}${data.phoneNumber}`,
 			nationality: data.nationality,
-			age,
 			gender: data.gender,
 			imageUrl: data.imageUrl,
 			birthdate: data.birthDate,
@@ -137,41 +129,15 @@ function Register() {
 	return (
 		<div className="editorial-hero min-h-screen px-4 py-12 sm:px-6 lg:px-8">
 			<div className="max-w-2xl mx-auto">
-				{/* Logo Section */}
-				<div className="flex justify-center gap-4 mb-8">
-					<a
-						href="https://vite.dev"
-						target="_blank"
-						className="transition-transform hover:scale-110"
-					>
-						<img
-							src={viteLogo}
-							className="w-12 h-12 opacity-80"
-							alt="Vite logo"
-						/>
-					</a>
-					<a
-						href="https://react.dev"
-						target="_blank"
-						className="transition-transform hover:scale-110"
-					>
-						<img
-							src={reactLogo}
-							className="w-12 h-12 opacity-80"
-							alt="React logo"
-						/>
-					</a>
-				</div>
-
 				{/* Card */}
 				<div className="rounded-2xl bg-surface-container-lowest p-8 sm:p-10 shadow-2xl">
 					{/* Header */}
 					<div className="mb-8">
 						<h1 className="text-3xl font-semibold text-slate-900 mb-2">
-							Crea tu cuenta
+							{t("auth.register.title")}
 						</h1>
 						<p className="text-slate-500 text-sm">
-							Únete a nuestra comunidad de estudiantes
+							{t("auth.register.subtitle")}
 						</p>
 					</div>
 
@@ -181,11 +147,11 @@ function Register() {
 						<div className="grid sm:grid-cols-2 gap-4">
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Nombre
+									{t("auth.register.firstNameLabel")}
 								</label>
 								<input
 									className="field-filled w-full px-4 py-2.5"
-									placeholder="Juan"
+									placeholder={t("auth.register.firstNamePlaceholder")}
 									{...register("firstName")}
 								/>
 								{formState.errors.firstName && (
@@ -196,11 +162,11 @@ function Register() {
 							</div>
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Apellido
+									{t("auth.register.lastNameLabel")}
 								</label>
 								<input
 									className="field-filled w-full px-4 py-2.5"
-									placeholder="Pérez"
+									placeholder={t("auth.register.lastNamePlaceholder")}
 									{...register("lastName")}
 								/>
 								{formState.errors.lastName && (
@@ -215,16 +181,20 @@ function Register() {
 						<div className="grid sm:grid-cols-2 gap-4">
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Género
+									{t("auth.register.genderLabel")}
 								</label>
 								<select
 									className="field-filled w-full px-4 py-2.5"
 									{...register("gender")}
 								>
-									<option value="">Seleccionar</option>
-									<option value="Masculino">Masculino</option>
-									<option value="Femenino">Femenino</option>
-									<option value="Otro">Otro</option>
+									<option value="">{t("auth.register.genderSelect")}</option>
+									<option value="Masculino">
+										{t("auth.register.genderMale")}
+									</option>
+									<option value="Femenino">
+										{t("auth.register.genderFemale")}
+									</option>
+									<option value="Otro">{t("auth.register.genderOther")}</option>
 								</select>
 								{formState.errors.gender && (
 									<p className="text-red-500 text-xs mt-1">
@@ -234,7 +204,7 @@ function Register() {
 							</div>
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Fecha de Nacimiento
+									{t("auth.register.birthDateLabel")}
 								</label>
 								<input
 									type="date"
@@ -253,13 +223,15 @@ function Register() {
 						<div className="grid sm:grid-cols-2 gap-4">
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Nacionalidad
+									{t("auth.register.nationalityLabel")}
 								</label>
 								<select
 									{...register("nationality")}
 									className="field-filled w-full px-4 py-2.5"
 								>
-									<option value="">Selecciona tu país</option>
+									<option value="">
+										{t("auth.register.nationalitySelect")}
+									</option>
 									{LATIN_AMERICAN_COUNTRIES.map((country) => (
 										<option key={country.code} value={country.code}>
 											{country.flag} {country.name}
@@ -274,7 +246,7 @@ function Register() {
 							</div>
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Teléfono
+									{t("auth.register.phoneLabel")}
 								</label>
 								<div>
 									<div className="flex gap-2">
@@ -282,7 +254,9 @@ function Register() {
 											{...register("phoneExtension")}
 											className="field-filled px-3 py-2.5 shrink-0"
 										>
-											<option value="">Ext</option>
+											<option value="">
+												{t("auth.register.phoneExtPlaceholder")}
+											</option>
 											{LATIN_AMERICAN_COUNTRIES.map((country) => (
 												<option key={country.code} value={country.extension}>
 													{country.flag} {country.extension}
@@ -313,12 +287,12 @@ function Register() {
 						{/* Profile Image */}
 						<div>
 							<label className="block text-sm font-medium text-slate-700 mb-2">
-								Foto de perfil (URL)
+								{t("auth.register.photoLabel")}
 							</label>
 							<input
 								className="field-filled w-full px-4 py-2.5"
 								type="url"
-								placeholder="https://ejemplo.com/foto.jpg"
+								placeholder={t("auth.register.photoPlaceholder")}
 								{...register("imageUrl")}
 							/>
 							{formState.errors.imageUrl && (
@@ -335,7 +309,7 @@ function Register() {
 							</div>
 							<div className="relative flex justify-center text-sm">
 								<span className="px-2 bg-surface-container-lowest text-slate-500">
-									Credenciales
+									{t("auth.register.credentialsDivider")}
 								</span>
 							</div>
 						</div>
@@ -344,12 +318,12 @@ function Register() {
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 							<div className="sm:col-span-2">
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Correo electrónico
+									{t("auth.register.emailLabel")}
 								</label>
 								<input
 									className="field-filled w-full px-4 py-2.5"
 									type="email"
-									placeholder="tu@email.com"
+									placeholder={t("auth.register.emailPlaceholder")}
 									{...register("email")}
 								/>
 								{formState.errors.email && (
@@ -360,15 +334,19 @@ function Register() {
 							</div>
 							<div className="sm:col-span-1">
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Rol
+									{t("auth.register.roleLabel")}
 								</label>
 								<select
 									{...register("role")}
 									className="field-filled w-full px-3 py-2.5 shrink-0"
 								>
-									<option value="">...</option>
-									<option value="student">Estudiante</option>
-									<option value="householder">Arrendador</option>
+									<option value="">{t("auth.register.rolePlaceholder")}</option>
+									<option value="student">
+										{t("auth.register.roleStudent")}
+									</option>
+									<option value="householder">
+										{t("auth.register.roleOwner")}
+									</option>
 								</select>
 								{formState.errors.role && (
 									<p className="text-red-500 text-xs mt-1">
@@ -382,7 +360,7 @@ function Register() {
 						<div className="grid sm:grid-cols-2 gap-4">
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Contraseña
+									{t("auth.register.passwordLabel")}
 								</label>
 								<div className="relative">
 									<input
@@ -398,7 +376,9 @@ function Register() {
 										}
 										className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 hover:text-slate-800"
 										aria-label={
-											showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+											showPassword
+												? t("auth.register.hidePassword")
+												: t("auth.register.showPassword")
 										}
 									>
 										{showPassword ? (
@@ -416,7 +396,7 @@ function Register() {
 							</div>
 							<div>
 								<label className="block text-sm font-medium text-slate-700 mb-2">
-									Confirmar Contraseña
+									{t("auth.register.confirmPasswordLabel")}
 								</label>
 								<div className="relative">
 									<input
@@ -433,8 +413,8 @@ function Register() {
 										className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 hover:text-slate-800"
 										aria-label={
 											showConfirmPassword
-												? "Ocultar contraseña"
-												: "Mostrar contraseña"
+												? t("auth.register.hidePassword")
+												: t("auth.register.showPassword")
 										}
 									>
 										{showConfirmPassword ? (
@@ -458,19 +438,21 @@ function Register() {
 							type="submit"
 							disabled={formState.isSubmitting || isPending}
 						>
-							{isPending ? "Creando cuenta..." : "Crear cuenta"}
+							{isPending
+								? t("auth.register.submitPending")
+								: t("auth.register.submit")}
 						</button>
 					</form>
 
 					{/* Sign In Link */}
 					<div className="mt-6 text-center">
 						<p className="text-slate-600 text-sm">
-							¿Ya tienes una cuenta?{" "}
+							{t("auth.register.alreadyHaveAccount")}{" "}
 							<a
 								href="/login"
 								className="text-primary hover:text-primary-container font-medium transition"
 							>
-								Inicia sesión
+								{t("auth.register.loginLink")}
 							</a>
 						</p>
 					</div>

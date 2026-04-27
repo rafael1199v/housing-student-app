@@ -8,7 +8,6 @@ public record RegisterDto(
     string LastName,
     string PhoneNumber,
     string Nationality,
-    int Age,
     string Gender,
     string ImageUrl,
     string BirthDate
