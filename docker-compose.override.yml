@@ -41,19 +41,19 @@ services:
   # TODO: configure once frontend Dockerfile is finalized.
   # Suggested config when ready:
   #
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #     target: builder       # Stop at the Node build stage → vite dev server
-  #   container_name: itersapiens-frontend-dev
-  #   ports:
-  #     - "5173:5173"
-  #   environment:
-  #     NODE_ENV: development
-  #   volumes:
-  #     - ./frontend/src:/app/src    # Source hot-reload
-  #     - /app/node_modules          # Anonymous volume: preserve container's modules
-  #   command: ["npm", "run", "dev", "--", "--host"]
-  #   depends_on:
-  #     - api
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder # Stop at the Node build stage → vite dev server
+    container_name: itersapiens-frontend-dev
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./frontend/src:/app/src # Source hot-reload
+      - /app/node_modules # Anonymous volume: preserve container's modules
+    command: [ "npm", "run", "dev", "--", "--host" ]
+    depends_on:
+      - api

@@ -22,8 +22,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: >-
-        Host=db;Port=5432;Database=${DB_NAME:-housingDb};
-        Username=${DB_USER};Password=${DB_PASSWORD}
+        Host=db;Port=5432;Database=${DB_NAME:-housingDb}; Username=${DB_USER};Password=${DB_PASSWORD}
       # JWT — required at startup; pass via .env or CI secrets
       Jwt__SecretKey: ${JWT_SECRET_KEY}
       Jwt__Issuer: ${JWT_ISSUER}
@@ -40,22 +39,21 @@ services:
       db:
         condition: service_healthy
 
-
   # ── Frontend ─────────────────────────────────────────────────────────────────
   # TODO: configure once frontend Dockerfile is finalized.
   # Suggested config when ready:
   #
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #     # No `target` → full multi-stage build (builder + runtime)
-  #   container_name: itersapiens-frontend
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     NODE_ENV: production
-  #   # No volumes: dist is baked into the image
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - api
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      # No `target` → full multi-stage build (builder + runtime)
+    container_name: itersapiens-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    # No volumes: dist is baked into the image
+    restart: unless-stopped
+    depends_on:
+      - api
