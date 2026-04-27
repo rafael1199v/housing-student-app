@@ -23,7 +23,7 @@ FROM nginxinc/nginx-unprivileged:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Port 8080 (non-root can't bind to ports below 1024)
-EXPOSE 8080
+EXPOSE 3000
 
 # Start NGINX in the foreground
 CMD ["nginx", "-g", "daemon off;"]
