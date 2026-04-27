@@ -15,7 +15,7 @@ public class GoogleLoginUseCase(IGoogleAuthService googleAuthService, IUserRepos
         if (payload is null)
             return Result<GoogleAuthDto>.Failure(GoogleAuthError.InvalidGoogleToken);
 
-        User? user = await userRepository.FindUserByEmailAsync(payload.Email);
+        Domain.Entities.User? user = await userRepository.FindUserByEmailAsync(payload.Email);
 
         if (user is null)
             return Result<GoogleAuthDto>.Success(new GoogleAuthDto(

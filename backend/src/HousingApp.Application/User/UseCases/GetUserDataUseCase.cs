@@ -33,12 +33,12 @@ public class GetUserDataUseCase : IGetUserDataUseCase
         UserDataDto userDataDto = new(
             user.Email,
             user.FirstName,
-            user.LastName,
-            user.PhoneNumber,
-            user.Nationality,
-            user.Gender,
+            user.LastName ?? string.Empty,
+            user.PhoneNumber ?? string.Empty,
+            user.Nationality ?? string.Empty,
+            user.Gender ?? "Otro",
             user.ImageUrl ?? string.Empty,
-            user.BirthDate.ToString("yyyy-MM-dd")
+            user.BirthDate.ToString() ?? string.Empty
         );
         return Result<UserDataDto>.Success(userDataDto);
     }
