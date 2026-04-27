@@ -91,14 +91,14 @@ public class UserRepository(UserManager<IdentityUser> userManager) : IUserReposi
         return result.Succeeded;
     }
 
-
     private static User ToDomain(IdentityUser user, List<string> roles)
     {
         return User.CreateUser(
             user.Id,
             user.Email!,
             user.PasswordHash!,
-            roles
+            roles,
+            user.EmailConfirmed
         );
     }
 

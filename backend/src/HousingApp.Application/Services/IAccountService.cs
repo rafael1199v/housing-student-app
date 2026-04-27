@@ -2,5 +2,5 @@
 
 public interface IAccountService
 {
-    string GenerateEmailConfirmationLinkAsync(string email, string token);
+    string GenerateEmailConfirmationLinkAsync(string userId, string token);
 }

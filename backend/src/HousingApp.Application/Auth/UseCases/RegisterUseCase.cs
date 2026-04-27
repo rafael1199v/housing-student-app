@@ -67,7 +67,7 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
         {
             string confirmationToken = await unitOfWork.UserRepository.GenerateEmailConfirmationToken(userId);
             string confirmationLink =
-                accountService.GenerateEmailConfirmationLinkAsync(email: person.Email, token: confirmationToken);
+                accountService.GenerateEmailConfirmationLinkAsync(userId: userId, token: confirmationToken);
 
             await emailService.SendConfirmationEmailAsync(to: person.Email, firstName: person.FirstName,
                 confirmationLink: confirmationLink);

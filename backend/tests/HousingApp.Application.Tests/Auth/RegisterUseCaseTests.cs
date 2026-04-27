@@ -5,6 +5,7 @@ using HousingApp.Application.Repositories;
 using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace HousingApp.Application.Tests.Auth;
@@ -17,6 +18,7 @@ public class RegisterUseCaseTests
     private readonly IUserRepository _userRepository;
     private readonly IEmailService _emailService;
     private readonly IAccountService _accountService;
+    private readonly ILogger<RegisterUseCase> _logger;
 
     public RegisterUseCaseTests()
     {
@@ -30,7 +32,9 @@ public class RegisterUseCaseTests
         _emailService = Substitute.For<IEmailService>();
         _accountService = Substitute.For<IAccountService>();
 
-        _registerUseCase = new RegisterUseCase(_unitOfWork, _emailService, _accountService);
+        _logger = Substitute.For<ILogger<RegisterUseCase>>();
+
+        _registerUseCase = new RegisterUseCase(_unitOfWork, _emailService, _accountService, _logger);
     }
 
     [Fact]

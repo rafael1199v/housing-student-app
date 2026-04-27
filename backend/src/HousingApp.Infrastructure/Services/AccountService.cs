@@ -5,9 +5,9 @@ namespace HousingApp.Infrastructure.Services;
 
 public class AccountService(IConfiguration configuration) : IAccountService
 {
-    public string GenerateEmailConfirmationLinkAsync(string email, string token)
+    public string GenerateEmailConfirmationLinkAsync(string userId, string token)
     {
         string clientBaseUrl = configuration["Frontend:Origin"] ?? throw new Exception("Frontend:Origin not found in configuration");
-        return $"{clientBaseUrl}/confirm-email?email={email}&token={token}";
+        return $"{clientBaseUrl}/confirm-email?userId={userId}&token={token}";
     }
 }
