@@ -17,6 +17,6 @@ public class AuthController(IConfirmEmailUseCase confirmEmailUseCase) : Controll
         if (!result.IsSuccess)
             return BadRequest(result.Error);
 
-        return Ok();
+        return NoContent();
     }
 }
