@@ -3,6 +3,8 @@
 	"role_not_exist": "O papel não existe",
 	"admin_role_denied": "Você não tem permissão para criar uma conta com esses privilégios",
 	"email_in_use": "O e-mail já está em uso",
+	"invalid_confirmation_email_token": "O token de confirmação de e-mail é inválido",
+	"email_already_confirmed": "O e-mail já foi confirmado",
 	"room_invalid_price_range": "A faixa de preço é inválida",
 	"room_householder_not_found": "O proprietário do quarto não foi encontrado",
 	"room_invalid_name": "O nome do quarto é inválido",

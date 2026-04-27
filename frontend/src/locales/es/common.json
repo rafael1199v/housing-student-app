@@ -70,7 +70,16 @@
 			"submit": "Crear cuenta",
 			"alreadyHaveAccount": "¿Ya tienes una cuenta?",
 			"loginLink": "Inicia sesión",
-			"successToast": "Cuenta creada con éxito"
+			"successToast": "Cuenta creada. Revisa tu correo para confirmar tu email"
+		},
+		"confirmEmail": {
+			"title": "Confirmación de correo",
+			"subtitle": "Estamos validando tu enlace de confirmación.",
+			"pending": "Confirmando tu correo...",
+			"success": "Tu correo fue confirmado correctamente. Ya puedes iniciar sesión.",
+			"missingParams": "El enlace de confirmación no es válido. Faltan parámetros.",
+			"genericError": "No pudimos confirmar tu correo. Intenta nuevamente.",
+			"goToLogin": "Ir a iniciar sesión"
 		}
 	},
 	"home": {
