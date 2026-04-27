@@ -1,32 +1,32 @@
 ﻿using HousingApp.Application.Services;
-using HousingApp.Domain.Enums;
+using HousingApp.Application.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Resend;
 
 namespace HousingApp.Infrastructure.Services;
 
-public class EmailService(IResend resend, IConfiguration configuration, ILogger<EmailService> logger) : IEmailService
+public class EmailService(IResend resend, IConfiguration configuration) : IEmailService
 {
-    public async Task SendEmailAsync(string to, string subject, EmailMessageType type)
+    public async Task SendEmailAsync(string to, string subject, string body)
     {
-        try
-        {
-            string emailFrom = configuration["Resend:FromEmail"] ??
-                               throw new Exception("FromEmail property not found in configuration");
-            EmailMessage message = new()
-            {
-                From = emailFrom,
-                Subject = subject,
-                HtmlBody = "<strong>Hi, this is an email from itersapiens team</strong>"
-            };
+        string emailFrom = configuration["Resend:FromEmail"] ??
+                           throw new Exception("FromEmail property not found in configuration");
 
-            message.To.Add(to);
-            await resend.EmailSendAsync(message);
-        }
-        catch (Exception e)
+        EmailMessage message = new()
         {
-            logger.LogError(e, "Error sending email: {Message}", e.Message);
-        }
+            From = emailFrom,
+            Subject = subject,
+            HtmlBody = body
+        };
+
+        message.To.Add(to);
+        await resend.EmailSendAsync(message);
+    }
+
+    public async Task SendConfirmationEmailAsync(string to, string firstName, string confirmationLink)
+    {
+        string body = EmailTemplateUtil.BuildConfirmationTemplateContent(firstName, confirmationLink);
+        await SendEmailAsync(to: to, subject: "Confirm your email", body: body);
     }
 }

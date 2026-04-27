@@ -41,7 +41,8 @@ public class RefreshTokenRepository(HousingApplicationDbContext context, UserMan
                 uuid: refreshTokenModel.UserId,
                 email: refreshTokenModel.User.Email!,
                 password: refreshTokenModel.User.PasswordHash!,
-                roles: roles
+                roles: roles,
+                isEmailConfirmed: refreshTokenModel.User.EmailConfirmed
             )
         };
     }

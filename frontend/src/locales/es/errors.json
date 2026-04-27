@@ -3,6 +3,8 @@
 	"role_not_exist": "El rol no existe",
 	"admin_role_denied": "No tienes permisos para crear una cuenta con estos privilegios",
 	"email_in_use": "El email ya está en uso",
+	"invalid_confirmation_email_token": "El token de confirmación de correo es inválido",
+	"email_already_confirmed": "El correo ya fue confirmado",
 	"room_invalid_price_range": "El rango de precio es inválido",
 	"room_householder_not_found": "No se encontró el propietario del alojamiento",
 	"room_invalid_name": "El nombre del alojamiento es inválido",

@@ -45,6 +45,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ILoginWithRefreshTokenUseCase, LoginWithRefreshTokenUseCase>();
         services.AddScoped<IGoogleLoginUseCase, GoogleLoginUseCase>();
         services.AddScoped<IGoogleRegistrationUseCase, GoogleRegistrationUseCase>();
+        services.AddScoped<IConfirmEmailUseCase, ConfirmEmailUseCase>();
 
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();
@@ -52,6 +53,7 @@ public static class ApplicationServicesExtensions
         //Services
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IAccountService, AccountService>();
 
         return services;
     }
