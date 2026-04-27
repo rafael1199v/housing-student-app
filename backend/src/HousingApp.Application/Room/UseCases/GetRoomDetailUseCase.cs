@@ -27,11 +27,11 @@ public class GetRoomDetailUseCase(IRoomRepository roomRepository, IStorageServic
             room.PersonId,
             room.RoomStatus.ToString(),
             room.Person!.FirstName,
-            room.Person!.LastName,
+            room.Person!.LastName ?? "",
             room.Person!.Email,
-            room.Person!.PhoneNumber,
-            room.Person!.Nationality,
-            room.Person!.Gender,
+            room.Person!.PhoneNumber ?? "",
+            room.Person!.Nationality ?? "",
+            room.Person!.Gender ?? "",
             room.Person!.ImageUrl ?? "",
             [.. room.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))]
         );

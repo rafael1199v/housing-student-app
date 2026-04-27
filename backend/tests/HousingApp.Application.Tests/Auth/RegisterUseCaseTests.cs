@@ -2,8 +2,10 @@ using FluentAssertions;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Repositories;
+using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace HousingApp.Application.Tests.Auth;
@@ -14,6 +16,9 @@ public class RegisterUseCaseTests
     private readonly RegisterUseCase _registerUseCase;
     private readonly IAuthUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly IEmailService _emailService;
+    private readonly IAccountService _accountService;
+    private readonly ILogger<RegisterUseCase> _logger;
 
     public RegisterUseCaseTests()
     {
@@ -24,7 +29,12 @@ public class RegisterUseCaseTests
         _unitOfWork.UserRepository.Returns(_userRepository);
         _unitOfWork.PersonRepository.Returns(_personRepository);
 
-        _registerUseCase = new RegisterUseCase(_unitOfWork);
+        _emailService = Substitute.For<IEmailService>();
+        _accountService = Substitute.For<IAccountService>();
+
+        _logger = Substitute.For<ILogger<RegisterUseCase>>();
+
+        _registerUseCase = new RegisterUseCase(_unitOfWork, _emailService, _accountService, _logger);
     }
 
     [Fact]
@@ -36,6 +46,8 @@ public class RegisterUseCaseTests
 
         _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((Domain.Entities.User?)null);
         _userRepository.RegisterUser(Arg.Any<Domain.Entities.User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
+        _userRepository.GenerateEmailConfirmationToken(Arg.Any<string>()).Returns("token");
+        _accountService.GenerateEmailConfirmationLinkAsync(Arg.Any<string>(), Arg.Any<string>()).Returns("http://localhost:5000/confirm-email");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);

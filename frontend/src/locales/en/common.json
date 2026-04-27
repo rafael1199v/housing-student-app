@@ -32,7 +32,14 @@
 			"noAccount": "Don't have an account?",
 			"createAccount": "Create an account",
 			"successToast": "Welcome",
-			"sessionExpired": "Session expired. Please sign in again."
+			"sessionExpired": "Session expired. Please sign in again.",
+			"googleLoginError": "Google sign in failed.",
+			"googleRegisterError": "Google registration failed.",
+			"roleModalTitle": "Complete your profile",
+			"roleModalSubtitle": "Select your role to finish account creation.",
+			"roleModalCancel": "Cancel",
+			"roleModalSubmit": "Continue",
+			"roleModalSubmitPending": "Creating account..."
 		},
 		"register": {
 			"title": "Create your account",
@@ -68,7 +75,16 @@
 			"submit": "Create account",
 			"alreadyHaveAccount": "Already have an account?",
 			"loginLink": "Sign in",
-			"successToast": "Account created successfully"
+			"successToast": "Account created. Check your email to confirm your address"
+		},
+		"confirmEmail": {
+			"title": "Email confirmation",
+			"subtitle": "We are validating your confirmation link.",
+			"pending": "Confirming your email...",
+			"success": "Your email was confirmed successfully. You can now sign in.",
+			"missingParams": "The confirmation link is invalid. Missing required parameters.",
+			"genericError": "We could not confirm your email. Please try again.",
+			"goToLogin": "Go to sign in"
 		}
 	},
 	"home": {

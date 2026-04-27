@@ -32,7 +32,14 @@
 			"noAccount": "Não tem uma conta?",
 			"createAccount": "Crie uma conta",
 			"successToast": "Bem-vindo",
-			"sessionExpired": "Sessão expirada. Faça login novamente."
+			"sessionExpired": "Sessão expirada. Faça login novamente.",
+			"googleLoginError": "Falha ao entrar com Google.",
+			"googleRegisterError": "Falha ao registrar com Google.",
+			"roleModalTitle": "Complete seu perfil",
+			"roleModalSubtitle": "Selecione seu papel para concluir a criação da conta.",
+			"roleModalCancel": "Cancelar",
+			"roleModalSubmit": "Continuar",
+			"roleModalSubmitPending": "Criando conta..."
 		},
 		"register": {
 			"title": "Crie sua conta",
@@ -68,7 +75,16 @@
 			"submit": "Criar conta",
 			"alreadyHaveAccount": "Já tem uma conta?",
 			"loginLink": "Entre",
-			"successToast": "Conta criada com sucesso"
+			"successToast": "Conta criada. Verifique seu e-mail para confirmar seu endereço"
+		},
+		"confirmEmail": {
+			"title": "Confirmação de e-mail",
+			"subtitle": "Estamos validando seu link de confirmação.",
+			"pending": "Confirmando seu e-mail...",
+			"success": "Seu e-mail foi confirmado com sucesso. Agora você pode entrar.",
+			"missingParams": "O link de confirmação é inválido. Faltam parâmetros obrigatórios.",
+			"genericError": "Não foi possível confirmar seu e-mail. Tente novamente.",
+			"goToLogin": "Ir para entrar"
 		}
 	},
 	"home": {

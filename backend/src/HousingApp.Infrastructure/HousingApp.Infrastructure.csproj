@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
         <PackageReference Include="EFCore.NamingConventions"/>
+        <PackageReference Include="Google.Apis.Auth" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
         <PackageReference Include="AWSSDK.Extensions.NETCore.Setup"/>
         <PackageReference Include="AWSSDK.S3"/>
+        <PackageReference Include="Resend" />
         <ProjectReference Include="../HousingApp.Application/HousingApp.Application.csproj"/>
         <ProjectReference Include="../HousingApp.Domain/HousingApp.Domain.csproj"/>
     </ItemGroup>

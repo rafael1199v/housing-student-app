@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import App from "../App";
+import { confirmEmailLoader } from "../features/auth/loaders/ConfirmEmail.loader";
+import ConfirmEmail from "../features/auth/pages/confirm-email";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
 import { useAccessToken } from "../features/auth/store/authStore";
@@ -36,6 +38,12 @@ export const router = createBrowserRouter([
 		path: "/",
 		Component: App,
 		children: [
+			{
+				path: "confirm-email",
+				loader: confirmEmailLoader,
+				Component: ConfirmEmail,
+			},
+
 			// Guest-only routes (redirect to / if already logged in)
 			{
 				Component: GuestRoute,

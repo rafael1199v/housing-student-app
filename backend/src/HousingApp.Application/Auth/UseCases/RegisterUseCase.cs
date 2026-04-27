@@ -1,12 +1,14 @@
 using HousingApp.Application.Auth.DTOs;
+using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
+public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailService, IAccountService accountService, ILogger<RegisterUseCase> logger) : IRegisterUseCase
 {
     public async Task<Result<string>> ExecuteAsync(RegisterDto registerDto)
     {
@@ -29,13 +31,16 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
 
         Domain.Entities.User user = Domain.Entities.User.CreateUser(registerDto.Email, registerDto.Password);
 
+        //Register user and person flow
+        await unitOfWork.BeginTransactionAsync();
+        Person person;
+        string userId;
+
         try
         {
-            await unitOfWork.BeginTransactionAsync();
+            userId = await unitOfWork.UserRepository.RegisterUser(user, role);
 
-            string userId = await unitOfWork.UserRepository.RegisterUser(user, role);
-
-            Person person = Person.CreatePerson(
+            person = Person.CreatePerson(
                 userId,
                 registerDto.FirstName,
                 registerDto.LastName,
@@ -44,20 +49,35 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork) : IRegisterUseCase
                 registerDto.Nationality,
                 gender: registerDto.Gender,
                 imageUrl: registerDto.ImageUrl,
-                birthDate: DateOnly.ParseExact(registerDto.BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                birthDate: registerDto.BirthDate is null ? null : DateOnly.ParseExact(registerDto.BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
                 user: user
             );
 
             await unitOfWork.PersonRepository.CreatePerson(person);
-
             await unitOfWork.CommitTransactionAsync();
+        }
+        catch
+        {
+            await unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
 
-            return Result<string>.Success(userId);
+        //Send confirmation email
+        try
+        {
+            string confirmationToken = await unitOfWork.UserRepository.GenerateEmailConfirmationToken(userId);
+            string confirmationLink =
+                accountService.GenerateEmailConfirmationLinkAsync(userId: userId, token: confirmationToken);
+
+            await emailService.SendConfirmationEmailAsync(to: person.Email, firstName: person.FirstName,
+                confirmationLink: confirmationLink);
         }
         catch (Exception ex)
         {
-            await unitOfWork.RollbackTransactionAsync();
-            throw new Exception(ex.Message);
+            logger.LogError(ex, "Error sending confirmation email {Message}", ex.Message);
         }
+
+
+        return Result<string>.Success(userId);
     }
 }

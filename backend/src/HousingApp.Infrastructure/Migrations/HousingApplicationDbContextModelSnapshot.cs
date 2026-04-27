@@ -270,7 +270,7 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasColumnType("character varying(450)")
                         .HasColumnName("user_id");
 
-                    b.Property<DateOnly>("BirthDate")
+                    b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date")
                         .HasColumnName("birth_date");
 
@@ -295,7 +295,6 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasColumnName("first_name");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("gender");
@@ -310,19 +309,16 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasColumnName("is_deleted");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)")
                         .HasColumnName("last_name");
 
                     b.Property<string>("Nationality")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("nationality");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("phone_number");
@@ -380,7 +376,7 @@ namespace HousingApp.Infrastructure.Migrations
                     b.ToTable("policies", (string)null);
                 });
 
-            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RefreshToken", b =>
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RefreshTokenModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1044,7 +1040,7 @@ namespace HousingApp.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RefreshToken", b =>
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.RefreshTokenModel", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()

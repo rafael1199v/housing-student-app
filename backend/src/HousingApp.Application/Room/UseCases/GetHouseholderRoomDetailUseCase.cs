@@ -33,7 +33,7 @@ public class GetHouseholderRoomDetailUseCase(IRoomRepository roomRepository, ISt
                     b.BookerId,
                     $"{b.Booker!.FirstName} {b.Booker!.LastName}",
                     b.Booker!.Email,
-                    b.Booker!.PhoneNumber,
+                    b.Booker!.PhoneNumber ?? "",
                     b.BookingStatus.ToString(),
                     b.RoomId
                 ))

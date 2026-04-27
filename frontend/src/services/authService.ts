@@ -1,9 +1,13 @@
 import type { AuthResponse } from "../features/auth/types/authResponse";
+import type { ConfirmEmailRequest } from "../features/auth/types/confirmEmailRequest";
+import type { GoogleAuthResponse } from "../features/auth/types/googleAuthResponse";
 import type { LoginRequest } from "../features/auth/types/loginRequest";
+import type { LoginWithGoogleRequest } from "../features/auth/types/loginWithGoogleRequest";
 import type { RegisterDto } from "../features/auth/types/registerDto";
 import type { ChangePasswordDto } from "../features/profile-settings/types/changePasswordDto";
 import type { UpdateUserDataDto } from "../features/profile-settings/types/updateUserDataDto";
 import type { UserDataDto } from "../features/profile-settings/types/userDataDto";
+import type { RegisterGoogleRequest } from "../features/auth/types/registerGoogleRequest";
 import { api } from "./apiService";
 
 const authService = {
@@ -16,6 +20,18 @@ const authService = {
 		api.put<void>("/api/user/data", data),
 	changePassword: (data: ChangePasswordDto) =>
 		api.put<void>("/api/user/password", data),
+	googleLogin: (data: LoginWithGoogleRequest) =>
+		api.post<GoogleAuthResponse>("/api/login/google", data, {
+			requiresAuth: false,
+		}),
+	googleRegister: (data: RegisterGoogleRequest) =>
+		api.post<AuthResponse>("/api/register/google", data, {
+			requiresAuth: false,
+		}),
+	confirmEmail: (data: ConfirmEmailRequest) =>
+		api.patch<void>("/api/auth/confirm-email", data, {
+			requiresAuth: false,
+		}),
 };
 
 export default authService;

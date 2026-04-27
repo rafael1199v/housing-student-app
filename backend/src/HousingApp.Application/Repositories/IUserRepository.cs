@@ -11,4 +11,12 @@ public interface IUserRepository
     Task<Domain.Entities.User?> FindUserByEmailAsync(string email);
 
     Task<bool> CheckPassword(string email, string password);
+
+    Task<User?> GetUserByIdAsync(string userId);
+
+    Task<string> RegisterExternalUser(User newUser, Domain.Enums.Roles role);
+
+    Task<string> GenerateEmailConfirmationToken(string userId);
+
+    Task<bool> ConfirmEmail(string userId, string token);
 }

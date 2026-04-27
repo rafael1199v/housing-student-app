@@ -25,7 +25,6 @@ public class LoginWithRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRe
         UserDto userDto = new(
             Id: renewedRefreshToken.UserId,
             Email: renewedRefreshToken.User!.Email,
-            PasswordHash: renewedRefreshToken.User!.Password,
             RefreshToken: renewedRefreshToken.Token,
             Roles: renewedRefreshToken.User!.Roles
         );
