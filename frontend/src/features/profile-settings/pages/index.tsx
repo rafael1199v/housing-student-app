@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import i18n from "../../../i18n";
@@ -12,6 +11,7 @@ import { LATIN_AMERICAN_COUNTRIES } from "../../auth/components/NationalitySelec
 import { useAccessToken } from "../../auth/store/authStore";
 import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
 import type { UpdateUserDataDto } from "../types/updateUserDataDto";
+import formatToInputDate from "../utils/StringToDate";
 
 const v = (key: string) => i18n.t(key, { ns: "validation" });
 
@@ -46,7 +46,6 @@ type UpdateProfileFormValues = z.infer<typeof updateProfileSchema>;
 
 export function ProfileSettings() {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const accessToken = useAccessToken();
 
@@ -74,7 +73,7 @@ export function ProfileSettings() {
 				phoneNumber: userData.phoneNumber,
 				nationality: userData.nationality,
 				gender: userData.gender,
-				birthdate: userData.birthdate,
+				birthdate: formatToInputDate(userData.birthdate),
 			});
 		}
 	}, [userData, reset]);
@@ -284,7 +283,7 @@ export function ProfileSettings() {
 				<div className="flex items-center justify-between pb-8">
 					<button
 						type="button"
-						onClick={() => navigate("/profile-settings/change-password")}
+						// onClick={() => navigate("/profile-settings/change-password")}
 						className="text-sm text-primary underline underline-offset-2 transition hover:opacity-75"
 					>
 						{t("profileSettings.changePasswordButton")}

@@ -4,10 +4,10 @@ import type { GoogleAuthResponse } from "../features/auth/types/googleAuthRespon
 import type { LoginRequest } from "../features/auth/types/loginRequest";
 import type { LoginWithGoogleRequest } from "../features/auth/types/loginWithGoogleRequest";
 import type { RegisterDto } from "../features/auth/types/registerDto";
+import type { RegisterGoogleRequest } from "../features/auth/types/registerGoogleRequest";
 import type { ChangePasswordDto } from "../features/profile-settings/types/changePasswordDto";
 import type { UpdateUserDataDto } from "../features/profile-settings/types/updateUserDataDto";
 import type { UserDataDto } from "../features/profile-settings/types/userDataDto";
-import type { RegisterGoogleRequest } from "../features/auth/types/registerGoogleRequest";
 import { api } from "./apiService";
 
 const authService = {
