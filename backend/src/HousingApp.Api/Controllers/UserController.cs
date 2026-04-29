@@ -14,11 +14,10 @@ namespace HousingApp.Api.Controllers;
 [Route("api/user")]
 public class UserController(
     IGetUserDataUseCase getUserDataUseCase,
-    IUpdateUserDataUseCase updateUserDataUseCase,
-    IValidator<UpdateUserDTO> updateUserDtoValidator
+    IUpdateUserDataUseCase updateUserDataUseCase
     ) : ControllerBase
 {
-    [HttpGet("data")]
+    [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(UserDataDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -45,7 +44,7 @@ public class UserController(
         return Ok(result.Value);
     }
 
-    [HttpPut("data")]
+    [HttpPut]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -53,12 +52,6 @@ public class UserController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateUserData([FromBody] UpdateUserDTO updateUserDto)
     {
-        ValidationResult validationResult = await updateUserDtoValidator.ValidateAsync(updateUserDto);
-
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.Errors);
-        }
 
         string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
