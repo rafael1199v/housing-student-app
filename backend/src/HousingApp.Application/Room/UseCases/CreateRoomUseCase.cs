@@ -1,4 +1,4 @@
-using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Storage;
 using HousingApp.Application.UnitOfWork;

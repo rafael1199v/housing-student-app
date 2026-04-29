@@ -1,4 +1,4 @@
-namespace HousingApp.Application.Room.DTO;
+namespace HousingApp.Application.Room.DTOs;
 
 public record SearchRoomsFiltersDto(
     string? Name,

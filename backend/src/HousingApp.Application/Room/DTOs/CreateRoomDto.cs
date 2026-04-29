@@ -1,6 +1,6 @@
 using HousingApp.Application.Room.Upload;
 
-namespace HousingApp.Application.Room.DTO;
+namespace HousingApp.Application.Room.DTOs;
 
 public record CreateRoomDto(
     string Name,

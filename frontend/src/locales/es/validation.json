@@ -28,8 +28,9 @@
 	"phone": {
 		"required": "El teléfono es requerido",
 		"onlyDigits": "El teléfono solo debe contener números",
+		"onlyExtensionAndDigits": "El teléfono debe iniciar con '+' y solo debe contener dígitos",
 		"tooShort": "El teléfono debe tener al menos 7 dígitos",
-		"tooLong": "El nombre no puede tener más de 15 caracteres"
+		"tooLong": "El teléfono no puede tener más de 15 caracteres"
 	},
 	"phoneExtension": {
 		"required": "La extensión es requerida"
@@ -63,5 +64,8 @@
 		"locationRequired": "Por favor, selecciona una ubicación en el mapa",
 		"latitudeRange": "La latitud debe estar entre -90 y 90",
 		"longitudeRange": "La longitud debe estar entre -180 y 180"
+	},
+	"currentPassword": {
+		"required": "La contraseña actual es requerida"
 	}
 }

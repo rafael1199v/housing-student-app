@@ -3,7 +3,7 @@ using FluentValidation.Results;
 using HousingApp.Api.Requests;
 using HousingApp.Application;
 using HousingApp.Application.Roles;
-using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Room.UseCases;
 using HousingApp.Domain.Error;

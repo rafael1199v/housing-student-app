@@ -1,4 +1,5 @@
 using HousingApp.Application.Auth.UseCases;
+using HousingApp.Application.User.UseCases;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.UseCases;
@@ -30,6 +31,8 @@ public static class ApplicationServicesExtensions
         //Use cases
         services.AddScoped<ILoginUseCase, LoginUseCase>();
         services.AddScoped<IRegisterUseCase, RegisterUseCase>();
+        services.AddScoped<IGetUserDataUseCase, GetUserDataUseCase>();
+        services.AddScoped<IUpdateUserDataUseCase, UpdateUserDataUseCase>();
         services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
         services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
         services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();

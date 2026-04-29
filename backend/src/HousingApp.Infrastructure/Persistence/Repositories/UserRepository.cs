@@ -1,14 +1,73 @@
+using HousingApp.Application;
 using HousingApp.Application.Repositories;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
+using HousingApp.Domain.Error;
+using HousingApp.Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Buffers.Text;
 using System.Text;
 
 namespace HousingApp.Infrastructure.Persistence.Repositories;
 
-public class UserRepository(UserManager<IdentityUser> userManager) : IUserRepository
+public class UserRepository(
+    UserManager<IdentityUser> userManager,
+    HousingApplicationDbContext context
+    ) : IUserRepository
 {
+    public async Task<User> GetByIdAsync(string userId)
+    {
+        IdentityUser? user = await userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
+
+        List<string> roles = [.. await userManager.GetRolesAsync(user)];
+        return ToDomain(user, roles);
+    }
+    public async Task<Person> GetFullUserByIdAsync(string userId)
+{
+    if (string.IsNullOrWhiteSpace(userId))
+    {
+        throw new InvalidOperationException("User id is required.");
+    }
+
+    IdentityUser? identityUser = await userManager.FindByIdAsync(userId);
+    if (identityUser == null)
+    {
+        throw new InvalidOperationException("User not found.");
+    }
+
+    Persistence.Models.PersonModel? personModel = await context.Persons
+        .AsNoTracking()
+        .FirstOrDefaultAsync(p => p.UserId == userId);
+
+    if (personModel == null)
+    {
+        throw new InvalidOperationException("Person profile not found.");
+    }
+
+    List<string> roles = [.. await userManager.GetRolesAsync(identityUser)];
+    User domainUser = ToDomain(identityUser, roles);
+
+    Person person = Person.CreatePerson(
+        personModel.UserId,
+        personModel.FirstName,
+        personModel.LastName,
+        personModel.Email,
+        personModel.PhoneNumber,
+        personModel.Nationality,
+        personModel.Gender,
+        personModel.ImageUrl ?? string.Empty,
+        personModel.BirthDate,
+        domainUser
+    );
+
+    return person;
+}
     public async Task<string> RegisterUser(User newUser, Roles role)
     {
         IdentityUser user = ToModel(newUser);

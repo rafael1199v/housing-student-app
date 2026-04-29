@@ -1,8 +1,13 @@
 {
+	"roles": {
+		"Student": "Estudiante",
+		"Householder": "Arrendador"
+	},
 	"nav": {
 		"rooms": "Habitaciones",
 		"bookings": "Reservas",
 		"createRoom": "Crear habitación",
+		"profileSettings": "Configuración de perfil",
 		"logout": "Cerrar sesión",
 		"loggedOut": "Sesión cerrada"
 	},
@@ -247,5 +252,40 @@
 		"nextImage": "Siguiente imagen",
 		"defaultSubtitle": "Habitación para estudiantes",
 		"perMonth": "por mes"
+	},
+	"profileSettings": {
+		"title": "Configuración de perfil",
+		"subtitle": "Actualiza tu información personal.",
+		"emailLabel": "Correo electrónico",
+		"roleLabel": "Rol",
+		"firstNameLabel": "Nombre",
+		"lastNameLabel": "Apellido",
+		"phoneNumberLabel": "Número de teléfono",
+		"nationalityLabel": "Nacionalidad",
+		"genderLabel": "Género",
+		"genderMale": "Masculino",
+		"genderFemale": "Femenino",
+		"genderOther": "Otro",
+		"birthdateLabel": "Fecha de nacimiento",
+		"saveButton": "Guardar cambios",
+		"savePending": "Guardando...",
+		"saveSuccess": "Perfil actualizado exitosamente.",
+		"saveError": "Error al actualizar el perfil. {{message}}",
+		"changePasswordButton": "Cambiar contraseña",
+		"changePassword": {
+			"title": "Cambiar contraseña",
+			"subtitle": "Ingresa tu contraseña actual y elige una nueva.",
+			"backButton": "Volver al perfil",
+			"cancelButton": "Cancelar",
+			"currentPasswordLabel": "Contraseña actual",
+			"newPasswordLabel": "Nueva contraseña",
+			"confirmPasswordLabel": "Confirmar nueva contraseña",
+			"showPassword": "Mostrar contraseña",
+			"hidePassword": "Ocultar contraseña",
+			"submitButton": "Cambiar contraseña",
+			"submitPending": "Cambiando...",
+			"successToast": "Contraseña cambiada exitosamente.",
+			"errorToast": "Error al cambiar la contraseña. {{message}}"
+		}
 	}
 }

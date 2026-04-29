@@ -1,5 +1,5 @@
 using HousingApp.Application.Repositories;
-using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Storage;
 using HousingApp.Domain.Entities;
 

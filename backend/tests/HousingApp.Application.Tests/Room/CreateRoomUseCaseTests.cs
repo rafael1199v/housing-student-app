@@ -1,7 +1,7 @@
 using FluentAssertions;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room;
-using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Room.UseCases;
 using HousingApp.Application.Storage;

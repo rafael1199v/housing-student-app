@@ -22,14 +22,14 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
             return Result<string>.Failure(RegisterError.RolDoesNotExist);
         }
 
-        User? userFoundedByEmail = await unitOfWork.UserRepository.FindUserByEmailAsync(registerDto.Email);
+        Domain.Entities.User? userFoundedByEmail = await unitOfWork.UserRepository.FindUserByEmailAsync(registerDto.Email);
 
         if (userFoundedByEmail is not null)
         {
             return Result<string>.Failure(RegisterError.EmailAlreadyInUse);
         }
 
-        User user = User.CreateUser(registerDto.Email, registerDto.Password);
+        Domain.Entities.User user = Domain.Entities.User.CreateUser(registerDto.Email, registerDto.Password);
 
         //Register user and person flow
         await unitOfWork.BeginTransactionAsync();

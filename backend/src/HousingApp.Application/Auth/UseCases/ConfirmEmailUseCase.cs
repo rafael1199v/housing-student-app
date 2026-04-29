@@ -8,7 +8,7 @@ public class ConfirmEmailUseCase(IUserRepository userRepository) : IConfirmEmail
 {
     public async Task<Result<bool>> ExecuteAsync(string userId, string token)
     {
-        User? user = await userRepository.GetUserByIdAsync(userId);
+        Domain.Entities.User? user = await userRepository.GetUserByIdAsync(userId);
 
         if (user is null)
             return Result<bool>.Failure(ConfirmEmailError.InvalidEmailConfirmationToken);

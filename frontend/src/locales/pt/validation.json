@@ -28,6 +28,7 @@
 	"phone": {
 		"required": "O telefone é obrigatório",
 		"onlyDigits": "O telefone deve conter apenas dígitos",
+		"onlyExtensionAndDigits": "O telefone deve começar com '+' e deve conter apenas dígitos",
 		"tooShort": "O telefone deve ter pelo menos 7 dígitos",
 		"tooLong": "O telefone não pode ter mais de 15 caracteres"
 	},
@@ -63,5 +64,8 @@
 		"locationRequired": "Por favor, selecione uma localização no mapa",
 		"latitudeRange": "A latitude deve estar entre -90 e 90",
 		"longitudeRange": "A longitude deve estar entre -180 e 180"
+	},
+	"currentPassword": {
+		"required": "A senha atual é obrigatória"
 	}
 }

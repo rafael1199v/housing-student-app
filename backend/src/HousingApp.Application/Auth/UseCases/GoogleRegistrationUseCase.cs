@@ -29,7 +29,7 @@ public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAu
         }
 
         //Check if the user already exists
-        User? userFoundedByEmail = await authUnitOfWork.UserRepository.FindUserByEmailAsync(payload.Email);
+        Domain.Entities.User? userFoundedByEmail = await authUnitOfWork.UserRepository.FindUserByEmailAsync(payload.Email);
 
         if (userFoundedByEmail is not null)
         {
@@ -37,7 +37,7 @@ public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAu
         }
 
         //User creation
-        User user = User.CreateExternalLoginUser(payload.Email);
+        Domain.Entities.User user = Domain.Entities.User.CreateExternalLoginUser(payload.Email);
 
         try
         {
@@ -63,7 +63,7 @@ public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAu
             await authUnitOfWork.CommitTransactionAsync();
 
             //Generate user data for credentials creation
-            User? userCreated = await authUnitOfWork.UserRepository.GetUserByIdAsync(userId);
+            Domain.Entities.User? userCreated = await authUnitOfWork.UserRepository.GetUserByIdAsync(userId);
 
             Result<string> refreshTokenResult = await generateRefreshTokenUseCase.ExecuteAsync(userId);
 
