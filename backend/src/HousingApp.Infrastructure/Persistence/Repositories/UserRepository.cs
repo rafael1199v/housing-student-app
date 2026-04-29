@@ -16,29 +16,29 @@ public class UserRepository(
     HousingApplicationDbContext context
     ) : IUserRepository
 {
-    public async Task<Result<User>> GetByIdAsync(string userId)
+    public async Task<User> GetByIdAsync(string userId)
     {
         IdentityUser? user = await userManager.FindByIdAsync(userId);
 
         if (user == null)
         {
-            return Result<User>.Failure(new Error("user.not.found", "User not found"));
+            throw new InvalidOperationException("User not found");
         }
 
         List<string> roles = [.. await userManager.GetRolesAsync(user)];
-        return Result<User>.Success(ToDomain(user, roles));
+        return ToDomain(user, roles);
     }
-    public async Task<Result<Person>> GetFullUserByIdAsync(string userId)
+    public async Task<Person> GetFullUserByIdAsync(string userId)
 {
     if (string.IsNullOrWhiteSpace(userId))
     {
-        return Result<Person>.Failure(new Error("user.invalid.id", "User id is required."));
+        throw new InvalidOperationException("User id is required.");
     }
 
     IdentityUser? identityUser = await userManager.FindByIdAsync(userId);
     if (identityUser == null)
     {
-        return Result<Person>.Failure(new Error("user.not.found", "User not found."));
+        throw new InvalidOperationException("User not found.");
     }
 
     Persistence.Models.PersonModel? personModel = await context.Persons
@@ -47,7 +47,7 @@ public class UserRepository(
 
     if (personModel == null)
     {
-        return Result<Person>.Failure(new Error("person.not.found", "Person profile not found."));
+        throw new InvalidOperationException("Person profile not found.");
     }
 
     List<string> roles = [.. await userManager.GetRolesAsync(identityUser)];
@@ -66,7 +66,7 @@ public class UserRepository(
         domainUser
     );
 
-    return Result<Person>.Success(person);
+    return person;
 }
     public async Task<string> RegisterUser(User newUser, Roles role)
     {

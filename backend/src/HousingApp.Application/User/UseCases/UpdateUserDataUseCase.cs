@@ -12,13 +12,13 @@ public class UpdateUserDataUseCase(IPersonRepository personRepository, IUserRepo
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            return Result<bool>.Failure(new Error("user.invalid.id", "User id is required."));
+            return Result<bool>.Failure(UserError.InvalidUserId);
         }
 
-        Result<Domain.Entities.User> userResult = await userRepository.GetByIdAsync(userId);
-        if (!userResult.IsSuccess)
+        Domain.Entities.User userResult = await userRepository.GetByIdAsync(userId);
+        if (userResult is null)
         {
-            return Result<bool>.Failure(userResult.Error);
+            return Result<bool>.Failure(UserError.UserNotFound);
         }
 
 
@@ -34,7 +34,7 @@ public class UpdateUserDataUseCase(IPersonRepository personRepository, IUserRepo
 
         if (!updated)
         {
-            return Result<bool>.Failure(new Error("person.not.found", "Person profile not found."));
+            return Result<bool>.Failure(UserError.PersonProfileNotFound);
         }
 
         return Result<bool>.Success(true);

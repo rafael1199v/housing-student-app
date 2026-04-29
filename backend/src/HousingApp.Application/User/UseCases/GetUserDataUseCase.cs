@@ -17,17 +17,11 @@ public class GetUserDataUseCase : IGetUserDataUseCase
 
     public async Task<Result<UserDataDto>> ExecuteAsync(string userId)
     {
-        Result<Domain.Entities.Person> result = await _userRepository.GetFullUserByIdAsync(userId);
+        Domain.Entities.Person user = await _userRepository.GetFullUserByIdAsync(userId);
 
-        if (!result.IsSuccess)
+        if (user == null)
         {
-            return Result<UserDataDto>.Failure(result.Error);
-        }
-
-        Domain.Entities.Person? user = result.Value;
-        if (user is null)
-        {
-            return Result<UserDataDto>.Failure(new Error("person.not.found", "Person profile not found."));
+            return Result<UserDataDto>.Failure(UserError.UserNotFound);
         }
 
         UserDataDto userDataDto = new(
@@ -36,7 +30,7 @@ public class GetUserDataUseCase : IGetUserDataUseCase
             user.LastName ?? string.Empty,
             user.PhoneNumber ?? string.Empty,
             user.Nationality ?? string.Empty,
-            user.Gender ?? "Otro",
+            user.Gender ?? string.Empty,
             user.ImageUrl ?? string.Empty,
             user.BirthDate.ToString() ?? string.Empty
         );

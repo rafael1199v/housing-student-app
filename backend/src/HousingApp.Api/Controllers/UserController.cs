@@ -33,11 +33,6 @@ public class UserController(
         Result<UserDataDto> result = await getUserDataUseCase.ExecuteAsync(userId);
         if (!result.IsSuccess)
         {
-            if (result.Error.Code == "user.not.found" || result.Error.Code == "person.not.found")
-            {
-                return NotFound(result.Error);
-            }
-
             return BadRequest(result.Error);
         }
 
@@ -64,11 +59,6 @@ public class UserController(
 
         if (!result.IsSuccess)
         {
-            if (result.Error.Code == "user.not.found" || result.Error.Code == "person.not.found")
-            {
-                return NotFound(result.Error);
-            }
-
             return BadRequest(result.Error);
         }
 
