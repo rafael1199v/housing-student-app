@@ -8,10 +8,10 @@ public interface IPersonRepository
     Task<bool> ExistsByUserIdAsync(string userId);
     Task<bool> UpdateUserDataAsync(
         string userId,
-        string firstName,
-        string lastName,
-        string phoneNumber,
-        string nationality,
-        string gender,
-        DateOnly birthDate);
+        string? firstName,
+        string? lastName,
+        string? phoneNumber,
+        string? nationality,
+        string? gender,
+        DateOnly? birthDate);
 }

@@ -23,22 +23,22 @@ public class PersonRepository(HousingApplicationDbContext context) : IPersonRepo
 
     public async Task<bool> UpdateUserDataAsync(
         string userId,
-        string firstName,
-        string lastName,
-        string phoneNumber,
-        string nationality,
-        string gender,
-        DateOnly birthDate)
+        string? firstName,
+        string? lastName,
+        string? phoneNumber,
+        string? nationality,
+        string? gender,
+        DateOnly? birthDate)
     {
         int affectedRows = await context.Persons
             .Where(person => person.UserId == userId && !person.IsDeleted)
             .ExecuteUpdateAsync(setters => setters
-                .SetProperty(person => person.FirstName, firstName)
-                .SetProperty(person => person.LastName, lastName)
-                .SetProperty(person => person.PhoneNumber, phoneNumber)
-                .SetProperty(person => person.Nationality, nationality)
-                .SetProperty(person => person.Gender, gender)
-                .SetProperty(person => person.BirthDate, birthDate)
+                .SetProperty(person => person.FirstName, person => string.IsNullOrEmpty(firstName) ? person.FirstName : firstName)
+                .SetProperty(person => person.LastName, person => string.IsNullOrEmpty(lastName) ? person.LastName : lastName)
+                .SetProperty(person => person.PhoneNumber, person => string.IsNullOrEmpty(phoneNumber) ? person.PhoneNumber : phoneNumber)
+                .SetProperty(person => person.Nationality, person => string.IsNullOrEmpty(nationality) ? person.Nationality : nationality)
+                .SetProperty(person => person.Gender, person => string.IsNullOrEmpty(gender) ? person.Gender : gender)
+                .SetProperty(person => person.BirthDate, person => birthDate.HasValue ? birthDate.Value : person.BirthDate)
                 .SetProperty(person => person.UpdatedAt, DateTime.UtcNow));
 
         return affectedRows == 1;

@@ -21,24 +21,16 @@ public class UpdateUserDataUseCase(IPersonRepository personRepository, IUserRepo
             return Result<bool>.Failure(userResult.Error);
         }
 
-        if (!DateOnly.TryParseExact(
-                updateUserDto.Birthdate,
-                "yyyy-MM-dd",
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out DateOnly birthDate))
-        {
-            return Result<bool>.Failure(new Error("user.invalid.birthdate", "Birthdate must be in yyyy-MM-dd format."));
-        }
 
         bool updated = await personRepository.UpdateUserDataAsync(
             userId,
-            updateUserDto.FirstName ?? string.Empty,
-            updateUserDto.LastName ?? string.Empty,
-            updateUserDto.PhoneNumber ?? string.Empty,
-            updateUserDto.Nationality ?? string.Empty,
-            updateUserDto.Gender ?? string.Empty,
-            birthDate);
+            updateUserDto.FirstName,
+            updateUserDto.LastName,
+            updateUserDto.PhoneNumber,
+            updateUserDto.Nationality,
+            updateUserDto.Gender,
+            birthDate: updateUserDto.Birthdate is null ? null : DateOnly.ParseExact(updateUserDto.Birthdate, "yyyy-MM-dd", CultureInfo.InvariantCulture)
+            );
 
         if (!updated)
         {

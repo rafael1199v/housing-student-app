@@ -27,19 +27,16 @@ const updateProfileSchema = z.object({
 		.trim()
 		.min(1, v("firstName.required"))
 		.max(50, v("firstName.tooLong")),
-	lastName: z
-		.string()
-		.trim()
-		.min(1, v("lastName.required"))
-		.max(50, v("lastName.tooLong")),
+	lastName: z.string().trim().max(50, v("lastName.tooLong")),
 	phoneNumber: z
 		.string()
 		.min(7, v("phone.tooShort"))
 		.max(15, v("phone.tooLong"))
-		.regex(/^\+\d+$/, v("phone.onlyExtensionAndDigits")),
-	nationality: z.string().min(1, v("nationality.required")),
-	gender: z.string().min(1, v("gender.required")),
-	birthdate: z.string().min(1, v("birthDate.required")),
+		.regex(/^\+\d+$/, v("phone.onlyExtensionAndDigits"))
+		.optional(),
+	nationality: z.string(),
+	gender: z.string(),
+	birthdate: z.string(),
 });
 
 type UpdateProfileFormValues = z.infer<typeof updateProfileSchema>;
@@ -79,7 +76,8 @@ export function ProfileSettings() {
 	}, [userData, reset]);
 
 	const mutation = useMutation({
-		mutationFn: (dto: UpdateUserDataDto) => authService.updateData(dto),
+		mutationFn: (dto: Partial<UpdateUserDataDto>) =>
+			authService.updateData(dto),
 		onSuccess: () => {
 			toast.success(t("profileSettings.saveSuccess"));
 			queryClient.invalidateQueries({ queryKey: ["user-data"] });
@@ -90,7 +88,28 @@ export function ProfileSettings() {
 	});
 
 	const onSubmit = (values: UpdateProfileFormValues) => {
-		mutation.mutate(values);
+		const dto: Partial<UpdateUserDataDto> = {};
+
+		if (values.firstName !== userData?.firstName)
+			dto.firstName = values.firstName;
+		if (values.lastName !== userData?.lastName) dto.lastName = values.lastName;
+		if (values.phoneNumber !== userData?.phoneNumber)
+			dto.phoneNumber = values.phoneNumber;
+		if (values.nationality !== userData?.nationality)
+			dto.nationality = values.nationality;
+		if (values.gender !== userData?.gender) dto.gender = values.gender;
+
+		const originalBirth = userData
+			? formatToInputDate(userData.birthdate)
+			: null;
+		if (values.birthdate !== originalBirth) dto.birthdate = values.birthdate;
+
+		if (Object.keys(dto).length === 0) {
+			toast.success(t("profileSettings.saveSuccess"));
+			return;
+		}
+
+		mutation.mutate(dto);
 	};
 
 	if (isLoading) {
