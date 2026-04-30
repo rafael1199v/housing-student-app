@@ -49,6 +49,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IGoogleLoginUseCase, GoogleLoginUseCase>();
         services.AddScoped<IGoogleRegistrationUseCase, GoogleRegistrationUseCase>();
         services.AddScoped<IConfirmEmailUseCase, ConfirmEmailUseCase>();
+        services.AddScoped<ILogoutUseCase, LogoutUseCase>();
 
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();

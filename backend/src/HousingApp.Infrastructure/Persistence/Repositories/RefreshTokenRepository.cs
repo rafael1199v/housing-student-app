@@ -73,4 +73,13 @@ public class RefreshTokenRepository(HousingApplicationDbContext context, UserMan
         };
     }
 
+    public async Task RevokeRefreshTokens(string userId)
+    {
+        if(string.IsNullOrWhiteSpace(userId))
+            throw new Exception("The userId is required");
+
+        await context.RefreshTokens
+            .Where(rt => rt.UserId == userId)
+            .ExecuteDeleteAsync();
+    }
 }
