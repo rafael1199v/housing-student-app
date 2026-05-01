@@ -1,8 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useAccessToken, useAuthActions } from "../../auth/store/authStore";
-import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
+import {
+	useAccessToken,
+	useAuthActions,
+} from "../../features/auth/store/authStore";
+import { getRoleFromAccessToken } from "../../features/auth/utils/tokenClaims";
 
 export function Footer() {
 	const { t } = useTranslation();

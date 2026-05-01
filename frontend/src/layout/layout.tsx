@@ -6,9 +6,9 @@ import {
 	useAuthActions,
 } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
-import { Footer } from "../features/shared/components/footer";
-import { LanguageSelector } from "../features/shared/components/LanguageSelector";
 import { RoleEnum } from "../global/enum/role";
+import { Footer } from "../shared/components/footer";
+import { LanguageSelector } from "../shared/components/LanguageSelector";
 import authService from "../services/authService";
 
 export function MainLayout() {

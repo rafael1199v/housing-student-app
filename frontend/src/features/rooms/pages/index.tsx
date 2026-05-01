@@ -12,9 +12,9 @@ import { z } from "zod";
 import i18n from "../../../i18n";
 import type { RoomSearchParams } from "../../../services/roomService";
 import roomService from "../../../services/roomService";
+import { RoomCard } from "../../../shared/components/RoomCard";
 import { CardSkeleton } from "../../home/components/skeleton";
 import type { RoomData } from "../../home/types/roomDataDto";
-import { RoomCard } from "../../shared/components/RoomCard";
 
 type OrderBy = "price-asc" | "price-desc" | "name-asc" | "name-desc";
 type MapPosition = { lat: number; lng: number };
