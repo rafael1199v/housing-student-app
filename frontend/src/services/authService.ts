@@ -29,6 +29,7 @@ const authService = {
 		api.patch<void>("/api/auth/confirm-email", data, {
 			requiresAuth: false,
 		}),
+	logout: () => api.delete<void>("/api/auth/logout"),
 };
 
 export default authService;
