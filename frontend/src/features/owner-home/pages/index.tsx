@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import roomService from "../../../services/roomService";
+import { RoomCard } from "../../../shared/components/RoomCard";
 import { CardSkeleton } from "../../home/components/skeleton";
-import { RoomCard } from "../../shared/components/RoomCard";
 
 export function OwnerHomePage() {
 	const { t } = useTranslation();

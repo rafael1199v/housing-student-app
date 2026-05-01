@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LANG_STORAGE_KEY, LANGUAGES, loadLanguage } from "../../../i18n";
+import { LANG_STORAGE_KEY, LANGUAGES, loadLanguage } from "../../i18n";
 
 export function LanguageSelector() {
 	const { i18n } = useTranslation();

@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { z } from "zod";
 import i18n from "../../../i18n";
 import roomService from "../../../services/roomService";
-import { RoomCard } from "../../shared/components/RoomCard";
+import { RoomCard } from "../../../shared/components/RoomCard";
 import { CardSkeleton } from "../components/skeleton";
 
 const searchFiltersSchema = z
