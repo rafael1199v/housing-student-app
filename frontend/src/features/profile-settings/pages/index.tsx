@@ -30,10 +30,13 @@ const updateProfileSchema = z.object({
 	lastName: z.string().trim().max(50, v("lastName.tooLong")),
 	phoneNumber: z
 		.string()
-		.min(7, v("phone.tooShort"))
-		.max(15, v("phone.tooLong"))
-		.regex(/^\+\d+$/, v("phone.onlyExtensionAndDigits"))
-		.optional(),
+		.optional()
+		.refine((val) => !val || val.length >= 7, v("phone.tooShort"))
+		.refine((val) => !val || val.length <= 15, v("phone.tooLong"))
+		.refine(
+			(val) => !val || /^\+\d+$/.test(val),
+			v("phone.onlyExtensionAndDigits"),
+		),
 	nationality: z.string(),
 	gender: z.string(),
 	birthdate: z.string(),
