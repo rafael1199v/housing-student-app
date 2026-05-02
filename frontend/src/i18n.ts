@@ -1,12 +1,15 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import brFlag from "./assets/icons/flags/br.svg";
+import esFlag from "./assets/icons/flags/es.svg";
+import usFlag from "./assets/icons/flags/us.svg";
 
 export const LANG_STORAGE_KEY = "app_language";
 
 export const LANGUAGES = [
-	{ code: "es", flag: "🇧🇴", label: "ES" },
-	{ code: "en", flag: "🇺🇸", label: "EN" },
-	{ code: "pt", flag: "🇧🇷", label: "PT" },
+	{ code: "es", flag: esFlag, label: "ES" },
+	{ code: "en", flag: usFlag, label: "EN" },
+	{ code: "pt", flag: brFlag, label: "PT" },
 ] as const;
 
 const supportedLanguages = LANGUAGES.map((l) => l.code);
