@@ -1,5 +1,5 @@
 using HousingApp.Application.User.DTOs;
-    
+
 namespace HousingApp.Application.User.UseCases;
 
 public interface IGetUserDataUseCase

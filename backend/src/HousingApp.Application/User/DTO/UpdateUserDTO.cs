@@ -1,4 +1,5 @@
 namespace HousingApp.Application.User.DTOs;
+
 public record UpdateUserDTO(
     string? FirstName,
     string? LastName,

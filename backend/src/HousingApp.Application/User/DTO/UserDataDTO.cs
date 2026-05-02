@@ -1,4 +1,5 @@
 namespace HousingApp.Application.User.DTOs;
+
 public record UserDataDto(
     string Email,
     string FirstName,

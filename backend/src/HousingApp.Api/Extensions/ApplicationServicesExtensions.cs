@@ -1,10 +1,10 @@
 using HousingApp.Application.Auth.UseCases;
-using HousingApp.Application.User.UseCases;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.UseCases;
 using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
+using HousingApp.Application.User.UseCases;
 using HousingApp.Infrastructure.Persistence.Repositories;
 using HousingApp.Infrastructure.Persistence.UnitOfWork;
 using HousingApp.Infrastructure.Seeders;

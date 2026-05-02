@@ -36,7 +36,7 @@ public class AuthController(IConfirmEmailUseCase confirmEmailUseCase, ILogoutUse
 
         Result<bool> result = await logoutUseCase.ExecuteAsync(userId);
 
-        if(!result.IsSuccess)
+        if (!result.IsSuccess)
         {
             return BadRequest(result.Error);
         }
