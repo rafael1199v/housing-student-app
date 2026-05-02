@@ -11,6 +11,6 @@ public class CreateRoomRequest
     public required double Price { get; set; }
     public required int RoomStatusId { get; set; }
     public List<IFormFile> Images { get; set; } = [];
-    public List<int> Services { get; set; } = [];
+    public List<CreateRoomServiceDto> Services { get; set; } = [];
     public List<CreateRoomPolicyDto> Policies { get; set; } = [];
 }
