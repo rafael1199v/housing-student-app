@@ -7,5 +7,7 @@ public record CreatedRoomDto(
     double Longitude,
     double Price,
     string RoomStatus,
-    List<string> ImageRoomUrls
+    List<string> ImageRoomUrls,
+    List<CreateRoomPolicyDto> Policies,
+    List<CreateRoomServiceDto> Services
 );

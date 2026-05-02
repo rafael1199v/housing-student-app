@@ -9,5 +9,7 @@ public record CreateRoomDto(
     double Longitude,
     double Price,
     int RoomStatusId,
-    List<ImageRoomUpload> Images
+    List<ImageRoomUpload> Images,
+    List<CreateRoomPolicyDto> Policies,
+    List<CreateRoomServiceDto> Services
 );
