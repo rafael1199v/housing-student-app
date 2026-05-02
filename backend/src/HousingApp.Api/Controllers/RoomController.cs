@@ -167,7 +167,9 @@ public class RoomController(
             [
                 .. request.Images.Select(image =>
                     new ImageRoomUpload(image.OpenReadStream, image.FileName, image.ContentType))
-            ]
+            ],
+            Policies: request.Policies,
+            Services: request.Services
         );
 
         return createRoomDto;

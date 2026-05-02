@@ -27,4 +27,6 @@ public class RoomModel : AuditableModel
 
     public ICollection<RoomImagesModel> RoomImages { get; set; } = [];
     public ICollection<BookingModel> Bookings { get; set; } = [];
+    public ICollection<ServiceModel> Services { get; set; } = [];
+    public ICollection<PolicyModel> Policies { get; set; } = [];
 }
