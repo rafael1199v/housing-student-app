@@ -1,9 +1,10 @@
 using HousingApp.Application.Repositories;
-using HousingApp.Application.User.DTOs;
 using HousingApp.Application.Storage;
+using HousingApp.Application.User.DTOs;
 using HousingApp.Domain.Error;
 
 namespace HousingApp.Application.User.UseCases;
+
 public class GetUserDataUseCase : IGetUserDataUseCase
 {
     private readonly IUserRepository _userRepository;

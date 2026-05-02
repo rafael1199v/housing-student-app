@@ -11,16 +11,28 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
 {
     public async Task<int> CreateRoomAsync(Room room)
     {
-        RoomModel roomModel = new()
+        RoomModel roomModel = ToModel(room);
+
+        List<PolicyModel> policyModels = await context.Policies
+            .Where(policyModel => room.Policies.Select(policy => policy.Id).Contains(policyModel.Id) && !policyModel.IsDeleted)
+            .ToListAsync();
+
+        List<ServiceModel> serviceModels = await context.Services
+            .Where(serviceModel => room.Services.Contains(serviceModel.Id) && !serviceModel.IsDeleted)
+            .ToListAsync();
+
+        if (policyModels.Count != room.Policies.Count)
         {
-            Name = room.Name,
-            Latitude = room.Latitude,
-            Longitude = room.Longitude,
-            Description = room.Description,
-            Price = (decimal)room.Price,
-            PersonId = room.PersonId,
-            RoomStatusId = (int)room.RoomStatus
-        };
+            throw new Exception("Some required policies do not exist");
+        }
+
+        if (serviceModels.Count != room.Services.Count)
+        {
+            throw new Exception("Some required services do not exist");
+        }
+
+        roomModel.Services = serviceModels;
+        roomModel.Policies = policyModels;
 
         await context.Rooms.AddAsync(roomModel);
 
@@ -214,5 +226,21 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
             .FirstOrDefaultAsync();
 
         return room;
+    }
+
+    private static RoomModel ToModel(Room room)
+    {
+        return new RoomModel
+        {
+            Name = room.Name,
+            Latitude = room.Latitude,
+            Longitude = room.Longitude,
+            Description = room.Description,
+            Price = (decimal)room.Price,
+            PersonId = room.PersonId,
+            RoomStatusId = (int)room.RoomStatus,
+            Policies = [],
+            Services = [],
+        };
     }
 }

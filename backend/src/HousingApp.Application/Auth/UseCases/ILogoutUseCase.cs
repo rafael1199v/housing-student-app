@@ -1,4 +1,4 @@
-using HousingApp.Application;
+namespace HousingApp.Application.Auth.UseCases;
 
 public interface ILogoutUseCase
 {
