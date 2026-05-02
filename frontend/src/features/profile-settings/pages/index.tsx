@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import i18n from "../../../i18n";
 import authService from "../../../services/authService";
-import { LATIN_AMERICAN_COUNTRIES } from "../../auth/components/NationalitySelector";
+import { NationalityDropdown } from "../../auth/components/NationalityDropdown";
 import { useAccessToken } from "../../auth/store/authStore";
 import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
 import type { UpdateUserDataDto } from "../types/updateUserDataDto";
@@ -30,10 +30,13 @@ const updateProfileSchema = z.object({
 	lastName: z.string().trim().max(50, v("lastName.tooLong")),
 	phoneNumber: z
 		.string()
-		.min(7, v("phone.tooShort"))
-		.max(15, v("phone.tooLong"))
-		.regex(/^\+\d+$/, v("phone.onlyExtensionAndDigits"))
-		.optional(),
+		.optional()
+		.refine((val) => !val || val.length >= 7, v("phone.tooShort"))
+		.refine((val) => !val || val.length <= 15, v("phone.tooLong"))
+		.refine(
+			(val) => !val || /^\+\d+$/.test(val),
+			v("phone.onlyExtensionAndDigits"),
+		),
 	nationality: z.string(),
 	gender: z.string(),
 	birthdate: z.string(),
@@ -57,6 +60,8 @@ export function ProfileSettings() {
 		register,
 		handleSubmit,
 		reset,
+		watch,
+		setValue,
 		formState: { errors },
 	} = useForm<UpdateProfileFormValues>({
 		resolver: zodResolver(updateProfileSchema),
@@ -230,17 +235,11 @@ export function ProfileSettings() {
 							>
 								{t("profileSettings.nationalityLabel")}
 							</label>
-							<select
-								{...register("nationality")}
-								className="field-filled w-full px-3.5 py-2.5 border border-slate-300 bg-white text-sm"
-							>
-								<option value="">{t("auth.register.nationalitySelect")}</option>
-								{LATIN_AMERICAN_COUNTRIES.map((country) => (
-									<option key={country.code} value={country.code}>
-										{country.flag} {country.name}
-									</option>
-								))}
-							</select>
+							<NationalityDropdown
+								value={watch("nationality") || ""}
+								onChange={(code) => setValue("nationality", code)}
+								ariaLabel={t("profileSettings.nationalityLabel")}
+							/>
 							{errors.nationality && (
 								<p className="text-xs text-red-600">
 									{errors.nationality.message}

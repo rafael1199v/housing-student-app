@@ -10,6 +10,7 @@ import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
 import i18n from "../../../i18n";
 import authService from "../../../services/authService";
+import { NationalityDropdown } from "../components/NationalityDropdown";
 import { LATIN_AMERICAN_COUNTRIES } from "../components/NationalitySelector";
 import type { RegisterDto } from "../types/registerDto";
 
@@ -81,7 +82,7 @@ function Register() {
 	const { t } = useTranslation();
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	const { register, handleSubmit, formState } = useForm<
+	const { register, handleSubmit, formState, watch, setValue } = useForm<
 		RegisterFormInput,
 		unknown,
 		RegisterFormOutput
@@ -223,19 +224,11 @@ function Register() {
 								<label className="block text-sm font-medium text-slate-700 mb-2">
 									{t("auth.register.nationalityLabel")}
 								</label>
-								<select
-									{...register("nationality")}
-									className="field-filled w-full px-4 py-2.5"
-								>
-									<option value="">
-										{t("auth.register.nationalitySelect")}
-									</option>
-									{LATIN_AMERICAN_COUNTRIES.map((country) => (
-										<option key={country.code} value={country.code}>
-											{country.flag} {country.name}
-										</option>
-									))}
-								</select>
+								<NationalityDropdown
+									value={watch("nationality") || ""}
+									onChange={(code) => setValue("nationality", code)}
+									ariaLabel={t("auth.register.nationalityLabel")}
+								/>
 								{formState.errors.nationality && (
 									<p className="text-red-500 text-xs mt-1">
 										{formState.errors.nationality.message}
@@ -248,19 +241,48 @@ function Register() {
 								</label>
 								<div>
 									<div className="flex gap-2">
-										<select
-											{...register("phoneExtension")}
-											className="field-filled px-3 py-2.5 shrink-0"
-										>
-											<option value="">
-												{t("auth.register.phoneExtPlaceholder")}
-											</option>
-											{LATIN_AMERICAN_COUNTRIES.map((country) => (
-												<option key={country.code} value={country.extension}>
-													{country.flag} {country.extension}
+										<div className="relative h-10 shrink-0 rounded-lg border border-slate-300 bg-white overflow-hidden">
+											<select
+												{...register("phoneExtension")}
+												className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+											>
+												<option value="">
+													{t("auth.register.phoneExtPlaceholder")}
 												</option>
-											))}
-										</select>
+												{LATIN_AMERICAN_COUNTRIES.map((country) => (
+													<option key={country.code} value={country.extension}>
+														{country.code} {country.extension}
+													</option>
+												))}
+											</select>
+											<div className="flex items-center gap-1.5 px-2 h-full pointer-events-none text-sm">
+												{watch("phoneExtension") ? (
+													<>
+														{LATIN_AMERICAN_COUNTRIES.find(
+															(c) => c.extension === watch("phoneExtension"),
+														)?.flagIcon ? (
+															<img
+																src={
+																	LATIN_AMERICAN_COUNTRIES.find(
+																		(c) =>
+																			c.extension === watch("phoneExtension"),
+																	)!.flagIcon
+																}
+																alt=""
+																className="w-4 h-4"
+															/>
+														) : null}
+														<span className="text-slate-700">
+															{watch("phoneExtension")}
+														</span>
+													</>
+												) : (
+													<span className="text-slate-500">
+														{t("auth.register.phoneExtPlaceholder")}
+													</span>
+												)}
+											</div>
+										</div>
 										<input
 											className="field-filled w-3 flex-1 px-4 py-2.5"
 											type="tel"

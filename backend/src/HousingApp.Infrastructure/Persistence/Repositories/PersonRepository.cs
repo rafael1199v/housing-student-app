@@ -38,7 +38,7 @@ public class PersonRepository(HousingApplicationDbContext context) : IPersonRepo
                 .SetProperty(person => person.PhoneNumber, person => string.IsNullOrEmpty(phoneNumber) ? person.PhoneNumber : phoneNumber)
                 .SetProperty(person => person.Nationality, person => string.IsNullOrEmpty(nationality) ? person.Nationality : nationality)
                 .SetProperty(person => person.Gender, person => string.IsNullOrEmpty(gender) ? person.Gender : gender)
-                .SetProperty(person => person.BirthDate, person => birthDate.HasValue ? birthDate.Value : person.BirthDate)
+                .SetProperty(person => person.BirthDate, person => birthDate)
                 .SetProperty(person => person.UpdatedAt, DateTime.UtcNow));
 
         return affectedRows == 1;

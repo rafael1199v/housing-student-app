@@ -6,9 +6,10 @@ import {
 	useAuthActions,
 } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
-import { Footer } from "../features/shared/components/footer";
-import { LanguageSelector } from "../features/shared/components/LanguageSelector";
 import { RoleEnum } from "../global/enum/role";
+import authService from "../services/authService";
+import { Footer } from "../shared/components/footer";
+import { LanguageSelector } from "../shared/components/LanguageSelector";
 
 export function MainLayout() {
 	const { t } = useTranslation();
@@ -18,7 +19,8 @@ export function MainLayout() {
 	const token = useAccessToken();
 	const role = getRoleFromAccessToken(token);
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
+		await authService.logout();
 		clearAll();
 		toast.success(t("nav.loggedOut"));
 		navigate("/login");

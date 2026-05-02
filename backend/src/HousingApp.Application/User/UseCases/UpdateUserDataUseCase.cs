@@ -29,7 +29,7 @@ public class UpdateUserDataUseCase(IPersonRepository personRepository, IUserRepo
             updateUserDto.PhoneNumber,
             updateUserDto.Nationality,
             updateUserDto.Gender,
-            birthDate: updateUserDto.Birthdate is null ? null : DateOnly.ParseExact(updateUserDto.Birthdate, "yyyy-MM-dd", CultureInfo.InvariantCulture)
+            birthDate: string.IsNullOrEmpty(updateUserDto.Birthdate) ? null : DateOnly.ParseExact(updateUserDto.Birthdate, "yyyy-MM-dd", CultureInfo.InvariantCulture)
             );
 
         if (!updated)
