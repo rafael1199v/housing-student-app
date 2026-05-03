@@ -217,7 +217,17 @@ export function ServicesPoliciesStep({
 							>
 								<div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
 									<label className="space-y-1.5 text-sm font-medium text-slate-700">
-										<span>{t("newRoom.policyTypeLabel")}</span>
+										<div className="flex items-center gap-2">
+											<span>{t("newRoom.policyTypeLabel")}</span>
+											{selectedPolicyOption?.icon && (
+												<img
+													src={selectedPolicyOption.icon}
+													alt=""
+													className="h-4 w-4"
+													aria-hidden="true"
+												/>
+											)}
+										</div>
 										<select
 											value={policy.id}
 											onChange={(e) =>

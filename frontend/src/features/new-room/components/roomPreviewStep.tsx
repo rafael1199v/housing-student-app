@@ -88,7 +88,7 @@ export function RoomPreviewStep({
 					<p className="text-xs uppercase tracking-wide text-slate-500">
 						{t("newRoom.descriptionLabel")}
 					</p>
-					<p className="mt-1 text-sm text-slate-800">
+					<p className="mt-1 text-sm text-slate-800 break-words">
 						{values.description || t("newRoom.previewEmpty")}
 					</p>
 				</div>
@@ -103,12 +103,22 @@ export function RoomPreviewStep({
 				) : (
 					<div className="flex flex-wrap gap-2">
 						{selectedServiceOptions.map((service) => (
-							<span
+							<div
 								key={service.id}
-								className="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-sm text-slate-700"
+								className="flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-3 py-1.5"
 							>
-								{t(service.labelKey)}
-							</span>
+								{service.icon && (
+									<img
+										src={service.icon}
+										alt=""
+										className="h-4 w-4"
+										aria-hidden="true"
+									/>
+								)}
+								<span className="text-sm text-slate-700">
+									{t(service.labelKey)}
+								</span>
+							</div>
 						))}
 					</div>
 				)}
@@ -131,11 +141,21 @@ export function RoomPreviewStep({
 									key={`${policy.id}-${index}`}
 									className="rounded-lg border border-slate-200 bg-white px-3 py-2"
 								>
-									<p className="text-sm font-medium text-slate-800">
-										{policyOption
-											? t(policyOption.labelKey)
-											: t("newRoom.previewEmpty")}
-									</p>
+									<div className="flex items-center gap-2">
+										{policyOption?.icon && (
+											<img
+												src={policyOption.icon}
+												alt=""
+												className="h-4 w-4"
+												aria-hidden="true"
+											/>
+										)}
+										<p className="text-sm font-medium text-slate-800">
+											{policyOption
+												? t(policyOption.labelKey)
+												: t("newRoom.previewEmpty")}
+										</p>
+									</div>
 									<p className="mt-0.5 text-sm text-slate-600">
 										{policy.description || t("newRoom.previewEmpty")}
 									</p>
