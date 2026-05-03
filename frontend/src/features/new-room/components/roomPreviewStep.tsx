@@ -88,7 +88,7 @@ export function RoomPreviewStep({
 					<p className="text-xs uppercase tracking-wide text-slate-500">
 						{t("newRoom.descriptionLabel")}
 					</p>
-					<p className="mt-1 text-sm text-slate-800 break-words">
+					<p className="mt-1 text-sm text-slate-800 wrap-break-word">
 						{values.description || t("newRoom.previewEmpty")}
 					</p>
 				</div>
@@ -111,7 +111,7 @@ export function RoomPreviewStep({
 									<img
 										src={service.icon}
 										alt=""
-										className="h-4 w-4"
+										className="h-4 w-4 brightness-0"
 										aria-hidden="true"
 									/>
 								)}
@@ -146,7 +146,7 @@ export function RoomPreviewStep({
 											<img
 												src={policyOption.icon}
 												alt=""
-												className="h-4 w-4"
+												className="h-4 w-4 brightness-0"
 												aria-hidden="true"
 											/>
 										)}

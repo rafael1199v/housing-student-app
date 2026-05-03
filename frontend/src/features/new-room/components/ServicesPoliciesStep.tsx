@@ -157,7 +157,7 @@ export function ServicesPoliciesStep({
 									<img
 										src={service.icon}
 										alt=""
-										className="h-4 w-4"
+										className="h-4 w-4 brightness-0"
 										aria-hidden="true"
 									/>
 								)}
@@ -223,7 +223,7 @@ export function ServicesPoliciesStep({
 												<img
 													src={selectedPolicyOption.icon}
 													alt=""
-													className="h-4 w-4"
+													className="h-4 w-4 brightness-0"
 													aria-hidden="true"
 												/>
 											)}
