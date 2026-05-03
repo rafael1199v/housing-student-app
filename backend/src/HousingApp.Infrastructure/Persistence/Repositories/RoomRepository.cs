@@ -101,26 +101,6 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         return rooms;
     }
 
-    public async Task<List<ServiceRaw>> GetServicesAsync()
-    {
-        List<ServiceModel> services = await context.Services
-            .AsNoTracking()
-            .Where(s => !s.IsDeleted)
-            .ToListAsync();
-
-        return services.Select(s => new ServiceRaw { Id = s.Id, Code = s.Code }).ToList();
-    }
-
-    public async Task<List<PolicyRaw>> GetPoliciesAsync()
-    {
-        List<PolicyModel> policies = await context.Policies
-            .AsNoTracking()
-            .Where(s => !s.IsDeleted)
-            .ToListAsync();
-        
-        return policies.Select(p => new PolicyRaw { Id = p.Id, Code = p.Code }).ToList();
-    }
-
     public async Task<Room?> GetRoomByIdAsync(int roomId)
     {
         Room? roomEntity = await context.Rooms
