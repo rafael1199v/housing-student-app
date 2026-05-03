@@ -23,6 +23,8 @@ public class RoomController(
     IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase,
     ICreateRoomUseCase createRoomUseCase,
     IGetHouseholderRoomDetailUseCase getHouseholderRoomDetailUseCase,
+    IGetRoomServicesUseCase getRoomServicesUseCase,
+    IGetRoomPoliciesUseCase getRoomPoliciesUseCase,
     IValidator<CreateRoomRequest> validator) : ControllerBase
 {
     [HttpGet]
@@ -124,6 +126,36 @@ public class RoomController(
         }
 
         Result<List<RoomHouseholderDto>> result = await getHouseholderRoomsUseCase.ExecuteAsync(userId);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("services")]
+    [Authorize(Roles = RolesDescription.Student)]
+    [ProducesResponseType(typeof(List<RoomServiceDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetRoomServices()
+    {
+        Result<List<RoomServiceDto>> result = await getRoomServicesUseCase.ExecuteAsync();
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("policies")]
+    [Authorize(Roles = RolesDescription.Student)]
+    [ProducesResponseType(typeof(List<RoomPolicyDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetRoomPolicies()
+    {
+        Result<List<RoomPolicyDto>> result = await getRoomPoliciesUseCase.ExecuteAsync();
 
         if (!result.IsSuccess)
         {

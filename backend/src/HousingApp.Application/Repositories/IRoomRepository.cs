@@ -7,6 +7,8 @@ public interface IRoomRepository
     Task<int> CreateRoomAsync(Domain.Entities.Room room);
     Task<List<Domain.Entities.Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20);
     Task<Domain.Entities.Room?> GetRoomByIdAsync(int roomId);
+    Task<List<PolicyRaw>> GetPoliciesAsync();
+    Task<List<ServiceRaw>> GetServicesAsync();
     Task<bool> TryMarkAsBookedAsync(int roomId);
     Task<bool> IsRoomAvailable(int roomId);
 
