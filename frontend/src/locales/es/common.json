@@ -235,7 +235,97 @@
 		"dropFormats": "PNG, JPG, WEBP — {{count}}/{{max}} agregadas",
 		"imagePreviewAlt": "Vista previa {{n}}",
 		"removeImageAriaLabel": "Eliminar imagen {{n}}",
+		"progressLabel": "Pasos de creación",
+		"mobileStepCounter": "Paso {{step}}/{{total}}",
+		"nextButton": "Siguiente",
+		"previousButton": "Atrás",
+		"previewButton": "Vista previa",
+		"servicesSection": "Servicios",
+		"servicesHint": "Selecciona los servicios incluidos en la habitación.",
+		"serviceSelectLabel": "Agregar un servicio",
+		"addServiceButton": "Agregar servicio",
+		"removeServiceAriaLabel": "Eliminar {{service}}",
+		"servicesAllAdded": "Ya se agregaron todos los servicios.",
+		"servicesEmpty": "No se seleccionaron servicios.",
+		"policiesSection": "Políticas",
+		"policiesHint": "Agrega una fila por cada regla de la casa y escribe su descripción.",
+		"addPolicyButton": "Agregar política",
+		"removePolicyButton": "Eliminar",
+		"removePolicyAriaLabel": "Eliminar {{policy}}",
+		"policyTypeLabel": "Tipo de política",
+		"policyDescriptionLabel": "Descripción",
+		"policyDescriptionPlaceholder": "Explica la regla, límites, horario o excepciones.",
+		"policyDescriptionRequired": "Cada política agregada necesita una descripción antes de continuar.",
+		"previewRoomLabel": "Vista previa de la habitación",
+		"previewDescription": "Revisa todo antes de publicar.",
+		"previewServicesTitle": "Servicios seleccionados",
+		"previewPoliciesTitle": "Políticas agregadas",
+		"previewLocationTitle": "Vista previa de ubicación",
+		"previewImagesTitle": "Vista previa de imágenes",
+		"previewCoordinatesReady": "Marcador guardado",
+		"previewCoordinatesMissing": "Aún no hay coordenadas",
+		"previewEmpty": "No proporcionado",
+		"imagesNeedReattach": "Las imágenes no se guardan después de recargar. Vuelve a adjuntarlas antes de publicar.",
+		"steps": {
+			"details": {
+				"title": "Datos principales",
+				"description": "Nombre, descripción, precio y ubicación."
+			},
+			"amenities": {
+				"title": "Servicios y políticas",
+				"description": "Elige servicios opcionales y define las reglas de la casa."
+			},
+			"preview": {
+				"title": "Vista previa",
+				"description": "Revisa todo antes de publicar."
+			}
+		},
+		"services": {
+			"tv": {
+				"label": "TV",
+				"description": "La habitación incluye una TV."
+			},
+			"wifi": {
+				"label": "WiFi",
+				"description": "La habitación incluye acceso a internet."
+			},
+			"kitchen": {
+				"label": "Cocina",
+				"description": "Hay acceso a una cocina compartida o privada."
+			},
+			"gymEquipment": {
+				"label": "Equipo de gimnasio",
+				"description": "Hay equipo básico de ejercicio disponible."
+			},
+			"airConditioner": {
+				"label": "Aire acondicionado",
+				"description": "La habitación incluye aire acondicionado."
+			}
+		},
+		"policies": {
+			"rules": {
+				"label": "Reglas de la casa",
+				"description": "Reglas generales y expectativas compartidas de la casa."
+			},
+			"cleaning": {
+				"label": "Limpieza",
+				"description": "Úsala para rutinas de limpieza y tareas."
+			},
+			"pets": {
+				"label": "Mascotas",
+				"description": "Úsala para restricciones o permisos sobre mascotas."
+			},
+			"security": {
+				"label": "Seguridad",
+				"description": "Úsala para acceso, seguridad o control de ingreso."
+			},
+			"parking": {
+				"label": "Estacionamiento",
+				"description": "Úsala para reglas o límites del estacionamiento."
+			}
+		},
 		"cancelButton": "Cancelar",
+		"cancelConfirmMessage": "¿Deseas descartar el borrador de la habitación y salir de esta página?",
 		"submitPending": "Creando…",
 		"submitButton": "Crear habitación",
 		"successToast": "¡Habitación creada exitosamente!",

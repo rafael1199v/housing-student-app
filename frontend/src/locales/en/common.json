@@ -235,7 +235,97 @@
 		"dropFormats": "PNG, JPG, WEBP — {{count}}/{{max}} added",
 		"imagePreviewAlt": "Preview {{n}}",
 		"removeImageAriaLabel": "Remove image {{n}}",
+		"progressLabel": "Creation steps",
+		"mobileStepCounter": "Step {{step}}/{{total}}",
+		"nextButton": "Next",
+		"previousButton": "Back",
+		"previewButton": "Preview",
+		"servicesSection": "Services",
+		"servicesHint": "Select the services included in the room.",
+		"serviceSelectLabel": "Add a service",
+		"addServiceButton": "Add service",
+		"removeServiceAriaLabel": "Remove {{service}}",
+		"servicesAllAdded": "All services have been added.",
+		"servicesEmpty": "No services selected.",
+		"policiesSection": "Policies",
+		"policiesHint": "Add one row per house rule and write the description for it.",
+		"addPolicyButton": "Add policy",
+		"removePolicyButton": "Remove",
+		"removePolicyAriaLabel": "Remove {{policy}}",
+		"policyTypeLabel": "Policy type",
+		"policyDescriptionLabel": "Description",
+		"policyDescriptionPlaceholder": "Explain the rule, limits, schedule, or exceptions.",
+		"policyDescriptionRequired": "Every added policy needs a description before continuing.",
+		"previewRoomLabel": "Room preview",
+		"previewDescription": "Review everything before publishing.",
+		"previewServicesTitle": "Selected services",
+		"previewPoliciesTitle": "Added policies",
+		"previewLocationTitle": "Location preview",
+		"previewImagesTitle": "Images preview",
+		"previewCoordinatesReady": "Marker saved",
+		"previewCoordinatesMissing": "No coordinates yet",
+		"previewEmpty": "Not provided",
+		"imagesNeedReattach": "Images are not persisted after refresh. Please attach them again before publishing.",
+		"steps": {
+			"details": {
+				"title": "Main details",
+				"description": "Name, description, price and location."
+			},
+			"amenities": {
+				"title": "Services and policies",
+				"description": "Choose optional services and define the house rules."
+			},
+			"preview": {
+				"title": "Preview",
+				"description": "Review everything before publishing."
+			}
+		},
+		"services": {
+			"tv": {
+				"label": "TV",
+				"description": "The room includes a TV."
+			},
+			"wifi": {
+				"label": "WiFi",
+				"description": "The room includes internet access."
+			},
+			"kitchen": {
+				"label": "Kitchen",
+				"description": "Shared or private kitchen access is available."
+			},
+			"gymEquipment": {
+				"label": "Gym equipment",
+				"description": "Basic exercise equipment is available on site."
+			},
+			"airConditioner": {
+				"label": "Air conditioner",
+				"description": "The room includes an air conditioner."
+			}
+		},
+		"policies": {
+			"rules": {
+				"label": "House rules",
+				"description": "General rules and shared expectations for the house."
+			},
+			"cleaning": {
+				"label": "Cleaning",
+				"description": "Use this for cleaning routines and chores."
+			},
+			"pets": {
+				"label": "Pets",
+				"description": "Use this for pet restrictions or allowances."
+			},
+			"security": {
+				"label": "Security",
+				"description": "Use this for access control or safety rules."
+			},
+			"parking": {
+				"label": "Parking",
+				"description": "Use this for parking space rules or limits."
+			}
+		},
 		"cancelButton": "Cancel",
+		"cancelConfirmMessage": "Discard your room draft and leave this page?",
 		"submitPending": "Creating...",
 		"submitButton": "Create room",
 		"successToast": "Room created successfully!",
