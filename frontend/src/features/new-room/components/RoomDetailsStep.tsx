@@ -152,7 +152,7 @@ export function RoomDetailsStep({
 								min="0"
 								step="0.01"
 								placeholder="0.00"
-								{...register("price")}
+								{...register("price", { valueAsNumber: true })}
 								className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 							/>
 						</div>
@@ -170,7 +170,9 @@ export function RoomDetailsStep({
 						</label>
 						<select
 							id="roomStatus"
-							{...register("roomStatus")}
+							{...register("roomStatus", {
+								setValueAs: (value) => Number(value),
+							})}
 							className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/40 transition"
 						>
 							{ROOM_STATUS_OPTIONS.map((opt) => (
