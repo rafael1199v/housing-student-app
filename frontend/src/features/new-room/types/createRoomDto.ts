@@ -6,4 +6,6 @@ export interface CreateRoomDto {
 	price: number;
 	roomStatus: number;
 	imageRoomFiles: File[];
+	services: number[];
+	policies: { id: number; description: string }[];
 }

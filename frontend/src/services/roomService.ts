@@ -49,9 +49,18 @@ const roomService = {
 		formData.append("price", String(dto.price));
 		formData.append("roomStatusId", String(dto.roomStatus));
 
+		dto.services.forEach((serviceId, index) => {
+			formData.append(`Services[${index}].Id`, String(serviceId));
+		});
+
+		dto.policies.forEach((policy, index) => {
+			formData.append(`Policies[${index}].Id`, String(policy.id));
+			formData.append(`Policies[${index}].Description`, policy.description);
+		});
+
 		const compressedImages = await compressImages(dto.imageRoomFiles);
 		for (const imageFile of compressedImages) {
-			formData.append("images", imageFile);
+			formData.append("Images", imageFile);
 		}
 
 		return apiFetch<void>("/api/rooms", { body: formData, method: "POST" });

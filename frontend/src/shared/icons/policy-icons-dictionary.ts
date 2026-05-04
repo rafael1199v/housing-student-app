@@ -1,3 +1,9 @@
+import cleaningServices from "../../assets/icons/policies/cleaning_services.svg";
+import garageCheck from "../../assets/icons/policies/garage_check.svg";
+import listAltCheck from "../../assets/icons/policies/list_alt_check.svg";
+import petsIcon from "../../assets/icons/policies/pets.svg";
+import securityIcon from "../../assets/icons/policies/security.svg";
+
 interface Policy {
 	code: string;
 	icon: string;
@@ -6,17 +12,17 @@ interface Policy {
 const POLICY_ICONS: Policy[] = [
 	{
 		code: "policy.rules",
-		icon: "../../assets/icons/policies/list_alt_check.svg",
+		icon: listAltCheck,
 	},
 	{
 		code: "policy.cleaning",
-		icon: "../../assets/icons/policies/cleaning_services.svg",
+		icon: cleaningServices,
 	},
-	{ code: "policy.pets", icon: "../../assets/icons/policies/pets.svg" },
-	{ code: "policy.security", icon: "../../assets/icons/policies/security.svg" },
+	{ code: "policy.pets", icon: petsIcon },
+	{ code: "policy.security", icon: securityIcon },
 	{
 		code: "policy.parking",
-		icon: "../../assets/icons/policies/garage_check.svg",
+		icon: garageCheck,
 	},
 ];
 

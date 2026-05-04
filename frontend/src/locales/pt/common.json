@@ -235,7 +235,97 @@
 		"dropFormats": "PNG, JPG, WEBP — {{count}}/{{max}} adicionadas",
 		"imagePreviewAlt": "Pré-visualização {{n}}",
 		"removeImageAriaLabel": "Remover imagem {{n}}",
+		"progressLabel": "Etapas de criação",
+		"mobileStepCounter": "Etapa {{step}}/{{total}}",
+		"nextButton": "Próximo",
+		"previousButton": "Voltar",
+		"previewButton": "Pré-visualizar",
+		"servicesSection": "Serviços",
+		"servicesHint": "Selecione os serviços incluídos no quarto.",
+		"serviceSelectLabel": "Adicionar um serviço",
+		"addServiceButton": "Adicionar serviço",
+		"removeServiceAriaLabel": "Remover {{service}}",
+		"servicesAllAdded": "Todos os serviços já foram adicionados.",
+		"servicesEmpty": "Nenhum serviço selecionado.",
+		"policiesSection": "Políticas",
+		"policiesHint": "Adicione uma linha para cada regra da casa e escreva a descrição.",
+		"addPolicyButton": "Adicionar política",
+		"removePolicyButton": "Remover",
+		"removePolicyAriaLabel": "Remover {{policy}}",
+		"policyTypeLabel": "Tipo de política",
+		"policyDescriptionLabel": "Descrição",
+		"policyDescriptionPlaceholder": "Explique a regra, limites, horários ou exceções.",
+		"policyDescriptionRequired": "Cada política adicionada precisa de uma descrição antes de continuar.",
+		"previewRoomLabel": "Pré-visualização do quarto",
+		"previewDescription": "Revise tudo antes de publicar.",
+		"previewServicesTitle": "Serviços selecionados",
+		"previewPoliciesTitle": "Políticas adicionadas",
+		"previewLocationTitle": "Pré-visualização da localização",
+		"previewImagesTitle": "Pré-visualização das imagens",
+		"previewCoordinatesReady": "Marcador salvo",
+		"previewCoordinatesMissing": "Ainda sem coordenadas",
+		"previewEmpty": "Não informado",
+		"imagesNeedReattach": "As imagens não são persistidas após atualizar a página. Anexe novamente antes de publicar.",
+		"steps": {
+			"details": {
+				"title": "Dados principais",
+				"description": "Nome, descrição, preço e localização."
+			},
+			"amenities": {
+				"title": "Serviços e políticas",
+				"description": "Escolha serviços opcionais e defina as regras da casa."
+			},
+			"preview": {
+				"title": "Pré-visualização",
+				"description": "Revise tudo antes de publicar."
+			}
+		},
+		"services": {
+			"tv": {
+				"label": "TV",
+				"description": "O quarto inclui uma TV."
+			},
+			"wifi": {
+				"label": "WiFi",
+				"description": "O quarto inclui acesso à internet."
+			},
+			"kitchen": {
+				"label": "Cozinha",
+				"description": "Há acesso a uma cozinha compartilhada ou privativa."
+			},
+			"gymEquipment": {
+				"label": "Equipamento de academia",
+				"description": "Há equipamento básico de exercício disponível."
+			},
+			"airConditioner": {
+				"label": "Ar-condicionado",
+				"description": "O quarto inclui ar-condicionado."
+			}
+		},
+		"policies": {
+			"rules": {
+				"label": "Regras da casa",
+				"description": "Regras gerais e expectativas compartilhadas da casa."
+			},
+			"cleaning": {
+				"label": "Limpeza",
+				"description": "Use para rotinas de limpeza e tarefas."
+			},
+			"pets": {
+				"label": "Pets",
+				"description": "Use para restrições ou permissões sobre animais de estimação."
+			},
+			"security": {
+				"label": "Segurança",
+				"description": "Use para controle de acesso ou regras de segurança."
+			},
+			"parking": {
+				"label": "Estacionamento",
+				"description": "Use para regras ou limites de estacionamento."
+			}
+		},
 		"cancelButton": "Cancelar",
+		"cancelConfirmMessage": "Descartar o rascunho do quarto e sair desta página?",
 		"submitPending": "Criando...",
 		"submitButton": "Criar quarto",
 		"successToast": "Quarto criado com sucesso!",
