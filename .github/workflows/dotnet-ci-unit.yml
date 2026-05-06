@@ -30,6 +30,7 @@ jobs:
       CONFIGURATION: Release
       SOLUTION_FILE: HousingApp.slnx
       API_PROJECT: ./src/HousingApp.Api/HousingApp.Api.csproj
+      UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
 
     steps:
       - uses: actions/checkout@v5
@@ -46,7 +47,7 @@ jobs:
         run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ env.CONFIGURATION }} --no-restore
 
       - name: Test
-        run: dotnet test ${{ env.API_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity-normal
+        run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity-normal
 
       - name: Publish
         run: dotnet publish ${{ env.API_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --output ./publish
