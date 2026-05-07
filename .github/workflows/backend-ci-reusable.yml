@@ -29,37 +29,6 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-
-    defaults:
-      run:
-        working-directory: backend
-
-    env:
-      CONFIGURATION: ${{ inputs.configuration }}
-      SOLUTION_FILE: HousingApp.slnx
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: ${{ inputs.dotnet-version }}
-          cache: true
-          cache-dependency-path: |
-            backend/**/packages.lock.json
-            backend/Directory.Packages.props
-            backend/**/*.csproj
-
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.SOLUTION_FILE }}
-
-      - name: Build
-        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ env.CONFIGURATION }} --no-restore
-
   unit-tests:
     if: ${{ inputs.run-unit-tests }}
     runs-on: ubuntu-24.04
@@ -140,7 +109,6 @@ jobs:
         )
       }}
     needs:
-      - build
       - unit-tests
       - integration-tests
     runs-on: ubuntu-24.04
