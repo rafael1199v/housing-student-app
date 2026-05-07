@@ -6,8 +6,23 @@ import { toast } from "sonner";
 import { BookingStatusEnum } from "../../../global/enum/booking-status";
 import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
+import {
+	ROOM_POLICY_OPTIONS,
+	ROOM_SERVICE_OPTIONS,
+} from "../../new-room/shared/roomWizardConfig";
 import { BookingActionDialog } from "../components/BookingActionDialog";
 import type { BookingDto } from "../types/roomHouseholderDetailDto";
+
+type ServiceOption = (typeof ROOM_SERVICE_OPTIONS)[number];
+type PolicyOption = (typeof ROOM_POLICY_OPTIONS)[number];
+
+const SERVICE_OPTION_BY_CODE = new Map<string, ServiceOption>(
+	ROOM_SERVICE_OPTIONS.map((service) => [service.code, service]),
+);
+
+const POLICY_OPTION_BY_CODE = new Map<string, PolicyOption>(
+	ROOM_POLICY_OPTIONS.map((policy) => [policy.code, policy]),
+);
 
 export function OwnerRoomDetailsPage() {
 	const { t } = useTranslation();
@@ -121,6 +136,9 @@ export function OwnerRoomDetailsPage() {
 		currency: "BOB",
 	}).format(room.price);
 
+	const services = room.services ?? [];
+	const policies = room.policies ?? [];
+
 	return (
 		<div className="space-y-8">
 			<section className="surface-card overflow-hidden rounded-2xl">
@@ -221,6 +239,80 @@ export function OwnerRoomDetailsPage() {
 						</h2>
 						<p className="text-slate-600 leading-relaxed">{room.description}</p>
 					</div>
+
+					<section className="space-y-3">
+						<h2 className="text-lg font-semibold text-slate-900">
+							{t("ownerRoomDetails.servicesTitle")}
+						</h2>
+						{services.length === 0 ? (
+							<p className="text-sm text-slate-500">
+								{t("ownerRoomDetails.servicesEmpty")}
+							</p>
+						) : (
+							<div className="flex flex-wrap gap-2">
+								{services.map((code) => {
+									const serviceOption = SERVICE_OPTION_BY_CODE.get(code);
+									const label = serviceOption
+										? t(serviceOption.labelKey)
+										: code;
+									return (
+										<div
+											key={code}
+											className="flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-3 py-1.5"
+										>
+											{serviceOption?.icon && (
+												<img
+													src={serviceOption.icon}
+													alt=""
+													className="h-4 w-4 brightness-0"
+													aria-hidden="true"
+												/>
+											)}
+											<span className="text-sm text-slate-700">{label}</span>
+										</div>
+									);
+								})}
+							</div>
+						)}
+					</section>
+
+					<section className="space-y-3">
+						<h2 className="text-lg font-semibold text-slate-900">
+							{t("ownerRoomDetails.policiesTitle")}
+						</h2>
+						{policies.length === 0 ? (
+							<p className="text-sm text-slate-500">
+								{t("ownerRoomDetails.policiesEmpty")}
+							</p>
+						) : (
+							<div className="flex flex-wrap gap-2">
+								{policies.map((policy, index) => {
+									const policyOption = POLICY_OPTION_BY_CODE.get(policy.code);
+									const label = policyOption
+										? t(policyOption.labelKey)
+										: policy.code;
+									return (
+										<div
+											key={`${policy.code}-${index}`}
+											className="flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-3 py-1.5"
+										>
+											{policyOption?.icon && (
+												<img
+													src={policyOption.icon}
+													alt=""
+													className="h-4 w-4 brightness-0"
+													aria-hidden="true"
+												/>
+											)}
+											<span className="text-sm text-slate-700">
+												{label}: {policy.description}
+											</span>
+										</div>
+									);
+								})}
+							</div>
+						)}
+					</section>
 
 					{/* Pending bookings section */}
 					<div className="pt-6">

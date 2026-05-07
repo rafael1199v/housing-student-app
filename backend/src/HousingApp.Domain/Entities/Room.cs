@@ -17,6 +17,7 @@ public class Room
     public Person? Person { get; init; }
     public List<Policy> Policies { get; init; } = [];
     public List<int> Services { get; init; } = [];
+    public List<string> ServiceCodes { get; init; } = [];
 
     public static Room Create(
         string name,
