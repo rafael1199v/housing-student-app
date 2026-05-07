@@ -33,7 +33,9 @@ public class GetRoomDetailUseCase(IRoomRepository roomRepository, IStorageServic
             room.Person!.Nationality ?? "",
             room.Person!.Gender ?? "",
             room.Person!.ImageUrl ?? "",
-            [.. room.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))]
+            [.. room.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))],
+            [.. room.ServiceCodes],
+            [.. room.Policies.Select(policy => new RoomPolicyDto(policy.Code, policy.Description))]
         );
 
         return Result<RoomDto>.Success(roomDto);

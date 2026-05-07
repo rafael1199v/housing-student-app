@@ -27,6 +27,8 @@ public class GetHouseholderRoomDetailUseCase(IRoomRepository roomRepository, ISt
             (decimal)roomDetail.Price,
             roomDetail.Status.ToString(),
             [.. roomDetail.ImageRoomUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))],
+            [.. roomDetail.ServiceCodes],
+            [.. roomDetail.Policies.Select(policy => new RoomPolicyDto(policy.Code, policy.Description))],
             [
                 ..roomDetail.Bookings.Select(b => new BookingDto(
                     b.Id,

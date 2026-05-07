@@ -12,6 +12,21 @@ import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
 import { RoomStatusEnum } from "../../../global/enum/room-status";
 import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
+import {
+	ROOM_POLICY_OPTIONS,
+	ROOM_SERVICE_OPTIONS,
+} from "../../new-room/shared/roomWizardConfig";
+
+type ServiceOption = (typeof ROOM_SERVICE_OPTIONS)[number];
+type PolicyOption = (typeof ROOM_POLICY_OPTIONS)[number];
+
+const SERVICE_OPTION_BY_CODE = new Map<string, ServiceOption>(
+	ROOM_SERVICE_OPTIONS.map((service) => [service.code, service]),
+);
+
+const POLICY_OPTION_BY_CODE = new Map<string, PolicyOption>(
+	ROOM_POLICY_OPTIONS.map((policy) => [policy.code, policy]),
+);
 
 export function RoomDetails() {
 	const { t } = useTranslation();
@@ -104,6 +119,9 @@ export function RoomDetails() {
 		style: "currency",
 		currency: "BOB",
 	}).format(room.price);
+
+	const services = room.services ?? [];
+	const policies = room.policies ?? [];
 
 	return (
 		<div className="space-y-8">
@@ -217,6 +235,97 @@ export function RoomDetails() {
 							</AdvancedMarker>
 						</GoogleMap>
 					</div>
+
+					<section className="space-y-3">
+						<h2 className="text-lg font-semibold text-slate-900">
+							{t("roomDetails.servicesTitle")}
+						</h2>
+						{services.length === 0 ? (
+							<p className="text-sm text-slate-500">
+								{t("roomDetails.servicesEmpty")}
+							</p>
+						) : (
+							<div className="grid gap-3 sm:grid-cols-2">
+								{services.map((code) => {
+									const serviceOption = SERVICE_OPTION_BY_CODE.get(code);
+									const label = serviceOption
+										? t(serviceOption.labelKey)
+										: code;
+									const description = serviceOption
+										? t(serviceOption.descriptionKey)
+										: "";
+									return (
+										<div
+											key={code}
+											className="rounded-lg border border-slate-200 bg-white px-4 py-3"
+										>
+											<div className="flex items-center gap-2">
+												{serviceOption?.icon && (
+													<img
+														src={serviceOption.icon}
+														alt=""
+														className="h-4 w-4 brightness-0"
+														aria-hidden="true"
+													/>
+												)}
+												<p className="text-sm font-semibold text-slate-800">
+													{label}
+												</p>
+											</div>
+											{description && (
+												<p className="mt-1 text-sm text-slate-600">
+													{description}
+												</p>
+											)}
+										</div>
+									);
+								})}
+							</div>
+						)}
+					</section>
+
+					<section className="space-y-3">
+						<h2 className="text-lg font-semibold text-slate-900">
+							{t("roomDetails.policiesTitle")}
+						</h2>
+						{policies.length === 0 ? (
+							<p className="text-sm text-slate-500">
+								{t("roomDetails.policiesEmpty")}
+							</p>
+						) : (
+							<div className="grid gap-3 sm:grid-cols-2">
+								{policies.map((policy, index) => {
+									const policyOption = POLICY_OPTION_BY_CODE.get(policy.code);
+									const label = policyOption
+										? t(policyOption.labelKey)
+										: policy.code;
+									return (
+										<div
+											key={`${policy.code}-${index}`}
+											className="rounded-lg border border-slate-200 bg-white px-4 py-3"
+										>
+											<div className="flex items-center gap-2">
+												{policyOption?.icon && (
+													<img
+														src={policyOption.icon}
+														alt=""
+														className="h-4 w-4 brightness-0"
+														aria-hidden="true"
+													/>
+												)}
+												<p className="text-sm font-semibold text-slate-800">
+													{label}
+												</p>
+											</div>
+											<p className="mt-1 text-sm text-slate-600">
+												{policy.description}
+											</p>
+										</div>
+									);
+								})}
+							</div>
+						)}
+					</section>
 
 					<div className="pt-6">
 						<div className="flex items-center gap-4">

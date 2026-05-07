@@ -17,5 +17,12 @@ export interface RoomHouseholderDetailDto {
 	price: number;
 	roomStatus: string;
 	imageRoomUrls: string[];
+	services: string[];
+	policies: RoomPolicyDto[];
 	bookings: BookingDto[];
+}
+
+export interface RoomPolicyDto {
+	code: string;
+	description: string;
 }

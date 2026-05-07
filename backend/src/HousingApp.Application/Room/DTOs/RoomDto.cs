@@ -16,5 +16,7 @@ public record RoomDto(
     string Nationality,
     string Gender,
     string ImageUrl,
-    List<string> ImageRoomUrls
+    List<string> ImageRoomUrls,
+    List<string> Services,
+    List<RoomPolicyDto> Policies
 );

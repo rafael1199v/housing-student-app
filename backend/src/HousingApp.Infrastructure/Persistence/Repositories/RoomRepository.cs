@@ -36,6 +36,37 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
 
         await context.Rooms.AddAsync(roomModel);
 
+        Dictionary<int, string> policyDescriptions = room.Policies
+            .GroupBy(policy => policy.Id)
+            .ToDictionary(group => group.Key, group => group.First().Description);
+
+        List<RoomServiceModel> roomServices =
+            [.. serviceModels.Select(service => new RoomServiceModel
+            {
+                Room = roomModel,
+                ServiceId = service.Id
+            })];
+
+        List<RoomPolicyModel> roomPolicies =
+            [.. policyModels.Select(policy => new RoomPolicyModel
+            {
+                Room = roomModel,
+                PolicyId = policy.Id,
+                Description = policyDescriptions.TryGetValue(policy.Id, out string? description)
+                    ? description
+                    : string.Empty
+            })];
+
+        if (roomServices.Count > 0)
+        {
+            await context.RoomServices.AddRangeAsync(roomServices);
+        }
+
+        if (roomPolicies.Count > 0)
+        {
+            await context.RoomPolicies.AddRangeAsync(roomPolicies);
+        }
+
         List<RoomImagesModel> roomImages =
             [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image, Room = roomModel })];
 
@@ -128,7 +159,22 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                     ImageUrl = model.Person.ImageUrl,
                     BirthDate = model.Person.BirthDate
                 },
-                ImageUrls = model.RoomImages.Select(ri => ri.ImageUrl).ToList()
+                ImageUrls = model.RoomImages.Select(ri => ri.ImageUrl).ToList(),
+                ServiceCodes = context.RoomServices
+                    .Where(roomService => roomService.RoomId == model.Id && !roomService.IsDeleted)
+                    .Where(roomService => !roomService.Service.IsDeleted)
+                    .Select(roomService => roomService.Service.Code)
+                    .ToList(),
+                Policies = context.RoomPolicies
+                    .Where(roomPolicy => roomPolicy.RoomId == model.Id && !roomPolicy.IsDeleted)
+                    .Where(roomPolicy => !roomPolicy.Policy.IsDeleted)
+                    .Select(roomPolicy => new Policy
+                    {
+                        Id = roomPolicy.PolicyId,
+                        Code = roomPolicy.Policy.Code,
+                        Description = roomPolicy.Description
+                    })
+                    .ToList()
             })
             .FirstOrDefaultAsync();
 
@@ -203,6 +249,21 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                 Price = (double)model.Price,
                 Status = (RoomStatus)model.RoomStatusId,
                 ImageRoomUrls = model.RoomImages.Select(ri => ri.ImageUrl).ToList(),
+                ServiceCodes = context.RoomServices
+                    .Where(roomService => roomService.RoomId == model.Id && !roomService.IsDeleted)
+                    .Where(roomService => !roomService.Service.IsDeleted)
+                    .Select(roomService => roomService.Service.Code)
+                    .ToList(),
+                Policies = context.RoomPolicies
+                    .Where(roomPolicy => roomPolicy.RoomId == model.Id && !roomPolicy.IsDeleted)
+                    .Where(roomPolicy => !roomPolicy.Policy.IsDeleted)
+                    .Select(roomPolicy => new Policy
+                    {
+                        Id = roomPolicy.PolicyId,
+                        Code = roomPolicy.Policy.Code,
+                        Description = roomPolicy.Description
+                    })
+                    .ToList(),
                 Bookings = model.Bookings.Where(b => !b.IsDeleted).Select(b => new Booking
                 {
                     Id = b.Id,
