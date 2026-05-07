@@ -115,7 +115,7 @@ jobs:
           merge-multiple: true
 
       - name: Test
-        run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
+        run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal /p:RunVSTest=false
 
   integration-tests:
     if: ${{ inputs.run-integration-tests }}
@@ -155,7 +155,7 @@ jobs:
           merge-multiple: true
 
       - name: Integration Tests
-        run: dotnet test ${{ env.INTEGRATION_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
+        run: dotnet test ${{ env.INTEGRATION_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal /p:RunVSTest=false
 
   publish:
     if: >-
