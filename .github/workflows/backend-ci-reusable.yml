@@ -72,9 +72,7 @@ jobs:
           name: ${{ inputs.build-artifact-name }}
           path: |
             backend/src/**/bin/**
-            backend/src/**/obj/**
             backend/tests/**/bin/**
-            backend/tests/**/obj/**
           retention-days: 7
 
   unit-tests:
@@ -114,7 +112,7 @@ jobs:
           path: ${{ github.workspace }}
           merge-multiple: true
       - name: Test
-        run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal --test-adapter-path .
+        run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
 
   integration-tests:
     if: ${{ inputs.run-integration-tests }}
@@ -154,7 +152,7 @@ jobs:
           merge-multiple: true
 
       - name: Integration Tests
-        run: dotnet test ${{ env.INTEGRATION_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal --test-adapter-path .
+        run: dotnet test ${{ env.INTEGRATION_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
 
   publish:
     if: >-
