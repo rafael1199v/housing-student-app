@@ -1,0 +1,209 @@
+name: Backend CI Reusable
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        type: string
+        default: 10.0.x
+      configuration:
+        type: string
+        default: Release
+      run-unit-tests:
+        type: boolean
+        default: true
+      run-integration-tests:
+        type: boolean
+        default: false
+      run-publish:
+        type: boolean
+        default: false
+      build-artifact-name:
+        type: string
+        default: backend-build
+      publish-artifact-name:
+        type: string
+        default: backend-artifact
+      require-tests-for-publish:
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    env:
+      CONFIGURATION: ${{ inputs.configuration }}
+      SOLUTION_FILE: HousingApp.slnx
+      API_PROJECT: ./src/HousingApp.Api/HousingApp.Api.csproj
+      UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+      INTEGRATION_TEST_PROJECT: ./tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: |
+            backend/**/packages.lock.json
+            backend/Directory.Packages.props
+            backend/**/*.csproj
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ env.CONFIGURATION }} --no-restore
+
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.build-artifact-name }}
+          path: |
+            backend/src/**/bin/**
+            backend/src/**/obj/**
+            backend/tests/**/bin/**
+            backend/tests/**/obj/**
+          retention-days: 7
+
+  unit-tests:
+    if: ${{ inputs.run-unit-tests }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    env:
+      CONFIGURATION: ${{ inputs.configuration }}
+      SOLUTION_FILE: HousingApp.slnx
+      API_PROJECT: ./src/HousingApp.Api/HousingApp.Api.csproj
+      UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+      INTEGRATION_TEST_PROJECT: ./tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: |
+            backend/**/packages.lock.json
+            backend/Directory.Packages.props
+            backend/**/*.csproj
+
+      - name: Download build outputs
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ inputs.build-artifact-name }}
+
+      - name: Test
+        run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
+
+  integration-tests:
+    if: ${{ inputs.run-integration-tests }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    env:
+      CONFIGURATION: ${{ inputs.configuration }}
+      SOLUTION_FILE: HousingApp.slnx
+      API_PROJECT: ./src/HousingApp.Api/HousingApp.Api.csproj
+      UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+      INTEGRATION_TEST_PROJECT: ./tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: |
+            backend/**/packages.lock.json
+            backend/Directory.Packages.props
+            backend/**/*.csproj
+
+      - name: Download build outputs
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ inputs.build-artifact-name }}
+
+      - name: Integration Tests
+        run: dotnet test ${{ env.INTEGRATION_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
+
+  publish:
+    if: >-
+      ${{
+        inputs.run-publish &&
+        (!inputs.require-tests-for-publish ||
+          (inputs.run-unit-tests == false || needs.unit-tests.result == 'success') &&
+          (inputs.run-integration-tests == false || needs.integration-tests.result == 'success')
+        )
+      }}
+    needs:
+      - build
+      - unit-tests
+      - integration-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    env:
+      CONFIGURATION: ${{ inputs.configuration }}
+      SOLUTION_FILE: HousingApp.slnx
+      API_PROJECT: ./src/HousingApp.Api/HousingApp.Api.csproj
+      UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+      INTEGRATION_TEST_PROJECT: ./tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: |
+            backend/**/packages.lock.json
+            backend/Directory.Packages.props
+            backend/**/*.csproj
+
+      - name: Download build outputs
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ inputs.build-artifact-name }}
+
+      - name: Publish
+        run: dotnet publish ${{ env.API_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --output ./publish
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.publish-artifact-name }}
+          path: backend/publish
+          retention-days: 7

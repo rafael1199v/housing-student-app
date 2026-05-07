@@ -1,7 +1,4 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET Integration testing
+name: .NET backend deploy
 
 on:
   push:
@@ -17,47 +14,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-tests:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-
-    defaults:
-      run:
-        working-directory: ./backend
-
-    env:
-      CONFIGURATION: Release
-      SOLUTION_FILE: HousingApp.slnx
-      API_PROJECT: ./src/HousingApp.Api/HousingApp.Api.csproj
-      UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
-      INTEGRATION_TEST_PROJECT: ./tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.SOLUTION_FILE }}
-
-      - name: Build
-        run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ env.CONFIGURATION }} --no-restore
-
-      - name: Test
-        run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
-
-      - name: Integration Tests
-        run: dotnet test ${{ env.INTEGRATION_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal      
-
-      - name: Publish
-        run: dotnet publish ${{ env.API_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --output ./publish
-
-      - name: Upload backend artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: backend-artifact
-          path: backend/publish
-          retention-days: 7
+  backend:
+    uses: ./.github/workflows/backend-ci-reusable.yml
+    with:
+      run-unit-tests: true
+      run-integration-tests: true
+      run-publish: true
