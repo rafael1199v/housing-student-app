@@ -304,7 +304,9 @@ export function OwnerRoomDetailsPage() {
 													aria-hidden="true"
 												/>
 											)}
-											<span className="text-sm text-slate-700">{label}</span>
+											<span className="text-sm text-slate-700">
+												{label}: {policy.description}
+											</span>
 										</div>
 									);
 								})}
