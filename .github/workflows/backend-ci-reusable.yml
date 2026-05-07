@@ -38,7 +38,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: backend
 
     env:
       CONFIGURATION: ${{ inputs.configuration }}
@@ -85,7 +85,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: backend
 
     env:
       CONFIGURATION: ${{ inputs.configuration }}
@@ -125,7 +125,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: backend
 
     env:
       CONFIGURATION: ${{ inputs.configuration }}
