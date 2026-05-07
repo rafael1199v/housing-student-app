@@ -113,7 +113,10 @@ jobs:
           name: ${{ inputs.build-artifact-name }}
           path: ${{ github.workspace }}
           merge-multiple: true
-
+      - name: Show dotnet info
+        run: |
+          dotnet --info
+          dotnet --version
       - name: Test
         run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal /p:RunVSTest=false
 
