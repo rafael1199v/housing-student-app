@@ -111,6 +111,8 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: ${{ inputs.build-artifact-name }}
+          path: ${{ github.workspace }}
+          merge-multiple: true
 
       - name: Test
         run: dotnet test ${{ env.UNIT_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
@@ -149,6 +151,8 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: ${{ inputs.build-artifact-name }}
+          path: ${{ github.workspace }}
+          merge-multiple: true
 
       - name: Integration Tests
         run: dotnet test ${{ env.INTEGRATION_TEST_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal
@@ -197,6 +201,8 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: ${{ inputs.build-artifact-name }}
+          path: ${{ github.workspace }}
+          merge-multiple: true
 
       - name: Publish
         run: dotnet publish ${{ env.API_PROJECT }} --configuration ${{ env.CONFIGURATION }} --no-build --output ./publish
