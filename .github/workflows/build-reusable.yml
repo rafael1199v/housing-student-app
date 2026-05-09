@@ -65,7 +65,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.build-artifact-name }}
-          path: |
-            backend/**/bin
-            backend/**/obj
+          path: backend/
           retention-days: 7
