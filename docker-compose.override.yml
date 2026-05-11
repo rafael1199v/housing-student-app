@@ -57,3 +57,22 @@ services:
     command: [ "npm", "run", "dev", "--", "--host" ]
     depends_on:
       - api
+
+  db:
+    container_name: itersapiens-db-dev
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-itersapiensDb}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - itersapiens-db-dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME:-itersapiensDb}"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      
+volumes:
+  itersapiens-db-dev:
