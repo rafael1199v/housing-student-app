@@ -21,18 +21,26 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__DefaultConnection: >-
-        Host=db;Port=5432;Database=${DB_NAME:-housingDb}; Username=${DB_USER};Password=${DB_PASSWORD}
+      ConnectionStrings__DefaultConnection: ${CONNECTION_STRING_DEFAULT_CONNECTION}
       # JWT — required at startup; pass via .env or CI secrets
       Jwt__SecretKey: ${JWT_SECRET_KEY}
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
       Jwt__ExpirationInMinutes: ${JWT_EXPIRATION_MINUTES}
+
       # AWS S3
       AWS__AccessKey: ${AWS_ACCESS_KEY}
       AWS__SecretKey: ${AWS_SECRET_KEY}
       AWS__Region: ${AWS_REGION}
       Storage__BucketName: ${STORAGE_BUCKET_NAME}
+
+      # Google OAuth
+      Google__ClientId: ${GOOGLE_CLIENT_ID}
+
+      # Resend (email service)
+      Resend__ApiKey: ${RESEND_API_KEY}
+      Resend__FromEmail: ${RESEND_FROM_EMAIL}
+
     # No volumes: image is self-contained (Part 8 — Production)
     restart: unless-stopped
     depends_on:
