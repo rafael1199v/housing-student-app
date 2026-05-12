@@ -41,8 +41,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
 WORKDIR /app
 
-RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
-USER appuser
+# RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+# USER appuser
 
 COPY --from=build /app/publish .
 
