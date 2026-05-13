@@ -101,7 +101,7 @@ describe("StudentProtectedRoute", () => {
 					<Route element={<StudentProtectedRoute />}>
 						<Route path="/student" element={<div>Student</div>} />
 					</Route>
-					<Route path="/not-found" element={<div>NotFound</div>} />
+					<Route path="/forbidden" element={<div>Forbidden</div>} />
 				</Routes>
 			</MemoryRouter>,
 		);
@@ -119,12 +119,12 @@ describe("StudentProtectedRoute", () => {
 					<Route element={<StudentProtectedRoute />}>
 						<Route path="/student" element={<div>Student</div>} />
 					</Route>
-					<Route path="/not-found" element={<div>NotFound</div>} />
+					<Route path="/forbidden" element={<div>Forbidden</div>} />
 				</Routes>
 			</MemoryRouter>,
 		);
 
-		expect(screen.getByText("NotFound")).toBeInTheDocument();
+		expect(screen.getByText("Forbidden")).toBeInTheDocument();
 	});
 });
 
@@ -139,7 +139,7 @@ describe("HouseholderProtectedRoute", () => {
 					<Route element={<HouseholderProtectedRoute />}>
 						<Route path="/owner" element={<div>Owner</div>} />
 					</Route>
-					<Route path="/not-found" element={<div>NotFound</div>} />
+					<Route path="/forbidden" element={<div>Forbidden</div>} />
 				</Routes>
 			</MemoryRouter>,
 		);
@@ -157,11 +157,11 @@ describe("HouseholderProtectedRoute", () => {
 					<Route element={<HouseholderProtectedRoute />}>
 						<Route path="/owner" element={<div>Owner</div>} />
 					</Route>
-					<Route path="/not-found" element={<div>NotFound</div>} />
+					<Route path="/forbidden" element={<div>Forbidden</div>} />
 				</Routes>
 			</MemoryRouter>,
 		);
 
-		expect(screen.getAllByText("NotFound")[0]).toBeInTheDocument();
+		expect(screen.getAllByText("Forbidden")[0]).toBeInTheDocument();
 	});
 });
