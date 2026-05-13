@@ -11,7 +11,7 @@ import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
 import { RoleEnum, type RoleEnum as RoleType } from "../../../global/enum/role";
 import i18n from "../../../i18n";
-import authService from "../../../services/authService";
+import { authService } from "../../../services/authService";
 import { useGoogleAuthentication } from "../hooks/google-hooks";
 import { useAuthActions } from "../store/authStore";
 import type { GoogleAuthResponse } from "../types/googleAuthResponse";

@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "react-router";
-import authService from "../../../services/authService";
+import { authService } from "../../../services/authService";
 
 export async function confirmEmailLoader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);

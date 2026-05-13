@@ -1,19 +1,18 @@
-import { API_BASE_URL } from "../config/constants";
 import { useAuthStore } from "../features/auth/store/authStore";
 import type { AuthResponse } from "../features/auth/types/authResponse";
+import { baseFetch } from "./baseFetch";
 
 export async function refreshAccessToken(): Promise<boolean> {
-	const refreshToken: string = useAuthStore.getState().refreshToken;
+	const store = useAuthStore.getState();
+	const { refreshToken } = store;
 
 	try {
-		const response = await fetch(`${API_BASE_URL}/api/login/refresh-token`, {
+		const response = await baseFetch("/api/login/refresh-token", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
-				refreshToken: refreshToken,
-			}),
+			body: JSON.stringify({ refreshToken }),
 		});
 
 		if (!response.ok) {
@@ -22,8 +21,8 @@ export async function refreshAccessToken(): Promise<boolean> {
 
 		const authData = (await response.json()) as AuthResponse;
 
-		useAuthStore.getState().actions.setAccessToken(authData.accessToken);
-		useAuthStore.getState().actions.setRefreshToken(authData.refreshToken);
+		store.actions.setAccessToken(authData.accessToken);
+		store.actions.setRefreshToken(authData.refreshToken);
 
 		return true;
 	} catch (error) {

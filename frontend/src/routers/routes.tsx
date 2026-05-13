@@ -7,6 +7,7 @@ import Register from "../features/auth/pages/register";
 import { useAccessToken } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { BookingsPage } from "../features/bookings/pages";
+import { ForbiddenPage } from "../features/forbidden/pages";
 import { HomePage } from "../features/home/pages";
 import { NewRoomPage } from "../features/new-room/pages";
 import { NotFoundPage } from "../features/not-found/pages";
@@ -104,6 +105,7 @@ export const router = createBrowserRouter([
 					},
 				],
 			},
+			{ path: "forbidden", Component: ForbiddenPage },
 			// 404 wildcard (any unmatched routes redirect here)
 			{ path: "*", Component: NotFoundPage },
 		],

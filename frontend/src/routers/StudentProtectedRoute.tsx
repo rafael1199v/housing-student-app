@@ -7,7 +7,7 @@ export function StudentProtectedRoute() {
 	const role = getRoleFromAccessToken(token);
 
 	if (role !== "Student") {
-		return <Navigate to="/not-found" replace />;
+		return <Navigate to="/forbidden" replace />;
 	}
 
 	return <Outlet />;

@@ -9,7 +9,7 @@ import { z } from "zod";
 import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
 import i18n from "../../../i18n";
-import authService from "../../../services/authService";
+import { authService } from "../../../services/authService";
 import { NationalityDropdown } from "../components/NationalityDropdown";
 import { LATIN_AMERICAN_COUNTRIES } from "../components/NationalitySelector";
 import type { RegisterDto } from "../types/registerDto";
