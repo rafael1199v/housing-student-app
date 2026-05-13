@@ -30,7 +30,7 @@ jobs:
               with:
                 context: ./frontend
                 push: true
-                tags: itersapiens/frontend:1.0
+                tags: ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:1.0
                 build-args: |
                     VITE_API_URL=https://api.itersapiens.rafael-vargas.dev:${{ vars.BACKEND_PORT}}
                     VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
@@ -42,4 +42,4 @@ jobs:
               with:
                 context: ./backend
                 push: true
-                tags: itersapiens/backend:1.0
+                tags: ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:1.0
