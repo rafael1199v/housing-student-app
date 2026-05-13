@@ -50,6 +50,7 @@ jobs:
                 host: ${{ secrets.SSH_HOST }}
                 key: ${{ secrets.SSH_KEY }}
                 port: ${{ secrets.SSH_PORT }}
+                username: ${{ secrets.SSH_USER }}
                 script: |
                   cat > /home/ubuntu/.env << EOF
 
