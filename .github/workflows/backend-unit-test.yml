@@ -38,7 +38,7 @@ jobs:
       UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -51,7 +51,7 @@ jobs:
             backend/**/*.csproj
 
       - name: Download compiled backend output
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build.outputs.build-artifact-name }}
           path: backend/

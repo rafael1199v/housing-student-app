@@ -39,7 +39,7 @@ jobs:
       CONFIGURATION: ${{ inputs.configuration }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -62,7 +62,7 @@ jobs:
         run: echo "build-artifact-name=${{ inputs.build-artifact-name }}" >> "$GITHUB_OUTPUT"
 
       - name: Upload compiled backend output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.build-artifact-name }}
           path: backend/
