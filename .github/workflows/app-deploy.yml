@@ -32,7 +32,7 @@ jobs:
                 push: true
                 tags: ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:1.0
                 build-args: |
-                    VITE_API_URL=https://api.itersapiens.rafael-vargas.dev:${{ vars.BACKEND_PORT}}
+                    VITE_API_URL=http://api.itersapiens.rafael-vargas.dev
                     VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
                     VITE_GOOGLE_MAPS_ID=${{ secrets.VITE_GOOGLE_MAPS_ID }}
                     VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
@@ -43,3 +43,49 @@ jobs:
                 context: ./backend
                 push: true
                 tags: ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:1.0
+
+            - name: Deploy application
+              uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2
+              with:
+                host: ${{ secrets.SSH_HOST }}
+                key: ${{ secrets.SSH_KEY }}
+                port: ${{ secrets.SSH_PORT }}
+                script: |
+                  cat > /home/ubuntu/.env << EOF
+
+                  ASPNETCORE_ENVIRONMENT=Production
+                  ASPNETCORE_URLS=http://+:${{ vars.BACKEND_PORT }}
+
+                  Frontend__Origin=http://itersapiens.rafael-vargas.dev
+
+                  Jwt__SecretKey=${{ secrets.JWT_SECRET_KEY }}
+                  Jwt__Issuer=http://api.itersapiens.rafael-vargas.dev
+                  Jwt__Audience=http://itersapiens.rafael-vargas.dev
+                  Jwt__ExpirationInMinutes=${{ secrets.JWT_EXPIRATION_MINUTES }}
+
+                  AWS__AccessKey=${{ secrets.AWS_ACCESS_KEY }}
+                  AWS__SecretKey=${{ secrets.AWS_SECRET_KEY }}
+                  AWS__Region=${{ vars.AWS_REGION }}
+                  Storage__BucketName=${{ vars.STORAGE_BUCKET_NAME }}
+
+                  Google__ClientId=${{ secrets.GOOGLE_CLIENT_ID }}
+
+                  Resend__ApiKey=${{ secrets.RESEND_API_KEY }}
+                  Resend__FromEmail=${{ vars.RESEND_FROM_EMAIL }}
+
+                  ConnectionStrings__DefaultConnection=${{ secrets.CONNECTION_STRING_DEFAULT_CONNECTION }}
+                  EOF
+
+                  docker pull ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:1.0
+                  docker pull ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:1.0
+
+                  docker stop itersapiens-frontend || true
+                  docker stop itersapiens-backend || true
+
+                  docker rm itersapiens-frontend || true
+                  docker rm itersapiens-backend || true
+
+                  docker run -d --name itersapiens-backend --env-file /home/ubuntu/.env -p ${{ vars.BACKEND_PORT }}:8080 ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:1.0
+                  docker run -d --name itersapiens-frontend -p ${{ vars.FRONTEND_PORT }}:8080 ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:1.0
+
+
