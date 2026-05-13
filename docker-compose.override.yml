@@ -11,29 +11,47 @@ services:
   # ── Backend API ─────────────────────────────────────────────────────────────
   api:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
       target: build # Stop at the SDK stage → full tooling available
     container_name: housing-api-dev
     ports:
-      - "8082:8080"
+      - "${BACKEND_PORT:-8080}:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8080 # dotnet run defaults to 5000; force 8080
-      ConnectionStrings__DefaultConnection: >-
-        Host=db;Port=5432;Database=${DB_NAME}; Username=${DB_USER};Password=${DB_PASSWORD}
-      # JWT — required by AuthExtensions (null value crashes startup)
+
+      # Frontend origin for CORS policy — required at startup; pass via .env or CI secrets
+      Frontend__Origin: ${FRONTEND_ORIGIN}
+
+      # JWT — required at startup; pass via .env or CI secrets
       Jwt__SecretKey: ${JWT_SECRET_KEY}
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
       Jwt__ExpirationInMinutes: ${JWT_EXPIRATION_MINUTES}
-      # AWS S3 — required by AwsExtensions (use dummy values locally if not needed)
+
+      # AWS S3
       AWS__AccessKey: ${AWS_ACCESS_KEY}
       AWS__SecretKey: ${AWS_SECRET_KEY}
       AWS__Region: ${AWS_REGION}
       Storage__BucketName: ${STORAGE_BUCKET_NAME}
+
+      # Google OAuth
+      Google__ClientId: ${GOOGLE_CLIENT_ID}
+
+      # Resend (email service)
+      Resend__ApiKey: ${RESEND_API_KEY}
+      Resend__FromEmail: ${RESEND_FROM_EMAIL}
+
+      # Connection string — required at startup; pass via .env or CI secrets
+      ConnectionStrings__DefaultConnection: ${CONNECTION_STRING_DEFAULT_CONNECTION}
     volumes:
       - ./backend/src:/workspace/src # Bind mount → props safe at /workspace/
+      - /workspace/src/HousingApp.Api/bin
+      - /workspace/src/HousingApp.Api/obj
+      - /workspace/src/HousingApp.Domain/bin
+      - /workspace/src/HousingApp.Domain/obj
+      - /workspace/src/HousingApp.Application/bin
+      - /workspace/src/HousingApp.Application/obj
+      - /workspace/src/HousingApp.Infrastructure/bin
+      - /workspace/src/HousingApp.Infrastructure/obj
     depends_on:
       db:
         condition: service_healthy
@@ -43,17 +61,34 @@ services:
   #
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
       target: builder # Stop at the Node build stage → vite dev server
+      
     container_name: itersapiens-frontend-dev
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:5173"
     environment:
       NODE_ENV: development
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_GOOGLE_MAPS_API_KEY: ${VITE_GOOGLE_MAPS_API_KEY}
+      VITE_GOOGLE_MAPS_ID: ${VITE_GOOGLE_MAPS_ID}
+      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID}
     volumes:
       - ./frontend/src:/app/src # Source hot-reload
       - /app/node_modules # Anonymous volume: preserve container's modules
     command: [ "npm", "run", "dev", "--", "--host" ]
     depends_on:
       - api
+
+  db:
+    container_name: itersapiens-db-dev
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-itersapiensDb}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - itersapiens-db-dev:/var/lib/postgresql/data
+      
+volumes:
+  itersapiens-db-dev:

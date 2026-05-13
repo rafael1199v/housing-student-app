@@ -12,6 +12,11 @@ RUN npm ci
 # Copy the rest of the source code
 COPY . .
 
+ARG VITE_API_URL
+ARG VITE_GOOGLE_MAPS_API_KEY
+ARG VITE_GOOGLE_MAPS_ID
+ARG VITE_GOOGLE_CLIENT_ID
+
 # Build the production bundle
 RUN npm run build
 
@@ -22,8 +27,10 @@ FROM nginxinc/nginx-unprivileged:alpine
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Port 8080 (non-root can't bind to ports below 1024)
-EXPOSE 3000
+EXPOSE 8080
 
 # Start NGINX in the foreground
 CMD ["nginx", "-g", "daemon off;"]
