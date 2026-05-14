@@ -1,12 +1,11 @@
-﻿using HousingApp.Application.Auth.DTOs;
+using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Services;
-using HousingApp.Domain.Entities;
 using HousingApp.Domain.Error;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class GoogleLoginUseCase(IGoogleAuthService googleAuthService, IUserRepository userRepository, IGenerateRefreshTokenUseCase generateRefreshTokenUseCase) : IGoogleLoginUseCase
+public class GoogleLoginUseCase(IGoogleAuthService googleAuthService, IUserRepository userRepository, IGenerateRefreshTokenUseCase generateRefreshTokenUseCase, IAccessTokenService accessTokenService) : IGoogleLoginUseCase
 {
     public async Task<Result<GoogleAuthDto>> ExecuteAsync(GoogleLoginDto googleLoginDto)
     {
@@ -18,23 +17,25 @@ public class GoogleLoginUseCase(IGoogleAuthService googleAuthService, IUserRepos
         Domain.Entities.User? user = await userRepository.FindUserByEmailAsync(payload.Email);
 
         if (user is null)
-            return Result<GoogleAuthDto>.Success(new GoogleAuthDto(
-                IsNewUser: true,
-                UserDto: null
-            ));
+            return Result<GoogleAuthDto>.Success(new GoogleAuthDto(IsNewUser: true, Credentials: null));
 
         Result<string> refreshTokenResult = await generateRefreshTokenUseCase.ExecuteAsync(user.Id);
 
         if (!refreshTokenResult.IsSuccess)
             return Result<GoogleAuthDto>.Failure(refreshTokenResult.Error);
 
+        UserDto userDto = new(
+            Id: user.Id,
+            Email: user.Email,
+            RefreshToken: refreshTokenResult.Value!,
+            Roles: user.Roles
+        );
+
         return Result<GoogleAuthDto>.Success(new GoogleAuthDto(
             IsNewUser: false,
-            UserDto: new UserDto(
-                Id: user.Id,
-                Email: user.Email,
-                RefreshToken: refreshTokenResult.Value!,
-                Roles: user.Roles
+            Credentials: new CredentialsDto(
+                AccessToken: accessTokenService.GenerateAccessToken(userDto),
+                RefreshToken: refreshTokenResult.Value!
             )
         ));
     }

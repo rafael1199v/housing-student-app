@@ -1,22 +1,19 @@
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Repositories;
+using HousingApp.Application.Services;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Error;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.X509Certificates;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class LoginWithRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRepository) : ILoginWithRefreshTokenUseCase
+public class LoginWithRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRepository, IAccessTokenService accessTokenService) : ILoginWithRefreshTokenUseCase
 {
-    public async Task<Result<UserDto>> ExecuteAsync(RefreshTokenDto refreshTokenDto)
+    public async Task<Result<CredentialsDto>> ExecuteAsync(RefreshTokenDto refreshTokenDto)
     {
         RefreshToken? refreshToken = await refreshTokenRepository.FindRefreshToken(refreshTokenDto.RefreshToken);
 
         if (refreshToken == null || !refreshToken.IsValid())
-        {
-            return Result<UserDto>.Failure(AuthError.RefreshTokenExpired);
-        }
+            return Result<CredentialsDto>.Failure(AuthError.RefreshTokenExpired);
 
         RefreshToken renewedRefreshToken = refreshToken.Renew();
 
@@ -29,6 +26,9 @@ public class LoginWithRefreshTokenUseCase(IRefreshTokenRepository refreshTokenRe
             Roles: renewedRefreshToken.User!.Roles
         );
 
-        return Result<UserDto>.Success(userDto);
+        return Result<CredentialsDto>.Success(new CredentialsDto(
+            AccessToken: accessTokenService.GenerateAccessToken(userDto),
+            RefreshToken: renewedRefreshToken.Token
+        ));
     }
 }

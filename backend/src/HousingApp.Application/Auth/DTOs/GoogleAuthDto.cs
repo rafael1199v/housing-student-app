@@ -2,5 +2,5 @@
 
 public record GoogleAuthDto(
     bool IsNewUser,
-    UserDto? UserDto
+    CredentialsDto? Credentials
 );

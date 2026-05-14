@@ -1,36 +1,32 @@
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Repositories;
-using HousingApp.Domain.Entities;
+using HousingApp.Application.Services;
 using HousingApp.Domain.Error;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class LoginUseCase(IUserRepository userRepository, IGenerateRefreshTokenUseCase generateRefreshTokenUseCase) : ILoginUseCase
+public class LoginUseCase(IUserRepository userRepository, IGenerateRefreshTokenUseCase generateRefreshTokenUseCase, IAccessTokenService accessTokenService) : ILoginUseCase
 {
-    public async Task<Result<UserDto>> Login(LoginDto loginDto)
+    public async Task<Result<CredentialsDto>> Login(LoginDto loginDto)
     {
         Domain.Entities.User? user = await userRepository.FindUserByEmailAsync(loginDto.Email);
 
         if (user is null || user.IsExternalLogin || !await userRepository.CheckPassword(loginDto.Email, loginDto.Password))
-        {
-            return Result<UserDto>.Failure(AuthError.InvalidCredentials);
-        }
+            return Result<CredentialsDto>.Failure(AuthError.InvalidCredentials);
 
         if (!user.IsEmailConfirmed)
-        {
-            return Result<UserDto>.Failure(AuthError.EmailNotConfirmed);
-        }
+            return Result<CredentialsDto>.Failure(AuthError.EmailNotConfirmed);
 
         Result<string> refreshTokenResult = await generateRefreshTokenUseCase.ExecuteAsync(user.Id);
 
         if (!refreshTokenResult.IsSuccess)
-        {
-            return Result<UserDto>.Failure(refreshTokenResult.Error);
-        }
+            return Result<CredentialsDto>.Failure(refreshTokenResult.Error);
 
-        UserDto userDto = new(
-            Id: user.Id, Email: user.Email, RefreshToken: refreshTokenResult.Value!, Roles: user.Roles);
+        UserDto userDto = new(Id: user.Id, Email: user.Email, RefreshToken: refreshTokenResult.Value!, Roles: user.Roles);
 
-        return Result<UserDto>.Success(userDto);
+        return Result<CredentialsDto>.Success(new CredentialsDto(
+            AccessToken: accessTokenService.GenerateAccessToken(userDto),
+            RefreshToken: refreshTokenResult.Value!
+        ));
     }
 }
