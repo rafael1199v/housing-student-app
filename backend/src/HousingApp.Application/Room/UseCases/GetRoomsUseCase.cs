@@ -23,7 +23,8 @@ public class GetRoomsUseCase(IRoomRepository roomRepository, IStorageService sto
         RoomSearchFilters roomSearchFilters = new(
             filters.Name,
             filters.MinPrice,
-            filters.MaxPrice
+            filters.MaxPrice,
+            filters.Services
         );
 
         List<Domain.Entities.Room> rooms = await roomRepository.GetRoomsAsync(roomSearchFilters);

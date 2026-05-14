@@ -29,9 +29,9 @@ public class RoomController(
     [Authorize(Roles = RolesDescription.Student + "," + RolesDescription.Householder)]
     [ProducesResponseType(typeof(List<RoomDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<RoomDto>> GetRooms([FromQuery] string? name, [FromQuery] string? minPrice,
-        [FromQuery] string? maxPrice)
+        [FromQuery] string? maxPrice, [FromQuery] int[]? services)
     {
-        HashSet<string> supportedFilters = new(StringComparer.OrdinalIgnoreCase) { "name", "minPrice", "maxPrice" };
+        HashSet<string> supportedFilters = new(StringComparer.OrdinalIgnoreCase) { "name", "minPrice", "maxPrice", "services" };
 
         string? unknownFilter = Request.Query.Keys.FirstOrDefault(key => !supportedFilters.Contains(key));
         if (!string.IsNullOrWhiteSpace(unknownFilter))
@@ -52,7 +52,8 @@ public class RoomController(
         SearchRoomsFiltersDto filters = new(
             name,
             parsedMinPrice,
-            parsedMaxPrice
+            parsedMaxPrice,
+            services
         );
 
         Result<List<RoomDto>> result = await getRoomsUseCase.ExecuteAsync(filters);

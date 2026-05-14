@@ -126,7 +126,10 @@
 		"loadError": "No se pudieron cargar las habitaciones. Por favor, intenta de nuevo más tarde.",
 		"noMatch": "No hay habitaciones que coincidan con los filtros actuales. Intenta ajustar tu búsqueda.",
 		"maxResultsTitle": "Mostrando hasta 20 resultados.",
-		"maxResultsHint": "¿No encontraste lo que buscabas? Intenta acotar tu búsqueda con un nombre más específico o un rango de precio más ajustado para obtener resultados más relevantes."
+		"maxResultsHint": "¿No encontraste lo que buscabas? Intenta acotar tu búsqueda con un nombre más específico o un rango de precio más ajustado para obtener resultados más relevantes.",
+		"servicesFilter": "Servicios",
+		"servicesFilterHint": "Selecciona los servicios que deseas filtrar.",
+		"clearServices": "Limpiar"
 	},
 	"bookings": {
 		"title": "Habitaciones reservadas",

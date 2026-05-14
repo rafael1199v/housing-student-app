@@ -126,7 +126,10 @@
 		"loadError": "Could not load rooms. Please try again later.",
 		"noMatch": "No rooms match the current filters. Try adjusting your search.",
 		"maxResultsTitle": "Showing up to 20 results.",
-		"maxResultsHint": "Didn't find what you were looking for? Try narrowing your search with a more specific name or a tighter price range for more relevant results."
+		"maxResultsHint": "Didn't find what you were looking for? Try narrowing your search with a more specific name or a tighter price range for more relevant results.",
+		"servicesFilter": "Services",
+		"servicesFilterHint": "Select the services you want to filter by.",
+		"clearServices": "Clear"
 	},
 	"bookings": {
 		"title": "Booked Rooms",
