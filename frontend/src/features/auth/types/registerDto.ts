@@ -1,7 +1,9 @@
+import { RoleEnum } from "../../../global/enum/role";
+
 export type RegisterDto = {
 	email: string;
 	password: string;
-	role: string;
+	role: RoleEnum;
 	firstName: string;
 	lastName: string;
 	phoneNumber: string;

@@ -16,6 +16,7 @@ import { OwnerRoomDetailsPage } from "../features/owner-room-details/pages";
 import { ProfileSettings } from "../features/profile-settings/pages";
 import { RoomDetails } from "../features/room-details/pages";
 import { RoomsPage } from "../features/rooms/pages";
+import { RoleEnum } from "../global/enum/role";
 import { MainLayout } from "../layout/layout";
 import GuestRoute from "./GuestRoute";
 import { HouseholderProtectedRoute } from "./HouseholderProtectedRoute";
@@ -26,7 +27,7 @@ function HomeRoutePage() {
 	const accessToken = useAccessToken();
 	const role = getRoleFromAccessToken(accessToken);
 
-	if (role === "Householder") {
+	if (role === RoleEnum.Householder) {
 		return <OwnerHomePage />;
 	}
 

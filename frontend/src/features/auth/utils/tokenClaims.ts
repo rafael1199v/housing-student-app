@@ -1,4 +1,4 @@
-type UserRole = "Student" | "Householder";
+import { RoleEnum } from "../../../global/enum/role";
 
 interface JwtPayload {
 	role?: string;
@@ -10,7 +10,7 @@ function decodeBase64Url(value: string) {
 	return atob(padded);
 }
 
-export function getRoleFromAccessToken(accessToken: string): UserRole | null {
+export function getRoleFromAccessToken(accessToken: string): RoleEnum | null {
 	if (!accessToken) {
 		return null;
 	}
@@ -24,17 +24,11 @@ export function getRoleFromAccessToken(accessToken: string): UserRole | null {
 		const payloadRaw = decodeBase64Url(parts[1]);
 		const payload = JSON.parse(payloadRaw) as JwtPayload;
 
-		if (typeof payload.role !== "string") {
-			return null;
-		}
-
-		const normalizedRole = payload.role.trim().toLowerCase();
-		if (normalizedRole === "student") {
-			return "Student";
-		}
-
-		if (normalizedRole === "householder") {
-			return "Householder";
+		if (
+			payload.role === RoleEnum.Student ||
+			payload.role === RoleEnum.Householder
+		) {
+			return payload.role;
 		}
 
 		return null;

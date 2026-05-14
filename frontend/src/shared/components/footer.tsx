@@ -6,6 +6,7 @@ import {
 	useAuthActions,
 } from "../../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../../features/auth/utils/tokenClaims";
+import { RoleEnum } from "../../global/enum/role";
 
 export function Footer() {
 	const { t } = useTranslation();
@@ -42,7 +43,7 @@ export function Footer() {
 						>
 							{t("footer.home")}
 						</button>
-						{role === "Student" ? (
+						{role === RoleEnum.Student ? (
 							<>
 								<button
 									type="button"
