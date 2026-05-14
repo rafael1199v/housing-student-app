@@ -32,7 +32,7 @@ jobs:
                 push: true
                 tags: ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:1.0
                 build-args: |
-                    VITE_API_URL=http://api.itersapiens.rafael-vargas.dev
+                    VITE_API_URL=https://api.itersapiens.rafael-vargas.dev
                     VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
                     VITE_GOOGLE_MAPS_ID=${{ secrets.VITE_GOOGLE_MAPS_ID }}
                     VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
@@ -57,11 +57,11 @@ jobs:
                   ASPNETCORE_ENVIRONMENT=Production
                   ASPNETCORE_URLS=http://+:${{ vars.BACKEND_PORT }}
 
-                  Frontend__Origin=http://itersapiens.rafael-vargas.dev
+                  Frontend__Origin=https://itersapiens.rafael-vargas.dev
 
                   Jwt__SecretKey=${{ secrets.JWT_SECRET_KEY }}
-                  Jwt__Issuer=http://api.itersapiens.rafael-vargas.dev
-                  Jwt__Audience=http://itersapiens.rafael-vargas.dev
+                  Jwt__Issuer=https://api.itersapiens.rafael-vargas.dev
+                  Jwt__Audience=https://itersapiens.rafael-vargas.dev
                   Jwt__ExpirationInMinutes=${{ secrets.JWT_EXPIRATION_MINUTES }}
 
                   AWS__AccessKey=${{ secrets.AWS_ACCESS_KEY }}
