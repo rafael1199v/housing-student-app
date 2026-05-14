@@ -35,7 +35,7 @@ const registerSchema = z
 			.max(150, v("password.tooLong")),
 		confirmPassword: z.string().min(1, v("confirmPassword.required")),
 		role: z.enum([RoleEnum.Student, RoleEnum.Householder], {
-			errorMap: () => ({ message: v("role.required") }),
+			error: () => ({ message: v("role.required") }),
 		}),
 		firstName: z
 			.string()
@@ -94,7 +94,7 @@ function Register() {
 		defaultValues: {
 			phoneExtension: "",
 			nationality: "",
-			role: "",
+			role: undefined,
 			imageUrl: "",
 		},
 	});
