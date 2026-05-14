@@ -114,10 +114,10 @@ export function RoomsPage() {
 
 	const [committed, setCommitted] = useState<RoomSearchParams>({
 		name: initialName,
-		minPrice: initialMinPrice,
-		maxPrice: initialMaxPrice,
-		longitude: initialLongitude ?? undefined,
-		latitude: initialLatitude ?? undefined,
+		minPrice: initialMinPrice ? Number(initialMinPrice) : undefined,
+		maxPrice: initialMaxPrice ? Number(initialMaxPrice) : undefined,
+		longitude: initialLongitude !== null ? Number(initialLongitude) : undefined,
+		latitude: initialLatitude !== null ? Number(initialLatitude) : undefined,
 	});
 
 	const handleMapClick = (event: MapMouseEvent) => {
@@ -158,18 +158,18 @@ export function RoomsPage() {
 		setErrors({});
 		const next: RoomSearchParams = {
 			name: searchText.trim(),
-			minPrice: minPrice.trim(),
-			maxPrice: maxPrice.trim(),
+			minPrice: minPrice.trim() ? Number(minPrice.trim()) : undefined,
+			maxPrice: maxPrice.trim() ? Number(maxPrice.trim()) : undefined,
 			longitude: selectedPosition?.lng,
 			latitude: selectedPosition?.lat,
 		};
 		setCommitted(next);
 		const params = new URLSearchParams();
 		if (next.name) params.set("name", next.name);
-		if (next.minPrice !== undefined && next.minPrice !== "") {
+		if (next.minPrice !== undefined) {
 			params.set("minPrice", String(next.minPrice));
 		}
-		if (next.maxPrice !== undefined && next.maxPrice !== "") {
+		if (next.maxPrice !== undefined) {
 			params.set("maxPrice", String(next.maxPrice));
 		}
 		if (next.latitude !== undefined)
