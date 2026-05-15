@@ -344,6 +344,11 @@
 		"message": "The page you're looking for doesn't exist. Go back to the home page and try your search again.",
 		"backButton": "Back to home"
 	},
+	"forbidden": {
+		"title": "Access denied (403)",
+		"message": "You don't have permission to view this page.",
+		"backButton": "Back to home"
+	},
 	"roomCard": {
 		"noImage": "No image available",
 		"prevImage": "Previous image",

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
 import i18n from "../../../i18n";
-import authService from "../../../services/authService";
+import { authService } from "../../../services/authService";
 import { NationalityDropdown } from "../../auth/components/NationalityDropdown";
 import { useAccessToken } from "../../auth/store/authStore";
 import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";

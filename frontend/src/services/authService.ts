@@ -9,7 +9,7 @@ import type { UpdateUserDataDto } from "../features/profile-settings/types/updat
 import type { UserDataDto } from "../features/profile-settings/types/userDataDto";
 import { api } from "./apiService";
 
-const authService = {
+export const authService = {
 	login: (data: LoginRequest) =>
 		api.post<AuthResponse>("/api/login", data, { requiresAuth: false }),
 	register: (user: RegisterDto) =>
@@ -31,5 +31,3 @@ const authService = {
 		}),
 	logout: () => api.delete<void>("/api/auth/logout"),
 };
-
-export default authService;

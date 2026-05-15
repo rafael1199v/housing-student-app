@@ -7,7 +7,7 @@ export function HouseholderProtectedRoute() {
 	const role = getRoleFromAccessToken(token);
 
 	if (role !== "Householder") {
-		return <Navigate to="/not-found" replace />;
+		return <Navigate to="/forbidden" replace />;
 	}
 
 	return <Outlet />;

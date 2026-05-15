@@ -7,7 +7,7 @@ import {
 } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { RoleEnum } from "../global/enum/role";
-import authService from "../services/authService";
+import { authService } from "../services/authService";
 import { Footer } from "../shared/components/footer";
 import { LanguageSelector } from "../shared/components/LanguageSelector";
 

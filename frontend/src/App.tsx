@@ -1,9 +1,21 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+	MutationCache,
+	QueryCache,
+	QueryClient,
+	QueryClientProvider,
+} from "@tanstack/react-query";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { Outlet } from "react-router";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	queryCache: new QueryCache({
+		onError: (error) => toast.error(error.message),
+	}),
+	mutationCache: new MutationCache({
+		onError: (error) => toast.error(error.message),
+	}),
+});
 
 function App() {
 	return (

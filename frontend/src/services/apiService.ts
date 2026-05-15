@@ -1,13 +1,14 @@
-import { toast } from "sonner";
 import { API_BASE_URL } from "../config/constants";
 import { useAuthStore } from "../features/auth/store/authStore";
 import i18n from "../i18n";
 import { router } from "../routers/routes";
 import { refreshAccessToken } from "./refreshToken";
+
 export interface RequestOptions extends RequestInit {
 	requiresAuth?: boolean;
 	baseURL?: string;
-	isRetry?: boolean;
+	/** Pass an AbortSignal via this field (inherited from RequestInit) to cancel in-flight requests. */
+	signal?: AbortSignal;
 }
 
 function getToken(): string {
@@ -23,18 +24,26 @@ function translateError(code: string | undefined): string {
 	});
 }
 
-export async function apiFetch<T>(
+function serializeBody(body: unknown): BodyInit {
+	if (body instanceof FormData) return body;
+	return JSON.stringify(body);
+}
+
+async function apiFetch<T>(
 	endpoint: string,
-	{
+	options: RequestOptions = {},
+	isRetry = false,
+): Promise<T> {
+	const {
 		requiresAuth = true,
 		baseURL = API_BASE_URL,
 		headers,
-		isRetry = false,
 		...rest
-	}: RequestOptions = {},
-): Promise<T> {
+	} = options;
+
+	const token = getToken();
 	const authHeaders: HeadersInit =
-		requiresAuth && getToken() ? { Authorization: `Bearer ${getToken()}` } : {};
+		requiresAuth && token ? { Authorization: `Bearer ${token}` } : {};
 	const contentTypeHeaders: HeadersInit =
 		rest.body instanceof FormData ? {} : { "Content-Type": "application/json" };
 
@@ -55,21 +64,14 @@ export async function apiFetch<T>(
 		if (!(await refreshAccessToken())) {
 			useAuthStore.getState().actions.clearAll();
 			router.navigate("/login");
-			toast.error(i18n.t("auth.login.sessionExpired"));
 			throw new Error(i18n.t("auth.login.sessionExpired"));
 		}
 
-		return apiFetch<T>(endpoint, {
-			requiresAuth: requiresAuth,
-			baseURL: baseURL,
-			headers: headers,
-			isRetry: true,
-			...rest,
-		});
+		return apiFetch<T>(endpoint, options, true);
 	}
 
 	if (response.status === 403) {
-		router.navigate("/not-found");
+		router.navigate("/forbidden");
 		throw new Error("forbidden.resource");
 	}
 
@@ -77,7 +79,7 @@ export async function apiFetch<T>(
 		.json()
 		.catch(() => ({ message: response.statusText }));
 
-	const code: string = error.code ?? error[0]?.code;
+	const code: string | undefined = error.code ?? error[0]?.code;
 
 	throw new Error(translateError(code));
 }
@@ -88,19 +90,19 @@ export const api = {
 	post: <T>(endpoint: string, body: unknown, opts?: RequestOptions) =>
 		apiFetch<T>(endpoint, {
 			method: "POST",
-			body: JSON.stringify(body),
+			body: serializeBody(body),
 			...opts,
 		}),
 	put: <T>(endpoint: string, body: unknown, opts?: RequestOptions) =>
 		apiFetch<T>(endpoint, {
 			method: "PUT",
-			body: JSON.stringify(body),
+			body: serializeBody(body),
 			...opts,
 		}),
 	patch: <T>(endpoint: string, body: unknown, opts?: RequestOptions) =>
 		apiFetch<T>(endpoint, {
 			method: "PATCH",
-			body: JSON.stringify(body),
+			body: serializeBody(body),
 			...opts,
 		}),
 	delete: <T>(endpoint: string, opts?: RequestOptions) =>

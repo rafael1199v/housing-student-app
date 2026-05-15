@@ -344,6 +344,11 @@
 		"message": "A página que você procura não existe. Volte ao início e tente novamente.",
 		"backButton": "Voltar ao início"
 	},
+	"forbidden": {
+		"title": "Acesso negado (403)",
+		"message": "Você não tem permissão para ver esta página.",
+		"backButton": "Voltar ao início"
+	},
 	"roomCard": {
 		"noImage": "Sem imagem disponível",
 		"prevImage": "Imagem anterior",
