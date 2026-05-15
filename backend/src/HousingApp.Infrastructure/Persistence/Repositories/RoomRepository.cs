@@ -103,7 +103,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         if (filters.Services is not null && filters.Services.Length > 0)
         {
             int[] serviceIds = filters.Services;
-            query = query.Where(r => r.Services.Any(s => !s.IsDeleted && serviceIds.Contains(s.Id)));
+            query = query.Where(r => serviceIds.All(id => r.Services.Any(s => !s.IsDeleted && s.Id == id)));
         }
 
         List<Room> rooms = await query

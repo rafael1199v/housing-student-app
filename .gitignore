@@ -3,3 +3,4 @@ backend/src/HousingApp.Api/fileName.sql
 frontend/nothing.json
 **/.env
 **/.env.prod
+*.lscache
