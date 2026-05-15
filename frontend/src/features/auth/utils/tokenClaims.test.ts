@@ -24,14 +24,24 @@ describe("getRoleFromAccessToken", () => {
 		expect(getRoleFromAccessToken(token)).toBeNull();
 	});
 
-	it("returns Student for student role (case-insensitive)", () => {
-		const token = makeToken({ role: "STUDENT" });
+	it("returns Student for exact-case role", () => {
+		const token = makeToken({ role: "Student" });
 		expect(getRoleFromAccessToken(token)).toBe("Student");
 	});
 
-	it("returns Householder for householder role with whitespace", () => {
-		const token = makeToken({ role: "  Householder  " });
+	it("returns Householder for exact-case role", () => {
+		const token = makeToken({ role: "Householder" });
 		expect(getRoleFromAccessToken(token)).toBe("Householder");
+	});
+
+	it("returns null for role with wrong case", () => {
+		const token = makeToken({ role: "STUDENT" });
+		expect(getRoleFromAccessToken(token)).toBeNull();
+	});
+
+	it("returns null for role with whitespace", () => {
+		const token = makeToken({ role: "  Householder  " });
+		expect(getRoleFromAccessToken(token)).toBeNull();
 	});
 
 	it("returns null for unknown role", () => {

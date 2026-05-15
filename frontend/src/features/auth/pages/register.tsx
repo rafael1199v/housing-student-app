@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import See from "../../../assets/see.png";
 import Unsee from "../../../assets/unsee.png";
+import { RoleEnum } from "../../../global/enum/role";
 import i18n from "../../../i18n";
 import { authService } from "../../../services/authService";
 import { NationalityDropdown } from "../components/NationalityDropdown";
@@ -33,7 +34,9 @@ const registerSchema = z
 			})
 			.max(150, v("password.tooLong")),
 		confirmPassword: z.string().min(1, v("confirmPassword.required")),
-		role: z.string().min(1, v("role.required")),
+		role: z.enum([RoleEnum.Student, RoleEnum.Householder], {
+			error: () => ({ message: v("role.required") }),
+		}),
 		firstName: z
 			.string()
 			.trim()
@@ -91,7 +94,7 @@ function Register() {
 		defaultValues: {
 			phoneExtension: "",
 			nationality: "",
-			role: "",
+			role: undefined,
 			imageUrl: "",
 		},
 	});
@@ -361,10 +364,10 @@ function Register() {
 									className="field-filled w-full px-3 py-2.5 shrink-0"
 								>
 									<option value="">{t("auth.register.rolePlaceholder")}</option>
-									<option value="student">
+									<option value={RoleEnum.Student}>
 										{t("auth.register.roleStudent")}
 									</option>
-									<option value="householder">
+									<option value={RoleEnum.Householder}>
 										{t("auth.register.roleOwner")}
 									</option>
 								</select>
