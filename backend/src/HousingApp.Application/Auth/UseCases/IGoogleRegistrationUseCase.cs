@@ -4,5 +4,5 @@ namespace HousingApp.Application.Auth.UseCases;
 
 public interface IGoogleRegistrationUseCase
 {
-    Task<Result<UserDto>> ExecuteAsync(GoogleRegisterDto googleRegisterDto);
+    Task<Result<CredentialsDto>> ExecuteAsync(GoogleRegisterDto googleRegisterDto);
 }

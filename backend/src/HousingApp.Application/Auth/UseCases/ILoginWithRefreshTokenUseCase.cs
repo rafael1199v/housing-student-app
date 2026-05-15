@@ -4,5 +4,5 @@ namespace HousingApp.Application.Auth.UseCases;
 
 public interface ILoginWithRefreshTokenUseCase
 {
-    Task<Result<UserDto>> ExecuteAsync(RefreshTokenDto refreshTokenDto);
+    Task<Result<CredentialsDto>> ExecuteAsync(RefreshTokenDto refreshTokenDto);
 }

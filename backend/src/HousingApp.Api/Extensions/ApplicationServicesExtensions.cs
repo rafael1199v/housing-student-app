@@ -58,6 +58,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IAccessTokenService, AccessTokenService>();
 
         return services;
     }

@@ -1,16 +1,16 @@
 using HousingApp.Application.Auth.DTOs;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using HousingApp.Application.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
-namespace HousingApp.Api.Utils;
+namespace HousingApp.Infrastructure.Services;
 
-public static class TokenHelpers
+public class AccessTokenService(IConfiguration configuration) : IAccessTokenService
 {
-    public static string GenerateAccessToken(UserDto user, IConfiguration configuration)
+    public string GenerateAccessToken(UserDto user)
     {
         SymmetricSecurityKey signInKey =
             new(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]!));
@@ -34,13 +34,6 @@ public static class TokenHelpers
         };
 
         JsonWebTokenHandler tokenHandler = new();
-        string accessToken = tokenHandler.CreateToken(tokenDescriptor);
-
-        return accessToken;
-    }
-
-    public static CredentialsDto GenerateCredentials(UserDto user, IConfiguration configuration)
-    {
-        return new CredentialsDto(GenerateAccessToken(user, configuration), user.RefreshToken);
+        return tokenHandler.CreateToken(tokenDescriptor);
     }
 }
