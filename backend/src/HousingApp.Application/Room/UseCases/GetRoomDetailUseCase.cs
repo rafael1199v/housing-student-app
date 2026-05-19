@@ -1,5 +1,5 @@
 using HousingApp.Application.Repositories;
-using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Storage;
 using HousingApp.Domain.Error;
 
@@ -27,14 +27,15 @@ public class GetRoomDetailUseCase(IRoomRepository roomRepository, IStorageServic
             room.PersonId,
             room.RoomStatus.ToString(),
             room.Person!.FirstName,
-            room.Person!.LastName,
+            room.Person!.LastName ?? "",
             room.Person!.Email,
-            room.Person!.PhoneNumber,
-            room.Person!.Nationality,
-            room.Person!.Age,
-            room.Person!.Gender,
+            room.Person!.PhoneNumber ?? "",
+            room.Person!.Nationality ?? "",
+            room.Person!.Gender ?? "",
             room.Person!.ImageUrl ?? "",
-            [.. room.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))]
+            [.. room.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))],
+            [.. room.ServiceCodes],
+            [.. room.Policies.Select(policy => new RoomPolicyDto(policy.Code, policy.Description))]
         );
 
         return Result<RoomDto>.Success(roomDto);

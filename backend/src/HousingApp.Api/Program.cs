@@ -24,10 +24,14 @@ builder.Services.AddAwsStorage(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddRateLimiterPolicy();
 builder.Services.AddFluentValidation();
+builder.Services.AddEmailConfiguration(builder.Configuration);
 
 builder.Services.AddAuthorization();
 
 WebApplication app = builder.Build();
+
+//Apply database migrations and seed data only
+await app.ApplyMigrationsAndSeedDataAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

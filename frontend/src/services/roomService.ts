@@ -3,58 +3,63 @@ import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
 import type { RoomHouseholderDetailDto } from "../features/owner-room-details/types/roomHouseholderDetailDto";
 import type { RoomDto } from "../features/room-details/types/roomDto";
-import { api, apiFetch } from "./apiService";
+import { compressImages } from "../global/utils/image-compressor";
+import { api } from "./apiService";
 
 export interface RoomSearchParams {
 	name?: string;
-	minPrice?: string | number;
-	maxPrice?: string | number;
-	longitude?: string | number;
-	latitude?: string | number;
+	minPrice?: number;
+	maxPrice?: number;
+	longitude?: number;
+	latitude?: number;
+}
+
+function buildRoomFormData(dto: CreateRoomDto): FormData {
+	const formData = new FormData();
+	formData.append("name", dto.name);
+	formData.append("latitude", String(dto.latitude));
+	formData.append("longitude", String(dto.longitude));
+	formData.append("description", dto.description);
+	formData.append("price", String(dto.price));
+	formData.append("roomStatusId", String(dto.roomStatus));
+
+	dto.services.forEach((serviceId, index) => {
+		formData.append(`Services[${index}].Id`, String(serviceId));
+	});
+
+	dto.policies.forEach((policy, index) => {
+		formData.append(`Policies[${index}].Id`, String(policy.id));
+		formData.append(`Policies[${index}].Description`, policy.description);
+	});
+
+	return formData;
 }
 
 const roomService = {
-	getRooms: async () => api.get<RoomData[]>("/api/rooms"),
-	searchRooms: async (params: RoomSearchParams) => {
-		const query = new URLSearchParams();
-		if (params.name) query.set("name", params.name);
-		if (params.minPrice !== undefined && params.minPrice !== "") {
-			query.set("minPrice", String(params.minPrice));
-		}
-		if (params.maxPrice !== undefined && params.maxPrice !== "") {
-			query.set("maxPrice", String(params.maxPrice));
-		}
-		if (params.latitude !== undefined && params.latitude !== "") {
-			query.set("latitude", String(params.latitude));
-		}
-		if (params.longitude !== undefined && params.longitude !== "") {
-			query.set("longitude", String(params.longitude));
-		}
-		const qs = query.size > 0 ? `?${query.toString()}` : "";
+	getRooms: () => api.get<RoomData[]>("/api/rooms"),
+	searchRooms: (params: RoomSearchParams) => {
+		const query = new URLSearchParams(
+			Object.entries(params)
+				.filter(([, v]) => v !== undefined && v !== "")
+				.map(([k, v]) => [k, String(v)]),
+		);
+		const qs = query.size > 0 ? `?${query}` : "";
 		return api.get<RoomData[]>(`/api/rooms${qs}`);
 	},
-	roomAlreadyBooked: async (roomId: string) =>
+	roomAlreadyBooked: (roomId: string) =>
 		api.get<boolean>(`/api/bookings/${roomId}`),
-	getRoomById: async (id: string) => api.get<RoomDto>(`/api/rooms/${id}`),
-	getHouseholderRooms: async () => {
-		return api.get<RoomHouseholderDto[]>("/api/rooms/householder");
-	},
+	getRoomById: (id: string) => api.get<RoomDto>(`/api/rooms/${id}`),
+	getHouseholderRooms: () =>
+		api.get<RoomHouseholderDto[]>("/api/rooms/householder"),
 	createRoom: async (dto: CreateRoomDto) => {
-		const formData = new FormData();
-		formData.append("name", dto.name);
-		formData.append("latitude", String(dto.latitude));
-		formData.append("longitude", String(dto.longitude));
-		formData.append("description", dto.description);
-		formData.append("price", String(dto.price));
-		formData.append("roomStatusId", String(dto.roomStatus));
-
-		for (const imageFile of dto.imageRoomFiles) {
-			formData.append("images", imageFile);
+		const formData = buildRoomFormData(dto);
+		const compressedImages = await compressImages(dto.imageRoomFiles);
+		for (const imageFile of compressedImages) {
+			formData.append("Images", imageFile);
 		}
-
-		return apiFetch<void>("/api/rooms", { body: formData, method: "POST" });
+		return api.post<void>("/api/rooms", formData);
 	},
-	getHouseholderRoomDetail: async (id: string) =>
+	getHouseholderRoomDetail: (id: string) =>
 		api.get<RoomHouseholderDetailDto>(`/api/rooms/householder/${id}`),
 };
 

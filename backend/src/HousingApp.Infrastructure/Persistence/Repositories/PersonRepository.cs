@@ -21,6 +21,29 @@ public class PersonRepository(HousingApplicationDbContext context) : IPersonRepo
             .AnyAsync(person => person.UserId == userId && !person.IsDeleted);
     }
 
+    public async Task<bool> UpdateUserDataAsync(
+        string userId,
+        string? firstName,
+        string? lastName,
+        string? phoneNumber,
+        string? nationality,
+        string? gender,
+        DateOnly? birthDate)
+    {
+        int affectedRows = await context.Persons
+            .Where(person => person.UserId == userId && !person.IsDeleted)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(person => person.FirstName, person => string.IsNullOrEmpty(firstName) ? person.FirstName : firstName)
+                .SetProperty(person => person.LastName, person => string.IsNullOrEmpty(lastName) ? person.LastName : lastName)
+                .SetProperty(person => person.PhoneNumber, person => string.IsNullOrEmpty(phoneNumber) ? person.PhoneNumber : phoneNumber)
+                .SetProperty(person => person.Nationality, person => string.IsNullOrEmpty(nationality) ? person.Nationality : nationality)
+                .SetProperty(person => person.Gender, person => string.IsNullOrEmpty(gender) ? person.Gender : gender)
+                .SetProperty(person => person.BirthDate, person => birthDate)
+                .SetProperty(person => person.UpdatedAt, DateTime.UtcNow));
+
+        return affectedRows == 1;
+    }
+
     private static PersonModel ToModel(Person person)
     {
         return new PersonModel
@@ -32,7 +55,6 @@ public class PersonRepository(HousingApplicationDbContext context) : IPersonRepo
             PhoneNumber = person.PhoneNumber,
             BirthDate = person.BirthDate,
             Nationality = person.Nationality,
-            Age = person.Age,
             Gender = person.Gender,
             ImageUrl = string.IsNullOrEmpty(person.ImageUrl) ? null : person.ImageUrl
         };

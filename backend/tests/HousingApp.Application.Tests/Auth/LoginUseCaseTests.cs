@@ -2,7 +2,7 @@ using FluentAssertions;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Repositories;
-using HousingApp.Domain.Entities;
+using HousingApp.Application.Services;
 using HousingApp.Domain.Error;
 using NSubstitute;
 
@@ -12,11 +12,15 @@ public class LoginUseCaseTests
 {
     private readonly LoginUseCase _loginUseCase;
     private readonly IUserRepository _userRepository;
+    private readonly IGenerateRefreshTokenUseCase _generateRefreshTokenUseCase;
+    private readonly IAccessTokenService _accessTokenService;
 
     public LoginUseCaseTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _loginUseCase = new LoginUseCase(_userRepository);
+        _generateRefreshTokenUseCase = Substitute.For<IGenerateRefreshTokenUseCase>();
+        _accessTokenService = Substitute.For<IAccessTokenService>();
+        _loginUseCase = new LoginUseCase(_userRepository, _generateRefreshTokenUseCase, _accessTokenService);
     }
 
     [Fact]
@@ -25,28 +29,29 @@ public class LoginUseCaseTests
         //Arrange
         LoginDto loginDto = new("rafael@gmail.com", "Password!555");
 
-        User returnedUser = User.CreateUser(
+        Domain.Entities.User returnedUser = Domain.Entities.User.CreateUser(
             "uuid",
             loginDto.Email,
             "password-hash",
-            ["student"]
+            ["student"],
+            isEmailConfirmed: true
         );
+
+        const string refreshTokenReturned = "refresh-token-returned";
+        const string accessTokenReturned = "access-token-returned";
 
         _userRepository.FindUserByEmailAsync(loginDto.Email).Returns(returnedUser);
         _userRepository.CheckPassword(loginDto.Email, loginDto.Password).Returns(true);
+        _generateRefreshTokenUseCase.ExecuteAsync(returnedUser.Id).Returns(Result<string>.Success(refreshTokenReturned));
+        _accessTokenService.GenerateAccessToken(Arg.Any<UserDto>()).Returns(accessTokenReturned);
 
-        UserDto userDtoExpected = new(
-            returnedUser.Id,
-            loginDto.Email,
-            returnedUser.Password,
-            returnedUser.Roles
-        );
+        CredentialsDto expected = new(AccessToken: accessTokenReturned, RefreshToken: refreshTokenReturned);
 
         //Act
-        Result<UserDto> result = await _loginUseCase.Login(loginDto);
+        Result<CredentialsDto> result = await _loginUseCase.Login(loginDto);
 
-        // Assert 
-        result.Value.Should().Be(userDtoExpected);
+        // Assert
+        result.Value.Should().Be(expected);
     }
 
     [Fact]
@@ -55,13 +60,13 @@ public class LoginUseCaseTests
         //Arrange
         LoginDto loginDto = new("rafael@gmail.com", "Password!555");
 
-        _userRepository.FindUserByEmailAsync(loginDto.Email).Returns((User?)null);
+        _userRepository.FindUserByEmailAsync(loginDto.Email).Returns((Domain.Entities.User?)null);
 
         //Act
-        Result<UserDto> result = await _loginUseCase.Login(loginDto);
+        Result<CredentialsDto> result = await _loginUseCase.Login(loginDto);
         Error error = result.Error;
 
-        // Assert 
+        // Assert
         error.Should().Be(AuthError.InvalidCredentials);
     }
 
@@ -70,7 +75,7 @@ public class LoginUseCaseTests
     {
         //Arrange
         LoginDto loginDto = new("rafael@gmail.com", "Password!555");
-        User returnedUser = User.CreateUser(
+        Domain.Entities.User returnedUser = Domain.Entities.User.CreateUser(
             "uuid",
             loginDto.Email,
             "password-hash",
@@ -81,10 +86,10 @@ public class LoginUseCaseTests
         _userRepository.CheckPassword(loginDto.Email, loginDto.Password).Returns(false);
 
         //Act
-        Result<UserDto> result = await _loginUseCase.Login(loginDto);
+        Result<CredentialsDto> result = await _loginUseCase.Login(loginDto);
         Error error = result.Error;
 
-        // Assert 
+        // Assert
         error.Should().Be(AuthError.InvalidCredentials);
     }
 }

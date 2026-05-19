@@ -1,0 +1,71 @@
+{
+	"email": {
+		"required": "El email es requerido",
+		"invalid": "Por favor ingresa un email válido",
+		"tooLong": "Email muy largo"
+	},
+	"password": {
+		"required": "La contraseña es requerida",
+		"tooShort": "La contraseña debe tener al menos 8 caracteres",
+		"complexity": "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo",
+		"tooLong": "La contraseña es excesivamente larga"
+	},
+	"confirmPassword": {
+		"required": "Debe confirmar la contraseña",
+		"mismatch": "Las contraseñas no coinciden"
+	},
+	"role": {
+		"required": "El rol es requerido"
+	},
+	"firstName": {
+		"required": "El nombre es requerido",
+		"tooLong": "Nombre muy largo"
+	},
+	"lastName": {
+		"required": "El apellido es requerido",
+		"tooLong": "Apellido demasiado largo"
+	},
+	"phone": {
+		"required": "El teléfono es requerido",
+		"onlyDigits": "El teléfono solo debe contener números",
+		"onlyExtensionAndDigits": "El teléfono debe iniciar con '+' y solo debe contener dígitos",
+		"tooShort": "El teléfono debe tener al menos 7 dígitos",
+		"tooLong": "El teléfono no puede tener más de 15 caracteres"
+	},
+	"phoneExtension": {
+		"required": "La extensión es requerida"
+	},
+	"nationality": {
+		"required": "La nacionalidad es requerida"
+	},
+	"gender": {
+		"required": "El género es requerido"
+	},
+	"profilePhoto": {
+		"invalidUrl": "La foto de perfil debe ser una URL válida"
+	},
+	"birthDate": {
+		"required": "La fecha de nacimiento es requerida"
+	},
+	"search": {
+		"nameTooLong": "El nombre no puede superar los 100 caracteres",
+		"minPriceTooLow": "El precio mínimo debe ser 0 o mayor",
+		"maxPriceTooLow": "El precio máximo debe ser 0 o mayor",
+		"priceTooHigh": "El precio no puede superar 99,999",
+		"priceRangeInvalid": "El precio máximo debe ser mayor o igual al precio mínimo"
+	},
+	"room": {
+		"nameRequired": "El nombre de la habitación es obligatorio",
+		"descriptionRequired": "La descripción es obligatoria",
+		"descriptionTooLong": "La descripción es demasiado larga",
+		"priceRequired": "El precio es obligatorio",
+		"priceTooLow": "El precio debe ser mayor a 0",
+		"priceTooHigh": "El precio es demasiado alto",
+		"locationRequired": "Por favor, selecciona una ubicación en el mapa",
+		"latitudeRange": "La latitud debe estar entre -90 y 90",
+		"longitudeRange": "La longitud debe estar entre -180 y 180"
+	},
+	"currentPassword": {
+		"required": "La contraseña actual es requerida"
+	}
+}

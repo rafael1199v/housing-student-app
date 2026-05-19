@@ -1,7 +1,8 @@
-using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Storage;
 using HousingApp.Application.UnitOfWork;
+using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
 
@@ -12,7 +13,7 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
     public async Task<Result<CreatedRoomDto>> ExecuteAsync(string userId, CreateRoomDto createRoomDto,
         CancellationToken cancellationToken)
     {
-        
+
         if (!await unitOfWork.PersonRepository.ExistsByUserIdAsync(userId))
             return Result<CreatedRoomDto>.Failure(RoomError.HouseholderNotFound);
 
@@ -40,17 +41,17 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
         if (createRoomDto.Images.Count > Images.MaxImagesAllowed)
             return Result<CreatedRoomDto>.Failure(RoomError.MaxImagesExceeded(Images.MaxImagesAllowed));
 
-        Domain.Entities.Room room = new()
-        {
-            Id = 0,
-            Name = createRoomDto.Name.Trim(),
-            Description = createRoomDto.Description.Trim(),
-            Latitude = createRoomDto.Latitude,
-            Longitude = createRoomDto.Longitude,
-            Price = createRoomDto.Price,
-            PersonId = userId,
-            RoomStatus = (RoomStatus)createRoomDto.RoomStatusId
-        };
+        Domain.Entities.Room room = Domain.Entities.Room.Create(
+            name: createRoomDto.Name,
+            description: createRoomDto.Description,
+            latitude: createRoomDto.Latitude,
+            longitude: createRoomDto.Longitude,
+            price: createRoomDto.Price,
+            roomStatusId: createRoomDto.RoomStatusId,
+            personId: userId,
+            services: [.. createRoomDto.Services.Select(s => s.Id)],
+            policies: [.. createRoomDto.Policies.Select(p => new Policy { Id = p.Id, Description = p.Description })]
+        );
 
         await unitOfWork.BeginTransactionAsync();
 
@@ -82,7 +83,10 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
                 Longitude: room.Longitude,
                 Price: room.Price,
                 RoomStatus: room.RoomStatus.ToString(),
-                ImageRoomUrls: [.. keys]);
+                ImageRoomUrls: [.. keys],
+                Policies: createRoomDto.Policies,
+                Services: createRoomDto.Services
+            );
 
             return Result<CreatedRoomDto>.Success(response);
         }
@@ -91,7 +95,7 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
             await unitOfWork.RollbackTransactionAsync();
             throw;
         }
-    
+
     }
 
 

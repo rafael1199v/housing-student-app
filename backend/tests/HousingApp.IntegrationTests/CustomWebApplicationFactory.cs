@@ -19,10 +19,12 @@ public class CustomWebApplicationFactory(string postgresConnectionString) : WebA
                 { "Jwt:SecretKey", "long-key-for-integration-tests-itersapiens-backend-app" },
                 { "AWS:AccessKey", "fake-access-key-test" },
                 { "AWS:SecretKey", "fake-secret-key-test" },
-                { "AWS:Region", "us-east-1" }
+                { "AWS:Region", "us-east-1" },
+                { "Resend:ApiKey", "fake-resend-api-key-test" },
+                { "Resend:FromEmail", "fakeEmail@gmail.com" },
             });
         });
-        
+
         builder.ConfigureServices(services =>
         {
             services.AddDbContext<HousingApplicationDbContext>(options =>

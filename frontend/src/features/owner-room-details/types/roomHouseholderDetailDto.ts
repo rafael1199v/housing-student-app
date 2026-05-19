@@ -3,6 +3,7 @@ export interface BookingDto {
 	bookerId: string;
 	bookerName: string;
 	bookerEmail: string;
+	bookerPhoneNumber: string;
 	bookingStatus: string;
 	roomId: number;
 }
@@ -16,5 +17,12 @@ export interface RoomHouseholderDetailDto {
 	price: number;
 	roomStatus: string;
 	imageRoomUrls: string[];
+	services: string[];
+	policies: RoomPolicyDto[];
 	bookings: BookingDto[];
+}
+
+export interface RoomPolicyDto {
+	code: string;
+	description: string;
 }

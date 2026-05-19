@@ -4,16 +4,12 @@ using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
 
 namespace HousingApp.Api.Controllers;
 
 [ApiController]
 [Route("api/login")]
-public class LoginController(ILoginUseCase loginUseCase, IConfiguration configuration, IValidator<LoginDto> validator)
+public class LoginController(ILoginUseCase loginUseCase, ILoginWithRefreshTokenUseCase loginWithRefreshTokenUseCase, IGoogleLoginUseCase googleLoginUseCase, IValidator<LoginDto> validator)
     : ControllerBase
 {
     [HttpPost]
@@ -23,47 +19,37 @@ public class LoginController(ILoginUseCase loginUseCase, IConfiguration configur
         ValidationResult? validationResult = await validator.ValidateAsync(user);
 
         if (!validationResult.IsValid)
-        {
             return BadRequest(validationResult.Errors);
-        }
 
-        Result<UserDto> result = await loginUseCase.Login(user);
+        Result<CredentialsDto> result = await loginUseCase.Login(user);
 
         if (!result.IsSuccess)
-        {
             return BadRequest(result.Error);
-        }
 
-        CredentialsDto credentials = new(GenerateToken(result.Value!));
-        return Ok(credentials);
+        return Ok(result.Value!);
     }
 
-    private string GenerateToken(UserDto user)
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> LoginWithRefreshToken([FromBody] RefreshTokenDto refreshToken)
     {
-        SymmetricSecurityKey signInKey =
-            new(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]!));
+        Result<CredentialsDto> result = await loginWithRefreshTokenUseCase.ExecuteAsync(refreshToken);
 
-        SigningCredentials credentials = new(signInKey, SecurityAlgorithms.HmacSha256);
+        if (!result.IsSuccess)
+            return BadRequest(result.Error);
 
-        List<Claim> claims =
-        [
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email),
-            ..user.Roles.Select(r => new Claim("role", r))
-        ];
+        return Ok(result.Value!);
+    }
 
-        SecurityTokenDescriptor tokenDescriptor = new()
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
-            SigningCredentials = credentials,
-            Audience = configuration["Jwt:Audience"],
-            Issuer = configuration["Jwt:Issuer"]
-        };
+    [HttpPost("google")]
+    public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginDto googleLoginDto)
+    {
+        Result<GoogleAuthDto> result = await googleLoginUseCase.ExecuteAsync(googleLoginDto);
 
-        JsonWebTokenHandler tokenHandler = new();
-        string accessToken = tokenHandler.CreateToken(tokenDescriptor);
+        if (!result.IsSuccess)
+            return BadRequest(result.Error);
 
-        return accessToken;
+        return Ok(result.Value!.IsNewUser
+            ? new GoogleAuthResponseDto(result.Value!.IsNewUser)
+            : new GoogleAuthResponseDto(result.Value!.IsNewUser, result.Value!.Credentials));
     }
 }

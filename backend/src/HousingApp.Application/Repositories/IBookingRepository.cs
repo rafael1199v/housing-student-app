@@ -5,7 +5,7 @@ namespace HousingApp.Application.Repositories;
 
 public interface IBookingRepository
 {
-   
+
     Task CreateBookingAsync(Domain.Entities.Booking booking);
     Task<bool> UserHasAlreadyBooked(string userId, int roomId);
     Task<bool> ChangeStatus(int bookingId, BookingStatus newStatus);

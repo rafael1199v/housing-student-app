@@ -3,8 +3,8 @@ using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Enums;
-using NSubstitute;
 using HousingApp.Domain.Error;
+using NSubstitute;
 
 namespace HousingApp.Application.Tests.Booking;
 
@@ -33,7 +33,10 @@ public class ApproveBookingUseCaseTests
         // Arrange
         Domain.Entities.Booking booking = new()
         {
-            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Pending
+            Id = 1,
+            BookerId = "user-1",
+            RoomId = 10,
+            BookingStatus = BookingStatus.Pending
         };
         _bookingRepository.GetBookingByIdAsync(1).Returns(booking);
         _bookingRepository.ApproveBooking(1).Returns(true);
@@ -71,7 +74,10 @@ public class ApproveBookingUseCaseTests
         // Arrange
         Domain.Entities.Booking booking = new()
         {
-            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Confirmed
+            Id = 1,
+            BookerId = "user-1",
+            RoomId = 10,
+            BookingStatus = BookingStatus.Confirmed
         };
         _bookingRepository.GetBookingByIdAsync(1).Returns(booking);
 
@@ -90,7 +96,10 @@ public class ApproveBookingUseCaseTests
         // Arrange
         Domain.Entities.Booking booking = new()
         {
-            Id = 1, BookerId = "user-1", RoomId = 10, BookingStatus = BookingStatus.Cancelled
+            Id = 1,
+            BookerId = "user-1",
+            RoomId = 10,
+            BookingStatus = BookingStatus.Cancelled
         };
         _bookingRepository.GetBookingByIdAsync(1).Returns(booking);
 

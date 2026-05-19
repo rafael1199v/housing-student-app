@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { BookingDto } from "../types/roomHouseholderDetailDto";
 
 interface BookingDialogProps {
@@ -17,41 +18,45 @@ export function BookingActionDialog({
 	onConfirm,
 	onCancel,
 }: BookingDialogProps) {
+	const { t } = useTranslation();
 	if (!isOpen || !booking) return null;
+
+	const isApprove = action === "approve";
 
 	return (
 		<div className="fixed inset-0 z-50 h-full flex items-center justify-center bg-slate-900/35 p-4 backdrop-blur-sm">
 			<div className="w-full max-w-sm space-y-6 rounded-2xl bg-surface-container-lowest p-6 shadow-2xl">
 				<div className="space-y-2">
 					<h2 className="text-xl font-semibold text-slate-900">
-						Confirmar {action == "approve" ? "aprobación" : "rechazo"} de
-						reserva
+						{isApprove
+							? t("bookingDialog.titleApprove")
+							: t("bookingDialog.titleReject")}
 					</h2>
 					<p className="text-sm text-slate-600">
-						¿Estás seguro de que deseas{" "}
-						{action == "approve" ? "aprobar" : "rechazar"} esta solicitud de
-						reserva?
+						{isApprove
+							? t("bookingDialog.subtitleApprove")
+							: t("bookingDialog.subtitleReject")}
 					</p>
 				</div>
 
 				<div className="space-y-3 rounded-lg bg-surface-container-low p-4">
 					<div>
 						<p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-							Nombre del solicitante
+							{t("bookingDialog.requesterName")}
 						</p>
 						<p className="text-slate-900 font-semibold">{booking.bookerName}</p>
 					</div>
 					<div>
 						<p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-							Correo electrónico
+							{t("bookingDialog.email")}
 						</p>
 						<p className="text-slate-900">{booking.bookerEmail}</p>
 					</div>
 					<div className="pt-2">
 						<p className="text-xs text-slate-600">
-							{action == "approve"
-								? "Una vez aprobada, esta reserva será confirmada y todas las demás solicitudes pendientes serán rechazadas."
-								: "Una vez rechazada, el usuario ya no podrá solicitar esta habitación."}
+							{isApprove
+								? t("bookingDialog.approveWarning")
+								: t("bookingDialog.rejectWarning")}
 						</p>
 					</div>
 				</div>
@@ -63,7 +68,7 @@ export function BookingActionDialog({
 						disabled={isLoading}
 						className="flex-1 rounded-full bg-surface-container-high px-4 py-2 font-medium text-slate-900 transition hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-60"
 					>
-						Cancelar
+						{t("bookingDialog.cancel")}
 					</button>
 					<button
 						type="button"
@@ -71,16 +76,16 @@ export function BookingActionDialog({
 						disabled={isLoading}
 						className={
 							"flex-1 rounded-full px-4 py-2 font-medium text-on-primary transition disabled:cursor-not-allowed disabled:opacity-60 " +
-							(action == "approve"
+							(isApprove
 								? "bg-primary hover:bg-primary-container"
 								: "bg-red-800 hover:bg-red-500")
 						}
 					>
 						{isLoading
-							? "Un momento..."
-							: action == "approve"
-								? "Aprobar"
-								: "Rechazar"}
+							? t("bookingDialog.loading")
+							: isApprove
+								? t("bookingDialog.approve")
+								: t("bookingDialog.reject")}
 					</button>
 				</div>
 			</div>

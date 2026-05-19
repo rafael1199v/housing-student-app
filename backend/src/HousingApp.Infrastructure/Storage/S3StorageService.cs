@@ -18,7 +18,10 @@ public class S3StorageService(IAmazonS3 s3Client, IOptions<StorageSettings> sett
         await s3Client.PutObjectAsync(
             new PutObjectRequest
             {
-                BucketName = settings.Value.BucketName, Key = key, InputStream = stream, ContentType = contentType
+                BucketName = settings.Value.BucketName,
+                Key = key,
+                InputStream = stream,
+                ContentType = contentType
             }, cancellationToken);
 
         return key;

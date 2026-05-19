@@ -1,7 +1,7 @@
 using FluentAssertions;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room;
-using HousingApp.Application.Room.DTO;
+using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.Upload;
 using HousingApp.Application.Room.UseCases;
 using HousingApp.Application.Storage;
@@ -58,7 +58,9 @@ public class CreateRoomUseCaseTests
             Longitude: 180,
             Price: 1000,
             RoomStatusId: (int)RoomStatus.Available,
-            Images: images
+            Images: images,
+            Policies: [new CreateRoomPolicyDto(Id: 1, Description: "Random policy"), new CreateRoomPolicyDto(Id: 2, Description: "Another mock policy")],
+            Services: [new CreateRoomServiceDto(Id: 1), new CreateRoomServiceDto(Id: 3)]
         );
 
         const int newRoomId = 1;
@@ -70,7 +72,9 @@ public class CreateRoomUseCaseTests
             Longitude: createRoomDto.Longitude,
             Price: createRoomDto.Price,
             RoomStatus: ((RoomStatus)createRoomDto.RoomStatusId).ToString(),
-            ImageRoomUrls: Enumerable.Repeat(roomImageId, roomImageQuantity).ToList()
+            ImageRoomUrls: Enumerable.Repeat(roomImageId, roomImageQuantity).ToList(),
+            Policies: createRoomDto.Policies,
+            Services: createRoomDto.Services
         );
 
 
@@ -108,7 +112,9 @@ public class CreateRoomUseCaseTests
             Longitude: 180,
             Price: 1000,
             RoomStatusId: (int)RoomStatus.Available,
-            Images: []
+            Images: [],
+            Policies: [new CreateRoomPolicyDto(Id: 1, Description: "Random policy"), new CreateRoomPolicyDto(Id: 2, Description: "Another mock policy")],
+            Services: [new CreateRoomServiceDto(Id: 1), new CreateRoomServiceDto(Id: 3)]
         );
 
         _personRepository.ExistsByUserIdAsync(userId).Returns(false);
@@ -138,7 +144,9 @@ public class CreateRoomUseCaseTests
             Longitude: 180,
             Price: 1000,
             RoomStatusId: roomStatusId,
-            Images: []
+            Images: [],
+            Policies: [new CreateRoomPolicyDto(Id: 1, Description: "Random policy"), new CreateRoomPolicyDto(Id: 2, Description: "Another mock policy")],
+            Services: [new CreateRoomServiceDto(Id: 1), new CreateRoomServiceDto(Id: 3)]
         );
 
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);
@@ -164,7 +172,9 @@ public class CreateRoomUseCaseTests
             Longitude: 180,
             Price: 1000,
             RoomStatusId: (int)RoomStatus.Booked,
-            Images: []
+            Images: [],
+            Policies: [],
+            Services: []
         );
 
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);
@@ -201,7 +211,9 @@ public class CreateRoomUseCaseTests
                     FileName: $"room-image.{extension}",
                     ContentType: contentType
                 )
-            ]
+            ],
+            Policies: [new CreateRoomPolicyDto(Id: 1, Description: "Random policy"), new CreateRoomPolicyDto(Id: 2, Description: "Another mock policy")],
+            Services: [new CreateRoomServiceDto(Id: 1), new CreateRoomServiceDto(Id: 3)]
         );
 
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);
@@ -236,7 +248,9 @@ public class CreateRoomUseCaseTests
             Longitude: 180,
             Price: 1000,
             RoomStatusId: (int)RoomStatus.Available,
-            Images: images
+            Images: images,
+            Policies: [new CreateRoomPolicyDto(Id: 1, Description: "Random policy"), new CreateRoomPolicyDto(Id: 2, Description: "Another mock policy")],
+            Services: [new CreateRoomServiceDto(Id: 1), new CreateRoomServiceDto(Id: 3)]
         );
 
         _personRepository.ExistsByUserIdAsync(userId).Returns(true);

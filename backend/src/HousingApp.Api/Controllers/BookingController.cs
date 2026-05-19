@@ -20,7 +20,7 @@ public class BookingController(
     IGetStudentBookingsUseCase getStudentBookingsUseCase,
     IRejectBookingUseCase rejectBookingUseCase) : ControllerBase
 {
-   
+
     [HttpGet]
     [Authorize(Roles = RolesDescription.Student)]
     [ProducesResponseType(typeof(List<BookingStudentDto>), StatusCodes.Status200OK)]
@@ -38,7 +38,7 @@ public class BookingController(
 
         return Ok(bookings.Value);
     }
-    
+
     [HttpPost]
     [Authorize(Roles = RolesDescription.Student)]
     [ProducesResponseType(typeof(CreatedBookingDto), StatusCodes.Status200OK)]
@@ -72,7 +72,7 @@ public class BookingController(
         {
             return BadRequest(result.Error);
         }
-        
+
         return Ok(result.Value);
     }
 
@@ -89,7 +89,7 @@ public class BookingController(
 
         return Ok(result.Value);
     }
-    
+
     [HttpGet("{roomId:int}")]
     [Authorize(Roles = RolesDescription.Student)]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]

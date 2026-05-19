@@ -1,17 +1,22 @@
 import { createBrowserRouter } from "react-router";
 import App from "../App";
+import { confirmEmailLoader } from "../features/auth/loaders/ConfirmEmail.loader";
+import ConfirmEmail from "../features/auth/pages/confirm-email";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
 import { useAccessToken } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { BookingsPage } from "../features/bookings/pages";
+import { ForbiddenPage } from "../features/forbidden/pages";
 import { HomePage } from "../features/home/pages";
 import { NewRoomPage } from "../features/new-room/pages";
 import { NotFoundPage } from "../features/not-found/pages";
 import { OwnerHomePage } from "../features/owner-home/pages";
 import { OwnerRoomDetailsPage } from "../features/owner-room-details/pages";
+import { ProfileSettings } from "../features/profile-settings/pages";
 import { RoomDetails } from "../features/room-details/pages";
 import { RoomsPage } from "../features/rooms/pages";
+import { RoleEnum } from "../global/enum/role";
 import { MainLayout } from "../layout/layout";
 import GuestRoute from "./GuestRoute";
 import { HouseholderProtectedRoute } from "./HouseholderProtectedRoute";
@@ -22,7 +27,7 @@ function HomeRoutePage() {
 	const accessToken = useAccessToken();
 	const role = getRoleFromAccessToken(accessToken);
 
-	if (role === "Householder") {
+	if (role === RoleEnum.Householder) {
 		return <OwnerHomePage />;
 	}
 
@@ -34,6 +39,12 @@ export const router = createBrowserRouter([
 		path: "/",
 		Component: App,
 		children: [
+			{
+				path: "confirm-email",
+				loader: confirmEmailLoader,
+				Component: ConfirmEmail,
+			},
+
 			// Guest-only routes (redirect to / if already logged in)
 			{
 				Component: GuestRoute,
@@ -54,6 +65,10 @@ export const router = createBrowserRouter([
 							{
 								index: true,
 								Component: HomeRoutePage,
+							},
+							{
+								path: "profile-settings",
+								Component: ProfileSettings,
 							},
 							{
 								path: "",
@@ -91,6 +106,7 @@ export const router = createBrowserRouter([
 					},
 				],
 			},
+			{ path: "forbidden", Component: ForbiddenPage },
 			// 404 wildcard (any unmatched routes redirect here)
 			{ path: "*", Component: NotFoundPage },
 		],

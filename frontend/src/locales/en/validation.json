@@ -1,0 +1,71 @@
+{
+	"email": {
+		"required": "Email is required",
+		"invalid": "Please enter a valid email",
+		"tooLong": "Email is too long"
+	},
+	"password": {
+		"required": "Password is required",
+		"tooShort": "Password must be at least 8 characters",
+		"complexity": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one symbol",
+		"tooLong": "Password is too long"
+	},
+	"confirmPassword": {
+		"required": "You must confirm the password",
+		"mismatch": "Passwords do not match"
+	},
+	"role": {
+		"required": "Role is required"
+	},
+	"firstName": {
+		"required": "First name is required",
+		"tooLong": "First name is too long"
+	},
+	"lastName": {
+		"required": "Last name is required",
+		"tooLong": "Last name is too long"
+	},
+	"phone": {
+		"required": "Phone is required",
+		"onlyDigits": "Phone must contain only digits",
+		"onlyExtensionAndDigits": "Phone must start with '+' and contain only digits",
+		"tooShort": "Phone must have at least 7 digits",
+		"tooLong": "Phone cannot exceed 15 characters"
+	},
+	"phoneExtension": {
+		"required": "Extension is required"
+	},
+	"nationality": {
+		"required": "Nationality is required"
+	},
+	"gender": {
+		"required": "Gender is required"
+	},
+	"profilePhoto": {
+		"invalidUrl": "Profile photo must be a valid URL"
+	},
+	"birthDate": {
+		"required": "Date of birth is required"
+	},
+	"search": {
+		"nameTooLong": "Name cannot exceed 100 characters",
+		"minPriceTooLow": "Minimum price must be 0 or greater",
+		"maxPriceTooLow": "Maximum price must be 0 or greater",
+		"priceTooHigh": "Price cannot exceed 99,999",
+		"priceRangeInvalid": "Maximum price must be greater than or equal to minimum price"
+	},
+	"room": {
+		"nameRequired": "Room name is required",
+		"descriptionRequired": "Description is required",
+		"descriptionTooLong": "Description is too long",
+		"priceRequired": "Price is required",
+		"priceTooLow": "Price must be greater than 0",
+		"priceTooHigh": "Price is too high",
+		"locationRequired": "Please select a location on the map",
+		"latitudeRange": "Latitude must be between -90 and 90",
+		"longitudeRange": "Longitude must be between -180 and 180"
+	},
+	"currentPassword": {
+		"required": "Current password is required"
+	}
+}

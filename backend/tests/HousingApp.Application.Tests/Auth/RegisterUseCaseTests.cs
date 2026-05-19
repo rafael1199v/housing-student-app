@@ -2,8 +2,10 @@ using FluentAssertions;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Repositories;
+using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace HousingApp.Application.Tests.Auth;
@@ -14,6 +16,9 @@ public class RegisterUseCaseTests
     private readonly RegisterUseCase _registerUseCase;
     private readonly IAuthUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly IEmailService _emailService;
+    private readonly IAccountService _accountService;
+    private readonly ILogger<RegisterUseCase> _logger;
 
     public RegisterUseCaseTests()
     {
@@ -24,7 +29,12 @@ public class RegisterUseCaseTests
         _unitOfWork.UserRepository.Returns(_userRepository);
         _unitOfWork.PersonRepository.Returns(_personRepository);
 
-        _registerUseCase = new RegisterUseCase(_unitOfWork);
+        _emailService = Substitute.For<IEmailService>();
+        _accountService = Substitute.For<IAccountService>();
+
+        _logger = Substitute.For<ILogger<RegisterUseCase>>();
+
+        _registerUseCase = new RegisterUseCase(_unitOfWork, _emailService, _accountService, _logger);
     }
 
     [Fact]
@@ -32,10 +42,12 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("o@o.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
-        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((User?)null);
-        _userRepository.RegisterUser(Arg.Any<User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
+        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns((Domain.Entities.User?)null);
+        _userRepository.RegisterUser(Arg.Any<Domain.Entities.User>(), Arg.Any<Domain.Enums.Roles>()).Returns("new-user-id");
+        _userRepository.GenerateEmailConfirmationToken(Arg.Any<string>()).Returns("token");
+        _accountService.GenerateEmailConfirmationLinkAsync(Arg.Any<string>(), Arg.Any<string>()).Returns("http://localhost:5000/confirm-email");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
@@ -50,9 +62,9 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("a@a.com", "Password!555", "Student", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
-        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns(new User());
+        _userRepository.FindUserByEmailAsync(registerDto.Email).Returns(new Domain.Entities.User());
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
@@ -68,7 +80,7 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("a@a.com", "Password!555", "invalid", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);
@@ -84,7 +96,7 @@ public class RegisterUseCaseTests
     {
         //Arrange
         RegisterDto registerDto = new("a@a.com", "Password!555", "Admin", "Wilson", "Higgsbury", "456789213",
-            "Argentina", 30, "Male", BirthDate: "1996-01-01", ImageUrl: "");
+            "Argentina", "Male", BirthDate: "1996-01-01", ImageUrl: "");
 
         //Act
         Result<string> result = await _registerUseCase.ExecuteAsync(registerDto);

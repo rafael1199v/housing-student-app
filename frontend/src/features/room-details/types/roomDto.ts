@@ -16,4 +16,11 @@ export interface RoomDto {
 	gender: string;
 	imageUrl: string;
 	imageRoomUrls: string[];
+	services: string[];
+	policies: RoomPolicyDto[];
+}
+
+export interface RoomPolicyDto {
+	code: string;
+	description: string;
 }

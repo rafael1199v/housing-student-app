@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import roomService from "../../../services/roomService";
-import { useUser } from "../../auth/store/authStore";
+import { RoomCard } from "../../../shared/components/RoomCard";
 import { CardSkeleton } from "../../home/components/skeleton";
-import { Footer } from "../../shared/components/footer";
-import { RoomCard } from "../../shared/components/RoomCard";
 
 export function OwnerHomePage() {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const user = useUser();
 
 	const { isLoading, isError, data } = useQuery({
 		queryKey: ["owner", "rooms"],
@@ -16,36 +15,31 @@ export function OwnerHomePage() {
 	});
 
 	const rooms = data ?? [];
-	const welcomeName = user?.email?.split("@")[0] ?? "arrendador";
 
 	return (
 		<div className="space-y-8">
 			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">
-					¡Bienvenido, {welcomeName}!
+					{t("ownerHome.welcome", { name: t("roles.Householder") })}
 				</h1>
-				<p className="mt-2 text-sm text-slate-600">
-					Administra tus habitaciones publicadas y revisa la demanda
-					rápidamente.
-				</p>
+				<p className="mt-2 text-sm text-slate-600">{t("ownerHome.subtitle")}</p>
 
 				<button
 					type="button"
 					onClick={() => navigate("/owner/rooms/new")}
 					className="btn-primary mt-6"
 				>
-					Crear nueva habitación
+					{t("ownerHome.createRoom")}
 				</button>
 			</section>
 
 			<section className="space-y-4">
 				<div>
 					<h2 className="text-xl font-semibold text-slate-900">
-						Tus habitaciones
+						{t("ownerHome.roomsTitle")}
 					</h2>
 					<p className="text-sm text-slate-500">
-						Lista de habitaciones que creaste con la cantidad de solicitudes de
-						reserva.
+						{t("ownerHome.roomsSubtitle")}
 					</p>
 				</div>
 
@@ -53,12 +47,11 @@ export function OwnerHomePage() {
 					<CardSkeleton quantity={3} />
 				) : isError ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-						No se pudieron cargar tus habitaciones. Por favor, intenta de nuevo
-						más tarde.
+						{t("ownerHome.loadError")}
 					</div>
 				) : rooms.length === 0 ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
-						Aún no has creado ninguna habitación.
+						{t("ownerHome.noRooms")}
 					</div>
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -68,13 +61,13 @@ export function OwnerHomePage() {
 								name={room.name}
 								price={room.price}
 								images={room.imageRoomUrls}
-								subtitle="Tu habitación publicada"
+								subtitle={t("ownerHome.roomSubtitle")}
 								description={room.description}
 								onClick={() => navigate(`/owner/rooms/${room.id}`)}
 							>
 								<div className="flex gap-1 flex-row items-center rounded-lg bg-surface-container-low px-3 py-2">
 									<p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-										Solicitudes de reserva:
+										{t("ownerHome.bookingRequests")}
 									</p>
 									<p className="text-base font-semibold text-slate-800">
 										{room.bookingRequests}
@@ -85,7 +78,6 @@ export function OwnerHomePage() {
 					</div>
 				)}
 			</section>
-			<Footer />
 		</div>
 	);
 }

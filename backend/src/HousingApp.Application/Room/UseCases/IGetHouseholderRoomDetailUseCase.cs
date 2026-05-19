@@ -1,4 +1,4 @@
-﻿using HousingApp.Application.Room.DTO;
+﻿using HousingApp.Application.Room.DTOs;
 
 namespace HousingApp.Application.Room.UseCases;
 

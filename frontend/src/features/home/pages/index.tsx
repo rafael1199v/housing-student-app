@@ -1,35 +1,37 @@
 import { useQuery } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { z } from "zod";
+import i18n from "../../../i18n";
 import roomService from "../../../services/roomService";
-import { useUser } from "../../auth/store/authStore";
-import { Footer } from "../../shared/components/footer";
-import { RoomCard } from "../../shared/components/RoomCard";
+import { RoomCard } from "../../../shared/components/RoomCard";
 import { CardSkeleton } from "../components/skeleton";
 
 const searchFiltersSchema = z
 	.object({
-		name: z.string().max(100, "El nombre no puede superar los 100 caracteres"),
+		name: z
+			.string()
+			.max(100, i18n.t("search.nameTooLong", { ns: "validation" })),
 		minPrice: z
 			.string()
 			.refine(
 				(v) => v === "" || Number(v) >= 0,
-				"El precio mínimo debe ser 0 o mayor",
+				i18n.t("search.minPriceTooLow", { ns: "validation" }),
 			)
 			.refine(
 				(v) => v === "" || Number(v) <= 99999,
-				"El precio no puede superar 99,999",
+				i18n.t("search.priceTooHigh", { ns: "validation" }),
 			),
 		maxPrice: z
 			.string()
 			.refine(
 				(v) => v === "" || Number(v) >= 0,
-				"El precio máximo debe ser 0 o mayor",
+				i18n.t("search.maxPriceTooLow", { ns: "validation" }),
 			)
 			.refine(
 				(v) => v === "" || Number(v) <= 99999,
-				"El precio no puede superar 99,999",
+				i18n.t("search.priceTooHigh", { ns: "validation" }),
 			),
 	})
 	.refine(
@@ -40,7 +42,7 @@ const searchFiltersSchema = z
 			return true;
 		},
 		{
-			message: "El precio máximo debe ser mayor o igual al precio mínimo",
+			message: i18n.t("search.priceRangeInvalid", { ns: "validation" }),
 			path: ["maxPrice"],
 		},
 	);
@@ -52,9 +54,9 @@ type SearchFilterErrors = {
 };
 
 export function HomePage() {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
-	const user = useUser();
 
 	const initialSearch = searchParams.get("name") ?? "";
 	const initialMinPrice = searchParams.get("minPrice") ?? "";
@@ -114,17 +116,13 @@ export function HomePage() {
 		handleSearchRedirect();
 	};
 
-	const welcomeName = user?.email?.split("@")[0] ?? "estudiante";
-
 	return (
 		<div className="space-y-8">
 			<section className="surface-section">
 				<h1 className="text-3xl font-semibold text-slate-900">
-					¡Bienvenido, {welcomeName}!
+					{t("home.welcome", { name: t(`roles.Student`) })}
 				</h1>
-				<p className="mt-2 text-sm text-slate-600">
-					Encuentra tu próxima habitación rápidamente.
-				</p>
+				<p className="mt-2 text-sm text-slate-600">{t("home.subtitle")}</p>
 
 				<form className="mt-6 space-y-4" onSubmit={handleSearchSubmit}>
 					<div className="space-y-1">
@@ -133,13 +131,13 @@ export function HomePage() {
 								type="search"
 								value={searchText}
 								onChange={(event) => setSearchText(event.target.value)}
-								placeholder="Buscar habitación por nombre"
+								placeholder={t("home.searchPlaceholder")}
 								className="w-full bg-transparent text-sm text-slate-700 outline-none"
 							/>
 							<button
 								type="submit"
 								className="rounded-md p-1 text-slate-600 transition hover:bg-surface-container hover:text-slate-900"
-								aria-label="Buscar habitaciones"
+								aria-label={t("home.searchAriaLabel")}
 							>
 								<svg
 									className="h-5 w-5"
@@ -163,7 +161,7 @@ export function HomePage() {
 
 					<div className="space-y-2">
 						<p className="text-sm font-medium text-slate-700">
-							Rango de precio
+							{t("home.priceRange")}
 						</p>
 						<div className="grid gap-2 sm:grid-cols-2">
 							<div className="space-y-1">
@@ -173,7 +171,7 @@ export function HomePage() {
 									min={0}
 									value={minPrice}
 									onChange={(event) => setMinPrice(event.target.value)}
-									placeholder="Precio mínimo"
+									placeholder={t("home.minPricePlaceholder")}
 									className="field-filled w-full"
 								/>
 								{errors.minPrice && (
@@ -187,7 +185,7 @@ export function HomePage() {
 									min={0}
 									value={maxPrice}
 									onChange={(event) => setMaxPrice(event.target.value)}
-									placeholder="Precio máximo"
+									placeholder={t("home.maxPricePlaceholder")}
 									className="field-filled w-full"
 								/>
 								{errors.maxPrice && (
@@ -202,23 +200,20 @@ export function HomePage() {
 			<section className="space-y-4">
 				<div>
 					<h2 className="text-xl font-semibold text-slate-900">
-						Habitaciones destacadas
+						{t("home.featuredTitle")}
 					</h2>
-					<p className="text-sm text-slate-500">
-						Accede rápidamente a los detalles de cada habitación.
-					</p>
+					<p className="text-sm text-slate-500">{t("home.featuredSubtitle")}</p>
 				</div>
 
 				{isLoading ? (
 					<CardSkeleton quantity={3} />
 				) : isError ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-tertiary shadow-sm">
-						No se pudieron cargar las habitaciones. Por favor, intenta de nuevo
-						más tarde.
+						{t("home.loadError")}
 					</div>
 				) : rooms.length === 0 ? (
 					<div className="rounded-xl bg-surface-container-lowest p-6 text-sm text-slate-600 shadow-sm">
-						No hay habitaciones que coincidan con los filtros de búsqueda.
+						{t("home.noRooms")}
 					</div>
 				) : (
 					<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -240,10 +235,9 @@ export function HomePage() {
 					onClick={() => navigate("/rooms")}
 					className="w-full rounded-full bg-secondary-fixed px-4 py-3 text-sm font-medium text-on-secondary-fixed transition hover:brightness-95"
 				>
-					Mostrar más habitaciones
+					{t("home.showMore")}
 				</button>
 			</section>
-			<Footer />
 		</div>
 	);
 }
