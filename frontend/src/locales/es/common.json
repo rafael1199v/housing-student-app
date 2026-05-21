@@ -197,6 +197,7 @@
 		"pendingBookingsTitle": "Solicitudes de reserva pendientes",
 		"noPendingBookings": "No hay solicitudes de reserva pendientes en este momento.",
 		"bookerContact": "Número: {{phone}}, Email: {{email}}",
+		"noPhone": "No proporcionado",
 		"approveButton": "Aprobar",
 		"rejectButton": "Rechazar",
 		"backButton": "Volver a mis habitaciones",
