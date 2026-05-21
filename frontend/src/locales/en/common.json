@@ -200,6 +200,7 @@
 		"pendingBookingsTitle": "Pending booking requests",
 		"noPendingBookings": "No pending booking requests at this time.",
 		"bookerContact": "Phone: {{phone}}, Email: {{email}}",
+		"noPhone": "No phone number provided",
 		"approveButton": "Approve",
 		"rejectButton": "Reject",
 		"backButton": "Back to my rooms",
