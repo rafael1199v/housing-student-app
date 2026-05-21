@@ -50,7 +50,7 @@ The app follows a feature-driven structure: feature-owned pages/components/types
 Create `frontend/.env` for local non-container development:
 
 ```env
-VITE_API_URL=http://localhost:5065
+VITE_API_URL=http://localhost:8082
 VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
 VITE_GOOGLE_MAPS_ID=your_google_maps_id
 VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
