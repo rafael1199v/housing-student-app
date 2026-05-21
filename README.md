@@ -82,7 +82,7 @@ dotnet ef database update --project src/HousingApp.Infrastructure --startup-proj
 dotnet run --project src/HousingApp.Api
 ```
 
-The API runs at `http://localhost:5065` with docs at `http://localhost:5065/docs`.
+The API runs at `http://localhost:8082` with docs at `http://localhost:8082/docs`.
 
 Run the frontend in another terminal:
 
