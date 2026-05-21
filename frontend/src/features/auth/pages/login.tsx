@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import type { CredentialResponse } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -12,6 +12,7 @@ import Unsee from "../../../assets/unsee.png";
 import { RoleEnum, type RoleEnum as RoleType } from "../../../global/enum/role";
 import i18n from "../../../i18n";
 import { authService } from "../../../services/authService";
+import { GoogleAuthButton } from "../components/GoogleAuthButton";
 import { useGoogleAuthentication } from "../hooks/google-hooks";
 import { useAuthActions } from "../store/authStore";
 import type { GoogleAuthResponse } from "../types/googleAuthResponse";
@@ -218,12 +219,7 @@ function Login() {
 									: t("auth.login.submit")}
 							</button>
 
-							<GoogleLogin
-								onSuccess={(credentialResponse) => {
-									handleGoogleAuthentication(credentialResponse);
-								}}
-								shape="pill"
-							/>
+							<GoogleAuthButton onSuccess={handleGoogleAuthentication} />
 						</form>
 
 						{/* Divider */}
