@@ -77,7 +77,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         return roomModel.Id;
     }
 
-    public async Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 3)
+    public async Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20)
     {
         IQueryable<RoomModel> query = context.Rooms
             .AsNoTracking()
@@ -98,6 +98,12 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         if (filters.MaxPrice.HasValue)
         {
             query = query.Where(r => r.Price <= (decimal)filters.MaxPrice.Value);
+        }
+
+        if (filters.Services is not null && filters.Services.Length > 0)
+        {
+            int[] serviceIds = filters.Services;
+            query = query.Where(r => serviceIds.All(id => r.Services.Any(s => !s.IsDeleted && s.Id == id)));
         }
 
         List<Room> rooms = await query

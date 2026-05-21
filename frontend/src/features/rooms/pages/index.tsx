@@ -1,10 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-	AdvancedMarker,
-	Map as GoogleMap,
-	type MapMouseEvent,
-	Pin,
-} from "@vis.gl/react-google-maps";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
@@ -15,10 +9,9 @@ import roomService from "../../../services/roomService";
 import { RoomCard } from "../../../shared/components/RoomCard";
 import { CardSkeleton } from "../../home/components/skeleton";
 import type { RoomData } from "../../home/types/roomDataDto";
+import { ROOM_SERVICE_OPTIONS } from "../../new-room/shared/roomWizardConfig";
 
 type OrderBy = "price-asc" | "price-desc" | "name-asc" | "name-desc";
-type MapPosition = { lat: number; lng: number };
-const DEFAULT_MAP_CENTER = { lat: -17.695442, lng: -63.150744 };
 
 const searchFiltersSchema = z
 	.object({
@@ -88,47 +81,30 @@ export function RoomsPage() {
 	const initialName = searchParams.get("name") ?? searchParams.get("q") ?? "";
 	const initialMinPrice = searchParams.get("minPrice") ?? "";
 	const initialMaxPrice = searchParams.get("maxPrice") ?? "";
-	const initialLatitude = searchParams.get("latitude");
-	const initialLongitude = searchParams.get("longitude");
-	const hasInitialCoordinates =
-		initialLatitude !== null && initialLongitude !== null;
-	const initialPosition = hasInitialCoordinates
-		? {
-				lat: Number(initialLatitude),
-				lng: Number(initialLongitude),
-			}
-		: null;
+	const initialServices = searchParams
+		.getAll("services")
+		.map(Number)
+		.filter(Boolean);
 
 	const [searchText, setSearchText] = useState(initialName);
 	const [minPrice, setMinPrice] = useState(initialMinPrice);
 	const [maxPrice, setMaxPrice] = useState(initialMaxPrice);
 	const [orderBy, setOrderBy] = useState<OrderBy>("price-asc");
-	const [selectedPosition, setSelectedPosition] = useState<MapPosition | null>(
-		initialPosition &&
-			Number.isFinite(initialPosition.lat) &&
-			Number.isFinite(initialPosition.lng)
-			? initialPosition
-			: null,
-	);
+	const [selectedServices, setSelectedServices] =
+		useState<number[]>(initialServices);
 	const [errors, setErrors] = useState<SearchFilterErrors>({});
 
 	const [committed, setCommitted] = useState<RoomSearchParams>({
 		name: initialName,
 		minPrice: initialMinPrice ? Number(initialMinPrice) : undefined,
 		maxPrice: initialMaxPrice ? Number(initialMaxPrice) : undefined,
-		longitude: initialLongitude !== null ? Number(initialLongitude) : undefined,
-		latitude: initialLatitude !== null ? Number(initialLatitude) : undefined,
+		services: initialServices.length ? initialServices : undefined,
 	});
 
-	const handleMapClick = (event: MapMouseEvent) => {
-		if (!event.detail.latLng) return;
-
-		const position = {
-			lat: event.detail.latLng.lat,
-			lng: event.detail.latLng.lng,
-		};
-
-		setSelectedPosition(position);
+	const toggleService = (id: number) => {
+		setSelectedServices((prev) =>
+			prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
+		);
 	};
 
 	const { isLoading, isError, data } = useQuery({
@@ -160,22 +136,18 @@ export function RoomsPage() {
 			name: searchText.trim(),
 			minPrice: minPrice.trim() ? Number(minPrice.trim()) : undefined,
 			maxPrice: maxPrice.trim() ? Number(maxPrice.trim()) : undefined,
-			longitude: selectedPosition?.lng,
-			latitude: selectedPosition?.lat,
+			services: selectedServices.length ? selectedServices : undefined,
 		};
 		setCommitted(next);
 		const params = new URLSearchParams();
 		if (next.name) params.set("name", next.name);
-		if (next.minPrice !== undefined) {
+		if (next.minPrice !== undefined)
 			params.set("minPrice", String(next.minPrice));
-		}
-		if (next.maxPrice !== undefined) {
+		if (next.maxPrice !== undefined)
 			params.set("maxPrice", String(next.maxPrice));
+		for (const id of next.services ?? []) {
+			params.append("services", String(id));
 		}
-		if (next.latitude !== undefined)
-			params.set("latitude", String(next.latitude));
-		if (next.longitude !== undefined)
-			params.set("longitude", String(next.longitude));
 		setSearchParams(params, { replace: true });
 	};
 
@@ -221,112 +193,126 @@ export function RoomsPage() {
 							<p className="text-xs text-red-600">{errors.name}</p>
 						)}
 					</div>
-					<div className="grid gap-2 sm:grid-cols-1">
-						<section className="hidden surface-section space-y-2">
+
+					<div className="flex flex-col justify-around gap-4">
+						<div className="space-y-2">
 							<p className="text-sm font-medium text-slate-700">
-								{t("rooms.locationLabel")}
+								{t("rooms.priceRange")}
 							</p>
-							<div className="overflow-hidden rounded-xl border border-outline-variant/35">
-								<GoogleMap
-									mapId={import.meta.env.VITE_GOOGLE_MAPS_ID}
-									style={{ height: "25dvh", width: "100%" }}
-									defaultCenter={DEFAULT_MAP_CENTER}
-									defaultZoom={13}
-									gestureHandling="greedy"
-									onClick={handleMapClick}
-								>
-									{selectedPosition && (
-										<AdvancedMarker position={selectedPosition}>
-											<Pin
-												background={"#0f9d58"}
-												borderColor={"#006425"}
-												glyphColor={"#60d98f"}
-											/>
-										</AdvancedMarker>
+							<div className="grid gap-2 sm:grid-cols-2">
+								<div className="space-y-1">
+									<input
+										type="number"
+										inputMode="numeric"
+										min={0}
+										value={minPrice}
+										onChange={(event) => setMinPrice(event.target.value)}
+										placeholder={t("rooms.minPricePlaceholder")}
+										className="field-filled w-full"
+									/>
+									{errors.minPrice && (
+										<p className="text-xs text-red-600">{errors.minPrice}</p>
 									)}
-								</GoogleMap>
+								</div>
+								<div className="space-y-1">
+									<input
+										type="number"
+										inputMode="numeric"
+										min={0}
+										value={maxPrice}
+										onChange={(event) => setMaxPrice(event.target.value)}
+										placeholder={t("rooms.maxPricePlaceholder")}
+										className="field-filled w-full"
+									/>
+									{errors.maxPrice && (
+										<p className="text-xs text-red-600">{errors.maxPrice}</p>
+									)}
+								</div>
 							</div>
+						</div>
 
-							<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-								{selectedPosition ? (
-									<p>
-										{t("rooms.locationSelected", {
-											lat: selectedPosition.lat.toFixed(6),
-											lng: selectedPosition.lng.toFixed(6),
-										})}
+						<div className="space-y-2">
+							<p className="text-sm font-medium text-slate-700">
+								{t("rooms.sortBy")}
+							</p>
+							<select
+								value={orderBy}
+								onChange={(event) => setOrderBy(event.target.value as OrderBy)}
+								className="field-filled w-full"
+							>
+								<option value="price-asc">{t("rooms.sortPriceAsc")}</option>
+								<option value="price-desc">{t("rooms.sortPriceDesc")}</option>
+								<option value="name-asc">{t("rooms.sortNameAsc")}</option>
+								<option value="name-desc">{t("rooms.sortNameDesc")}</option>
+							</select>
+						</div>
+
+						<section className="surface-section space-y-3">
+							<div className="flex items-center justify-between gap-2">
+								<div>
+									<h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+										{t("rooms.servicesFilter")}
+									</h2>
+									<p className="mt-0.5 text-xs text-slate-500">
+										{t("rooms.servicesFilterHint")}
 									</p>
-								) : (
-									<p>{t("rooms.noLocation")}</p>
-								)}
-
-								{selectedPosition && (
+								</div>
+								{selectedServices.length > 0 && (
 									<button
 										type="button"
-										onClick={() => {
-											setSelectedPosition(null);
-										}}
-										className="text-primary underline underline-offset-2"
+										onClick={() => setSelectedServices([])}
+										className="shrink-0 text-xs text-primary underline underline-offset-2"
 									>
-										{t("rooms.removeMarker")}
+										{t("rooms.clearServices")}
 									</button>
 								)}
 							</div>
-						</section>
-						<div className="flex flex-col justify-around">
-							<div className="space-y-2">
-								<p className="text-sm font-medium text-slate-700">
-									{t("rooms.priceRange")}
-								</p>
-								<div className="grid gap-2 sm:grid-cols-2">
-									<div className="space-y-1">
-										<input
-											type="number"
-											inputMode="numeric"
-											min={0}
-											value={minPrice}
-											onChange={(event) => setMinPrice(event.target.value)}
-											placeholder={t("rooms.minPricePlaceholder")}
-											className="field-filled w-full"
-										/>
-										{errors.minPrice && (
-											<p className="text-xs text-red-600">{errors.minPrice}</p>
-										)}
-									</div>
-									<div className="space-y-1">
-										<input
-											type="number"
-											inputMode="numeric"
-											min={0}
-											value={maxPrice}
-											onChange={(event) => setMaxPrice(event.target.value)}
-											placeholder={t("rooms.maxPricePlaceholder")}
-											className="field-filled w-full"
-										/>
-										{errors.maxPrice && (
-											<p className="text-xs text-red-600">{errors.maxPrice}</p>
-										)}
-									</div>
-								</div>
-							</div>
 
-							<div className="space-y-2">
-								<p className="text-sm font-medium text-slate-700">
-									{t("rooms.sortBy")}
-								</p>
-								<select
-									value={orderBy}
-									onChange={(event) =>
-										setOrderBy(event.target.value as OrderBy)
-									}
-									className="field-filled w-full"
-								>
-									<option value="price-asc">{t("rooms.sortPriceAsc")}</option>
-									<option value="price-desc">{t("rooms.sortPriceDesc")}</option>
-									<option value="name-asc">{t("rooms.sortNameAsc")}</option>
-									<option value="name-desc">{t("rooms.sortNameDesc")}</option>
-								</select>
+							<div className="flex flex-wrap gap-2">
+								{ROOM_SERVICE_OPTIONS.map((service) => {
+									const isSelected = selectedServices.includes(service.id);
+									return (
+										<button
+											key={service.id}
+											type="button"
+											onClick={() => toggleService(service.id)}
+											aria-pressed={isSelected}
+											className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition ${
+												isSelected
+													? "border-primary bg-primary-container text-primary font-medium"
+													: "border-slate-300 bg-slate-50 text-slate-700 hover:border-slate-400 hover:bg-slate-100"
+											}`}
+										>
+											{service.icon && (
+												<img
+													src={service.icon}
+													alt=""
+													aria-hidden="true"
+													className={`h-4 w-4 ${isSelected ? "opacity-100" : "brightness-0 opacity-60"}`}
+												/>
+											)}
+											{t(service.labelKey)}
+											{isSelected && (
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="12"
+													height="12"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													strokeWidth="2.5"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													aria-hidden="true"
+												>
+													<path d="M20 6 9 17l-5-5" />
+												</svg>
+											)}
+										</button>
+									);
+								})}
 							</div>
-						</div>
+						</section>
 					</div>
 
 					<button type="submit" className="btn-primary w-full">
