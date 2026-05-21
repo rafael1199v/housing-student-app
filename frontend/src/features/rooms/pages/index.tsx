@@ -279,7 +279,7 @@ export function RoomsPage() {
 											aria-pressed={isSelected}
 											className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition ${
 												isSelected
-													? "border-primary bg-primary-container text-primary font-medium"
+													? "border-primary bg-primary-container text-white font-medium "
 													: "border-slate-300 bg-slate-50 text-slate-700 hover:border-slate-400 hover:bg-slate-100"
 											}`}
 										>
