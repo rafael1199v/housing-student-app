@@ -12,8 +12,20 @@ export const LANGUAGES = [
 	{ code: "pt", flag: brFlag, label: "PT" },
 ] as const;
 
+export type SupportedLang = (typeof LANGUAGES)[number]["code"];
+
+export const GOOGLE_LOCALE_BY_LANG: Record<SupportedLang, string> = {
+	es: "es",
+	en: "en",
+	pt: "pt-BR",
+};
+
 const supportedLanguages = LANGUAGES.map((l) => l.code);
-type SupportedLang = (typeof LANGUAGES)[number]["code"];
+
+export function getGoogleLocale(lang: string): string {
+	const normalized = lang.split("-")[0] as SupportedLang;
+	return GOOGLE_LOCALE_BY_LANG[normalized] ?? GOOGLE_LOCALE_BY_LANG.en;
+}
 
 function getInitialLanguage(): SupportedLang {
 	const stored = localStorage.getItem(LANG_STORAGE_KEY);
