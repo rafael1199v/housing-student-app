@@ -12,6 +12,7 @@ export interface RoomSearchParams {
 	maxPrice?: number;
 	longitude?: number;
 	latitude?: number;
+	services?: number[];
 }
 
 function buildRoomFormData(dto: CreateRoomDto): FormData {
@@ -38,11 +39,15 @@ function buildRoomFormData(dto: CreateRoomDto): FormData {
 const roomService = {
 	getRooms: () => api.get<RoomData[]>("/api/rooms"),
 	searchRooms: (params: RoomSearchParams) => {
+		const { services, ...scalar } = params;
 		const query = new URLSearchParams(
-			Object.entries(params)
+			Object.entries(scalar)
 				.filter(([, v]) => v !== undefined && v !== "")
 				.map(([k, v]) => [k, String(v)]),
 		);
+		for (const id of services ?? []) {
+			query.append("services", String(id));
+		}
 		const qs = query.size > 0 ? `?${query}` : "";
 		return api.get<RoomData[]>(`/api/rooms${qs}`);
 	},

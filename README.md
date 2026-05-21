@@ -1,162 +1,217 @@
-# Itersapiens — Student Housing App
+# Itersapiens - Student Housing App
 
-A full-stack web platform that connects **students** looking for rooms with **householders** who offer them, built for the Latin American market.
+Full-stack platform that connects students looking for rooms with householders who publish rental spaces. The app includes role-based authentication, room search, bookings, image uploads, Google Maps, email flows, Dockerized local/prod environments, and GitHub Actions CI/CD.
 
-Students can search, filter, and book rooms. Householders can list rooms, upload images, set locations on a map, and manage booking requests — all through a role-aware interface backed by a secure REST API.
+## Architecture
 
-## Architecture Overview
-
-```
+```text
 housing-student-app/
-├── frontend/   # React 19 + TypeScript SPA (Vite)
-└── backend/    # ASP.NET Core Web API (.NET 10)
+|-- frontend/   React 19 + TypeScript + Vite SPA
+|-- backend/    ASP.NET Core Web API (.NET 10)
+|-- docker-compose.yaml
+|-- docker-compose.override.yml
+|-- docker-compose.prod.yml
+`-- .github/workflows/
 ```
 
-Both sides are independently deployable and communicate via a REST API with JWT authentication.
+| Area | Main technologies |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, TanStack Query, Zustand, React Router, Google Maps |
+| Backend | ASP.NET Core .NET 10, EF Core, PostgreSQL, ASP.NET Core Identity, JWT, AWS S3, Resend |
+| DevOps | Docker, Docker Compose, NGINX, GitHub Actions, Docker Hub |
 
-## Tech Stack Summary
+See the service-specific docs for deeper details:
 
-| Side     | Key Technologies                                              |
-|----------|---------------------------------------------------------------|
-| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, TanStack Query, Zustand, React Router v7, Google Maps |
-| Backend  | ASP.NET Core (.NET 10), Entity Framework Core, PostgreSQL, ASP.NET Core Identity, JWT, AWS S3 |
-
-For a detailed breakdown of each side, see:
 - [frontend/README.md](frontend/README.md)
 - [backend/README.md](backend/README.md)
 
-## Features at a Glance
+## Prerequisites
 
-- **Role-based access**: Student and Householder roles with dedicated flows and route guards.
-- **Room search**: Full-text search with price filters, sort options, and map view.
-- **Booking system**: Students book rooms; householders approve or reject requests. Householders can also explicitly reject pending requests.
-- **Image uploads**: Up to 5 images per room, stored in AWS S3.
-- **Map integration**: Google Maps for location display and map-based room creation.
-- **Rate limiting**: Per-IP rate limiting on the API to prevent abuse.
+| Tool | Recommended version |
+| --- | --- |
+| Node.js | 20+ locally, CI currently uses Node 21 |
+| npm | Bundled with Node |
+| .NET SDK | 10.0.x |
+| Docker + Docker Compose | Recent Docker Desktop or Docker Engine |
+| PostgreSQL | 14+ if running without containers |
 
-## Getting Started
+External services needed for the full app:
 
-### Prerequisites
+- AWS S3 bucket and credentials.
+- Google Maps API key.
+- Google OAuth client ID.
+- Resend API key for email.
 
-| Requirement | Minimum Version |
-|---|---|
-| Node.js | 18 |
-| npm | bundled with Node |
-| .NET SDK | 10.0 |
-| PostgreSQL | 14+ |
-| AWS account | — (S3 bucket required) |
-| Google Maps API key | — (Maps JavaScript API enabled) |
+## Environment Variables
 
----
+Copy the example file and fill in real values:
 
-### Backend Setup
+```bash
+cp .env.example .env
+```
 
-1. **Navigate to the backend directory:**
+The root `.env` is used by Docker Compose. Important values:
 
-   ```bash
-   cd backend
-   ```
+| Variable | Used by | Purpose |
+| --- | --- | --- |
+| `FRONTEND_PORT` | Compose | Host port for the frontend container, defaults to `5173` in dev and `3000` in prod examples |
+| `BACKEND_PORT` | Compose | Host port for the API container, defaults to `8080` |
+| `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT` | Compose/Postgres | Database container configuration |
+| `FRONTEND_ORIGIN` | Backend | CORS allowed origin |
+| `JWT_SECRET_KEY`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_EXPIRATION_MINUTES` | Backend | JWT validation/signing settings |
+| `AWS_ACCESS_KEY`, `AWS_SECRET_KEY`, `AWS_REGION`, `STORAGE_BUCKET_NAME` | Backend | S3 storage settings |
+| `GOOGLE_CLIENT_ID` | Backend | Google auth client ID validation/config |
+| `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Backend | Email delivery settings |
+| `CONNECTION_STRING_DEFAULT_CONNECTION` | Backend | PostgreSQL connection string |
+| `VITE_API_URL`, `VITE_GOOGLE_MAPS_API_KEY`, `VITE_GOOGLE_MAPS_ID`, `VITE_GOOGLE_CLIENT_ID` | Frontend | Build/runtime configuration for Vite |
 
-2. **Configure secrets.** The API requires the following environment variables (or a `.env` file in the `backend/` directory):
+## Run Locally Without Containers
 
-   | Variable | Description |
-   |---|---|
-   | `ConnectionStrings:DefaultConnection` | PostgreSQL connection string |
-   | `Jwt:SecretKey` | Secret key for signing JWT tokens |
-   | `AWS:AccessKey` | AWS IAM access key ID |
-   | `AWS:SecretKey` | AWS IAM secret access key |
-   | `AWS:Region` | AWS region (e.g. `us-east-1`) |
+Start PostgreSQL yourself or run only the database with Docker:
 
-   Non-secret settings (JWT audience/issuer, S3 bucket name, allowed CORS origins) are configured in `src/HousingApp.Api/appsettings.json`.
+```bash
+docker compose up -d db
+```
 
-3. **Install the EF Core CLI tool** (if not already installed):
+Run the backend:
 
-   ```bash
-   dotnet tool install --global dotnet-ef
-   ```
+```bash
+cd backend
+dotnet restore
+dotnet ef database update --project src/HousingApp.Infrastructure --startup-project src/HousingApp.Api
+dotnet run --project src/HousingApp.Api
+```
 
-4. **Apply database migrations:**
+The API runs at `http://localhost:5065` with docs at `http://localhost:5065/docs`.
 
-   ```bash
-   dotnet ef database update \
-     --project src/HousingApp.Infrastructure \
-     --startup-project src/HousingApp.Api
-   ```
-
-5. **Run the API:**
-
-   ```bash
-   make run
-   # or:
-   dotnet run --project src/HousingApp.Api
-   ```
-
-   The API will be available at `http://localhost:5065`.
-   Interactive API docs (Scalar UI): `http://localhost:5065/docs`
-
----
-
-### Frontend Setup
-
-1. **Navigate to the frontend directory:**
-
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Create a `.env` file** in the `frontend/` directory:
-
-   ```env
-   VITE_API_URL=http://localhost:5065
-   VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-   ```
-
-   | Variable | Description |
-   |---|---|
-   | `VITE_API_URL` | Base URL of the running backend API |
-   | `VITE_GOOGLE_MAPS_API_KEY` | Google Maps JavaScript API key |
-
-4. **Start the development server:**
-
-   ```bash
-   npm run dev
-   ```
-
-   The app will be available at `http://localhost:5173`.
-
----
-
-
-## Testing
-
-The backend has currently one test project under `backend/tests/`:
-
-| Project | Type | Tools |
-|---|---|---|
-| `HousingApp.Application.Tests` | Unit | xUnit, NSubstitute, FluentAssertions |
-
-Unit tests cover all Application layer use cases (Auth, Room, Booking) in isolation with mocked dependencies.
-
-A GitHub Actions workflow runs the unit test suite on every push to `feature/**` branches and on pull requests targeting `develop`.
-
-See [backend/README.md](backend/README.md#testing) for full details on running tests and the CI setup.
-
----
-
-### Docker (Frontend only)
-
-The frontend includes a production-ready `Dockerfile`:
+Run the frontend in another terminal:
 
 ```bash
 cd frontend
-docker build -t itersapiens-frontend .
-docker run -p 3000:3000 itersapiens-frontend
+npm install
+npm run dev
 ```
 
-The container builds the static bundle with `npm run build` and serves it via `serve` on port **3000**.
+The Vite dev server runs at `http://localhost:5173`.
+
+Useful root Make targets:
+
+```bash
+make backend
+make frontend
+make dev-db
+```
+
+## Run With Docker Compose
+
+Development mode uses `docker-compose.yaml` plus the auto-loaded `docker-compose.override.yml`.
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Development containers:
+
+| Service | Container | Host port | Notes |
+| --- | --- | --- | --- |
+| `frontend` | `itersapiens-frontend-dev` | `${FRONTEND_PORT:-5173}` | Vite dev server with source bind mount |
+| `api` | `housing-api-dev` | `${BACKEND_PORT:-8080}` | .NET SDK build stage with source bind mount |
+| `db` | `itersapiens-db-dev` | `${DB_PORT:-5432}` | PostgreSQL with named volume |
+
+Production-like Compose uses the prod override:
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.prod.yml up --build -d
+```
+
+```bash
+docker compose --env-file .env.prod -f docker-compose.yaml -f docker-compose.prod.yml up --build -d
+```
+
+Production containers:
+
+| Service | Container | Host port | Notes |
+| --- | --- | --- | --- |
+| `frontend` | `itersapiens-frontend-prod` | `${FRONTEND_PORT:-3000}` -> container `8080` | Static Vite build served by unprivileged NGINX |
+| `api` | `housing-api-prod` | `${BACKEND_PORT:-8080}` -> container `8080` | Published ASP.NET Core runtime image |
+| `db` | `itersapiens-db-prod` | `${DB_PORT:-5432}` | PostgreSQL with prod named volume |
+
+Useful container commands:
+
+```bash
+docker compose logs -f
+docker compose logs -f api
+docker compose down
+docker compose -f docker-compose.yaml -f docker-compose.prod.yml down
+```
+
+## Docker Images
+
+Frontend:
+
+```bash
+docker build \
+  --build-arg VITE_API_URL=http://localhost:8080 \
+  --build-arg VITE_GOOGLE_MAPS_API_KEY=your_key \
+  --build-arg VITE_GOOGLE_MAPS_ID=your_map_id \
+  --build-arg VITE_GOOGLE_CLIENT_ID=your_client_id \
+  -t itersapiens-frontend ./frontend
+
+docker run -p 3000:8080 itersapiens-frontend
+```
+
+The frontend image builds the Vite bundle and serves `dist/` with `nginxinc/nginx-unprivileged:alpine` on container port `8080`.
+
+Backend:
+
+```bash
+docker build -t itersapiens-backend ./backend
+docker run --env-file .env -p 8080:8080 itersapiens-backend
+```
+
+The backend image restores, publishes, and runs `HousingApp.Api.dll` on container port `8080`.
+
+## Testing
+
+Frontend:
+
+```bash
+cd frontend
+npm run lint
+npm run test -- --run
+npm run build
+```
+
+Backend:
+
+```bash
+cd backend
+dotnet test
+dotnet test tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+dotnet test tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj
+```
+
+## CI/CD Pipeline
+
+GitHub Actions workflows live in `.github/workflows`.
+
+| Workflow | Triggers | What it does |
+| --- | --- | --- |
+| `frontend-validation.yml` | Push to `feature/**`, PR to `develop` | Installs dependencies, runs Biome lint, Vitest, and production build |
+| `backend-unit-test.yml` | Push to `feature/**`, PR to `develop` | Uses reusable .NET build, then runs application unit tests |
+| `backend-integration-test.yml` | Push to `main`, PR to `develop` | Uses reusable .NET build, then runs integration tests |
+| `backend-publish.yml` | Push to `main`, PR to `main` or `release/**` | Publishes backend artifact |
+| `app-deploy.yml` | Push/PR to `main`, manual dispatch | Builds and pushes frontend/backend Docker images to Docker Hub, then deploys via SSH |
+| `build-reusable.yml` | Called by backend workflows | Restores, builds, and uploads compiled backend output |
+
+Deployment workflow details:
+
+- Builds frontend image from `./frontend` with Vite build args.
+- Builds backend image from `./backend`.
+- Pushes both images to Docker Hub tags `itersapiens-frontend:1.0` and `itersapiens-backend:1.0`.
+- Connects to the production host through SSH.
+- Writes a production `.env` on the host.
+- Pulls the latest images, replaces old containers, and runs both services.
+
+Required GitHub secrets/vars include Docker Hub credentials, SSH connection data, JWT settings, AWS/Resend credentials, Google keys, database connection string, and public frontend/backend ports.

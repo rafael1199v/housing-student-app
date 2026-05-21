@@ -20,33 +20,33 @@ const POLICY_ICON_BY_CODE = new Map(
 const ROOM_SERVICE_BASE_OPTIONS = [
 	{
 		id: 1,
-		code: "service.tv",
-		labelKey: "newRoom.services.tv.label",
-		descriptionKey: "newRoom.services.tv.description",
-	},
-	{
-		id: 2,
 		code: "service.wifi",
 		labelKey: "newRoom.services.wifi.label",
 		descriptionKey: "newRoom.services.wifi.description",
 	},
 	{
-		id: 3,
+		id: 2,
 		code: "service.kitchen",
 		labelKey: "newRoom.services.kitchen.label",
 		descriptionKey: "newRoom.services.kitchen.description",
 	},
 	{
-		id: 4,
-		code: "service.gym-equipment",
-		labelKey: "newRoom.services.gymEquipment.label",
-		descriptionKey: "newRoom.services.gymEquipment.description",
+		id: 3,
+		code: "service.tv",
+		labelKey: "newRoom.services.tv.label",
+		descriptionKey: "newRoom.services.tv.description",
 	},
 	{
-		id: 5,
+		id: 4,
 		code: "service.air-conditioner",
 		labelKey: "newRoom.services.airConditioner.label",
 		descriptionKey: "newRoom.services.airConditioner.description",
+	},
+	{
+		id: 5,
+		code: "service.gym-equipment",
+		labelKey: "newRoom.services.gymEquipment.label",
+		descriptionKey: "newRoom.services.gymEquipment.description",
 	},
 ] as const;
 

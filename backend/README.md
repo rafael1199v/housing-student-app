@@ -1,285 +1,186 @@
-# Itersapiens: Backend
+# Itersapiens Backend
 
-ASP.NET Core Web API for the Itersapiens student housing platform, built with **.NET 10** and following **Clean Architecture** principles.
-
-## Table of Contents
-
-- [Itersapiens: Backend](#itersapiens-backend)
-  - [Table of Contents](#table-of-contents)
-  - [Tech Stack](#tech-stack)
-  - [Project Structure](#project-structure)
-  - [Architecture \& Design Patterns](#architecture--design-patterns)
-    - [Design Patterns](#design-patterns)
-    - [Domain Model](#domain-model)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Configuration](#configuration)
-    - [Running the API](#running-the-api)
-  - [Testing](#testing)
-    - [Unit Tests](#unit-tests)
-    - [Running Tests](#running-tests)
-    - [CI](#ci)
-  - [Production Good Practices](#production-good-practices)
-    - [Global Exception Handling](#global-exception-handling)
-    - [Result\<T\> — Functional Error Handling](#resultt--functional-error-handling)
-    - [JWT Authentication with Strict Validation](#jwt-authentication-with-strict-validation)
-    - [Role-Based Authorization (RBAC)](#role-based-authorization-rbac)
-    - [Per-IP Rate Limiting](#per-ip-rate-limiting)
-    - [CORS with Explicit Origin](#cors-with-explicit-origin)
-    - [AWS S3 with Presigned URLs](#aws-s3-with-presigned-urls)
-    - [Database Schema via EF Core Migrations](#database-schema-via-ef-core-migrations)
+ASP.NET Core Web API for the Itersapiens student housing platform, built with .NET 10 and Clean Architecture.
 
 ## Tech Stack
 
-| Layer              | Technology                                          |
-|--------------------|-----------------------------------------------------|
-| Framework          | ASP.NET Core (.NET 10)                              |
-| Language           | C#                                                  |
-| ORM                | Entity Framework Core + Npgsql                      |
-| Database           | PostgreSQL                                          |
-| Authentication     | ASP.NET Core Identity + JWT Bearer                  |
-| Cloud Storage      | AWS S3 (AWSSDK.S3)                                  |
-| API Docs           | OpenAPI + Scalar                                    |
-| Rate Limiting      | Built-in ASP.NET Core Rate Limiter (per-IP policy)  |
-| Naming Convention  | EFCore.NamingConventions (snake_case)               |
+| Concern | Technology |
+| --- | --- |
+| Framework | ASP.NET Core .NET 10 |
+| Language | C# |
+| Database | PostgreSQL |
+| ORM | Entity Framework Core + Npgsql |
+| Auth | ASP.NET Core Identity + JWT Bearer |
+| Storage | AWS S3 |
+| Email | Resend |
+| API docs | OpenAPI + Scalar |
+| Testing | xUnit, NSubstitute, FluentAssertions |
+| Container runtime | ASP.NET runtime image |
 
 ## Project Structure
 
-```
+```text
 src/
-├── HousingApp.Api/                    # Presentation layer
-│   ├── Controllers/                   # HTTP endpoints (Login, Register, Room, Booking)
-│   ├── Exception/                     # GlobalExceptionHandler (centralized error handling)
-│   ├── Extensions/                    # IServiceCollection extension methods per concern
-│   │   ├── ApplicationServicesExtensions.cs
-│   │   ├── AuthExtensions.cs
-│   │   ├── AwsExtensions.cs
-│   │   ├── CorsExtensions.cs
-│   │   ├── DatabaseExtensions.cs
-│   │   ├── IdentityExtensions.cs
-│   │   └── RateLimiterExtension.cs
-│   ├── Policies/                      # Rate limiter policy definitions
-│   ├── Requests/                      # API request models (input contracts)
-│   └── Program.cs                     # App bootstrap and middleware pipeline
-│
-├── HousingApp.Application/            # Business logic layer
-│   ├── Auth/
-│   │   ├── DTOs/                      # Data transfer objects for auth flows
-│   │   └── UseCases/                  # LoginUseCase, RegisterUseCase (+ interfaces)
-│   ├── Booking/
-│   │   ├── DTO/
-│   │   └── UseCases/                  # Create, Delete, Approve, Reject, GetStudentBookings
-│   ├── Room/
-│   │   ├── DTO/
-│   │   └── UseCases/                  # Create, GetRooms, GetRoomDetail, GetHouseholderRooms, etc.
-│   ├── Repositories/                  # Repository interfaces (IBooking, IPerson, IRoom, IUser)
-│   ├── Storage/                       # IStorageService abstraction + StorageType enum
-│   ├── UnitOfWork/                    # Unit of Work interfaces (Auth, Booking, Room)
-│   └── Result.cs                      # Generic Result<T> for functional error handling
-│
-├── HousingApp.Domain/                 # Core domain layer (no framework dependencies)
-│   ├── Entities/                      # Business objects: User, Person, Room, Booking, etc.
-│   ├── Enums/                         # Roles, BookingStatus, RoomStatus
-│   └── Error/                         # Typed error objects: AuthError, BookingError, RoomError, etc.
-│
-└── HousingApp.Infrastructure/         # Data access & external services layer
-    ├── Persistence/
-    │   ├── Context/                   # HousingApplicationDbContext (EF Core)
-    │   ├── Models/                    # EF Core entity models (mapped to DB tables)
-    │   ├── Repositories/              # Concrete repository implementations
-    │   └── UnitOfWork/                # Concrete Unit of Work implementations
-    ├── Storage/                       # S3StorageService (AWS S3 implementation)
-    └── Migrations/                    # EF Core database migrations
+|-- HousingApp.Api/             Presentation layer, controllers, middleware, DI setup
+|-- HousingApp.Application/     Use cases, DTOs, repository interfaces, Result<T>
+|-- HousingApp.Domain/          Domain entities, enums, typed errors
+`-- HousingApp.Infrastructure/  EF Core, repositories, migrations, S3 storage
 
 tests/
-├── HousingApp.Application.Tests/      # Unit tests for Application layer use cases
-│   ├── Auth/                          # LoginUseCaseTests, RegisterUseCaseTests
-│   ├── Booking/                       # CreateBookingUseCaseTests, DeleteBookingUseCaseTests,
-│   │                                  # ApproveBookingUseCaseTests, RejectBookingUseCaseTests
-│   └── Room/                          # CreateRoomUseCaseTests
+|-- HousingApp.Application.Tests/
+`-- HousingApp.IntegrationTests/
 ```
 
-## Architecture & Design Patterns
+Dependency direction:
 
-The backend follows **Clean Architecture** with a strict dependency rule: outer layers depend on inner layers, never the reverse.
-
-```
-Api  →  Application  →  Domain
-Infrastructure  →  Application  →  Domain
+```text
+Api -> Application -> Domain
+Infrastructure -> Application -> Domain
 ```
 
-### Design Patterns
+## Environment Variables
 
-| Pattern | Where | Purpose |
-|---|---|---|
-| **Repository** | `Application/Repositories/` → `Infrastructure/Repositories/` | Abstracts data access; controllers never touch EF Core directly |
-| **Unit of Work** | `Application/UnitOfWork/` → `Infrastructure/UnitOfWork/` | Groups repository operations into a single transaction boundary |
-| **Use Case** | `Application/**/UseCases/` | Encapsulates one business operation per class (SRP); each use case has a paired interface |
-| **Result\<T\>** | `Application/Result.cs` | Functional error handling — returns `Success<T>` or `Failure<Error>` instead of throwing exceptions for expected failures |
-| **DTO** | `Application/**/DTO*/` | Decouples API contracts from domain entities and EF Core models |
-| **Global Exception Handler** | `Api/Exception/GlobalExceptionHandler.cs` | Catches unhandled exceptions and returns consistent error responses without leaking stack traces |
-| **Service Extension Methods** | `Api/Extensions/` | Each infrastructure concern (DB, Auth, CORS, AWS, Rate Limiter) is registered in its own extension method, keeping `Program.cs` clean |
-| **Dependency Injection** | Throughout | All dependencies are constructor-injected via ASP.NET Core's built-in DI container; no static state |
-| **RBAC** | Controllers | Role-based authorization enforced with `[Authorize(Roles = "Student")]` / `"Householder"` attributes |
+For local Docker Compose, configure the root `.env` from `.env.example`. For local non-container development, provide equivalent environment variables or user secrets.
 
-### Domain Model
+| Variable | Purpose |
+| --- | --- |
+| `ConnectionStrings__DefaultConnection` | PostgreSQL connection string for container/env-var configuration |
+| `ConnectionStrings:DefaultConnection` | Same setting using .NET colon notation |
+| `Frontend__Origin` | Allowed CORS origin |
+| `Jwt__SecretKey` | JWT signing key |
+| `Jwt__Issuer` | Expected JWT issuer |
+| `Jwt__Audience` | Expected JWT audience |
+| `Jwt__ExpirationInMinutes` | Access token lifetime |
+| `AWS__AccessKey`, `AWS__SecretKey`, `AWS__Region` | AWS S3 credentials/config |
+| `Storage__BucketName` | S3 bucket name |
+| `Google__ClientId` | Google OAuth client ID |
+| `Resend__ApiKey`, `Resend__FromEmail` | Email delivery configuration |
 
-```
-User (IdentityUser)
- └── Person           # Profile: name, phone, nationality, gender, avatar
-      └── Room        # Rental: name, price, location, status, images
-           └── Booking  # Reservation: student ↔ room, with BookingStatus
-```
+Development defaults such as launch URLs live in `src/HousingApp.Api/Properties/launchSettings.json`.
 
-Statuses are stored as lookup tables (`RoomStatusModel`, `BookingStatusModel`) for referential integrity.
+## Run Locally
 
-## Getting Started
-
-### Prerequisites
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- PostgreSQL instance (local or cloud)
-- AWS account with an S3 bucket and an IAM user with `s3:PutObject` / `s3:GetObject` permissions
-- `dotnet-ef` CLI tool: `dotnet tool install --global dotnet-ef`
-
-### Configuration
-
-The API reads secrets from environment variables or a `.env` file (not committed to source control). The required keys are:
-
-| Key | Description | Example |
-|-----|-------------|---------|
-| `ConnectionStrings:DefaultConnection` | PostgreSQL connection string | `Host=localhost;Database=housing;Username=postgres;Password=...` |
-| `Jwt:SecretKey` | Secret used to sign JWT tokens (min. 32 chars) | `your-very-long-secret-key` |
-| `AWS:AccessKey` | AWS IAM access key ID | `AKIAIOSFODNN7EXAMPLE` |
-| `AWS:SecretKey` | AWS IAM secret access key | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
-| `AWS:Region` | AWS region for the S3 bucket | `us-east-1` |
-
-Additional non-secret settings live in `appsettings.json` / `appsettings.Development.json`:
-
-```json
-{
-  "Jwt": {
-    "Audience": "housing-app",
-    "Issuer": "housing-api",
-    "ExpirationInMinutes": 60
-  },
-  "AllowedOrigins": ["http://localhost:5173"],
-  "AWS": {
-    "BucketName": "your-s3-bucket-name"
-  }
-}
-```
-
-### Running the API
+Start PostgreSQL yourself or use the root Compose database:
 
 ```bash
-# Navigate to the backend directory
+docker compose up -d db
+```
+
+Restore and apply migrations:
+
+```bash
 cd backend
-
-# Apply database migrations
+dotnet restore
+dotnet tool install --global dotnet-ef
 dotnet ef database update --project src/HousingApp.Infrastructure --startup-project src/HousingApp.Api
+```
 
-# Run the API (development)
+Run the API:
+
+```bash
 make run
-# or directly:
+# or
 dotnet run --project src/HousingApp.Api
 ```
 
-The API will be available at `http://localhost:5065`. Interactive API docs (Scalar) are at `http://localhost:5065/docs`.
+Default local URLs:
+
+```text
+API:  http://localhost:5065
+Docs: http://localhost:5065/docs
+```
 
 ## Testing
 
-The backend has two dedicated test projects under `tests/`, managed with **xUnit** and using **Central Package Management** (`Directory.Packages.props`) for consistent NuGet versions across all projects.
-
-### Unit Tests
-
-**Project:** `tests/HousingApp.Application.Tests`
-
-Tests are written against the Application layer use cases in isolation. All external dependencies (repositories, unit of work, storage) are replaced with fakes using **NSubstitute**. Assertions are written with **FluentAssertions**.
-
-| Test class | Use case under test | Scenarios covered |
-|---|---|---|
-| `LoginUseCaseTests` | `LoginUseCase` | Success, user not found, wrong password |
-| `RegisterUseCaseTests` | `RegisterUseCase` | Success, email already in use, invalid role, admin role denied |
-| `CreateBookingUseCaseTests` | `CreateBookingUseCase` | Success, room already booked, room not available |
-| `DeleteBookingUseCaseTests` | `DeleteBookingUseCase` | Success (pending), booking not found, already approved, already denied |
-| `ApproveBookingUseCaseTests` | `ApproveBookingUseCase` | Success (pending), booking not found, already approved, already cancelled |
-| `RejectBookingUseCaseTests` | `RejectBookingUseCase` | Success (pending), booking not found |
-| `CreateRoomUseCaseTests` | `CreateRoomUseCase` | Success (0–5 images), householder not found, invalid room status, booked status blocked, non-image file type, max images exceeded |
-
-Test libraries:
-
-| Library | Version | Purpose |
-|---|---|---|
-| xUnit | 2.9.3 | Test framework |
-| NSubstitute | 5.3.0 | Mocking/faking dependencies |
-| FluentAssertions | 8.9.0 | Readable assertion API |
-| coverlet.collector | 6.0.4 | Code coverage collection |
-
-### Running Tests
+Run all backend tests:
 
 ```bash
-# All tests from the backend root
 dotnet test
 ```
 
-### CI
+Run a specific suite:
 
-A GitHub Actions workflow (`.github/workflows/dotnet.yml`) runs the unit test suite automatically:
-- **Triggers**: pushes to `feature/**` branches and pull requests targeting `develop`.
-- **Steps**: restore → build → `dotnet test`.
+```bash
+dotnet test tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+dotnet test tests/HousingApp.IntegrationTests/HousingApp.IntegrationTests.csproj
+```
 
----
+Unit tests focus on application use cases with mocked dependencies. Integration tests live in `tests/HousingApp.IntegrationTests` and are executed by their own CI workflow.
 
-## Production Good Practices
+## Docker
 
-### Global Exception Handling
+The backend Dockerfile is multi-stage:
 
-Unhandled exceptions are caught by `GlobalExceptionHandler` (`Api/Exception/GlobalExceptionHandler.cs`), which:
-- Logs the full exception using `ILogger<GlobalExceptionHandler>` (structured logging with message and stack trace).
-- Returns a `500 Internal Server Error` with a generic `ServerError.UnknownError` response body — no stack traces or internal details are ever sent to the client.
+1. `mcr.microsoft.com/dotnet/sdk:10.0` build stage restores and publishes the API.
+2. `mcr.microsoft.com/dotnet/aspnet:10.0` runtime stage runs `HousingApp.Api.dll`.
+3. The container exposes port `8080`.
 
-### Result\<T\> — Functional Error Handling
+Build and run directly:
 
-Business logic uses `Result<T>` (`Application/Result.cs`) instead of exceptions for expected failures. Use cases return either `Result<T>.Success(value)` or `Result<T>.Failure(error)`. Controllers then check `result.IsSuccess` and map to the appropriate HTTP status code. This means:
-- No try/catch scattered across the codebase for business errors.
-- Error responses always come from typed domain error objects (`AuthError`, `BookingError`, `RoomError`, etc.), not raw exception messages.
+```bash
+docker build -t itersapiens-backend .
+docker run --env-file ../.env -p 8080:8080 itersapiens-backend
+```
 
-### JWT Authentication with Strict Validation
+For direct Docker usage, the connection string must point to a reachable database host. Inside Compose, use the Compose service name `db`.
 
-Configured in `Api/Extensions/AuthExtensions.cs` with the following validation enforced on every request:
+## Docker Compose
 
-| Parameter | Value | Effect |
-|---|---|---|
-| `ValidateIssuerSigningKey` | `true` | Rejects tokens signed with any other key |
-| `ValidateIssuer` | `true` | Rejects tokens from unexpected issuers |
-| `ValidateAudience` | `true` | Rejects tokens intended for other services |
-| `ValidateLifetime` | `true` | Rejects expired tokens |
-| `ClockSkew` | `TimeSpan.Zero` | No tolerance window — tokens expire exactly on time |
-| `MapInboundClaims` | `false` | Claim names are used as-is (no WS-Federation remapping) |
+From the repository root:
 
-### Role-Based Authorization (RBAC)
+```bash
+docker compose up --build
+```
 
-Every protected endpoint declares its required role explicitly via `[Authorize(Roles = "...")]`. Students and Householders can only access their own endpoints — there is no shared "authenticated user" catch-all.
+Development Compose:
 
-### Per-IP Rate Limiting
+- Builds the `build` target from the Dockerfile.
+- Runs `dotnet run --project src/HousingApp.Api/HousingApp.Api.csproj --no-launch-profile`.
+- Bind-mounts `./backend/src` into `/workspace/src`.
+- Exposes `${BACKEND_PORT:-8080}` on the host.
+- Waits for the `db` healthcheck before starting.
 
-A global fixed-window rate limiter is applied to all requests (`Api/Extensions/RateLimiterExtension.cs`):
-- **Limit**: 40 requests per 60-second window, partitioned by `RemoteIpAddress`.
-- **Rejection**: Returns `429 Too Many Requests` when the limit is exceeded.
-- The policy name (`fixed-by-ip`) is defined as a constant in `RateLimiterPolicies.cs` to avoid magic strings.
+Production-like Compose:
 
-### CORS with Explicit Origin
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.prod.yml up --build -d api
+```
 
-`Api/Extensions/CorsExtensions.cs` reads the allowed origin from `Frontend:Origin` in configuration and passes it to `WithOrigins()`. No wildcard (`*`) is used; only the configured frontend URL is allowed.
+Production Compose:
 
-### AWS S3 with Presigned URLs
+- Uses the final runtime image.
+- Runs with `ASPNETCORE_ENVIRONMENT=Production`.
+- Sets `ASPNETCORE_URLS=http://+:8080`.
+- Uses no source bind mounts.
+- Restarts with `unless-stopped`.
 
-`Infrastructure/Storage/S3StorageService.cs` handles all file storage:
-- Files are uploaded directly to S3 with `PutObjectAsync`. The bucket is not public.
-- File access uses `GetPreSignedURL` with a 10-minute default expiration. Clients never receive a permanent public URL.
-- S3 object keys are namespaced by storage type and entity ID, with a `Guid`-prefixed filename to avoid collisions: `{type}/{entityId}/{guid}_{filename}`.
+## CI/CD
 
-### Database Schema via EF Core Migrations
+Backend workflows live in `.github/workflows`.
 
-All schema changes are managed through EF Core Migrations (`Infrastructure/Migrations/`). The database is never modified manually. Migrations are applied explicitly with `dotnet ef database update` before running the application.
+| Workflow | Triggers | Purpose |
+| --- | --- | --- |
+| `backend-unit-test.yml` | Push to `feature/**`, PR to `develop` | Builds application test project and runs unit tests |
+| `backend-integration-test.yml` | Push to `main`, PR to `develop` | Builds integration test project and runs integration tests |
+| `backend-publish.yml` | Push to `main`, PR to `main` or `release/**` | Publishes the API and uploads `backend-artifact` |
+| `build-reusable.yml` | Called by backend workflows | Shared restore/build/artifact workflow |
+| `app-deploy.yml` | Push/PR to `main`, manual dispatch | Builds Docker image, pushes it, and deploys through SSH |
+
+Deployment workflow behavior:
+
+1. Builds the backend Docker image from `./backend`.
+2. Pushes it to Docker Hub as `itersapiens-backend:1.0`.
+3. Writes production environment variables on the server.
+4. Pulls the new image.
+5. Stops/removes the previous backend container.
+6. Runs the new container with `--env-file` and `-p <BACKEND_PORT>:8080`.
+
+## Architecture Notes
+
+- Controllers map HTTP requests to application use cases.
+- Application use cases return `Result<T>` for expected business failures.
+- Repositories and unit of work abstractions keep EF Core out of the application layer.
+- Global exception handling prevents stack traces from leaking to clients.
+- Role-based authorization is enforced with ASP.NET Core policies/attributes.
+- S3 storage returns presigned URLs instead of public permanent file URLs.
+- EF Core migrations own schema changes.

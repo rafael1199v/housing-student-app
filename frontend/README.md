@@ -1,282 +1,195 @@
-# Itersapiens: Frontend
+# Itersapiens Frontend
 
-A student housing web application built with React and TypeScript that connects **students** looking for rooms with **householders** offering them. The platform features role-based dashboards, room search with map integration, a booking system, and image galleries.
-
-## Table of Contents
-
-- [Itersapiens: Frontend](#itersapiens-frontend)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-    - [Student Flow](#student-flow)
-    - [Householder Flow](#householder-flow)
-  - [Tech Stack](#tech-stack)
-  - [Project Structure](#project-structure)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-  - [Available Scripts](#available-scripts)
-  - [Architecture](#architecture)
-    - [Key Architectural Decisions](#key-architectural-decisions)
-  - [Features](#features)
-    - [Authentication](#authentication)
-    - [Room Search (Student)](#room-search-student)
-    - [Room Details](#room-details)
-    - [Room Creation (Householder)](#room-creation-householder)
-    - [Booking System](#booking-system)
-    - [Shared Components](#shared-components)
-  - [Routing](#routing)
-  - [State Management](#state-management)
-    - [Authentication (Zustand)](#authentication-zustand)
-    - [Server State (TanStack Query)](#server-state-tanstack-query)
-  - [API Integration](#api-integration)
-    - [API Endpoints](#api-endpoints)
-  - [Authentication](#authentication-1)
-  - [Docker](#docker)
-
-## Overview
-
-The application serves two user roles:
-
-### Student Flow
-1. Register and log in as a **Student**.
-2. Browse rooms from the Home page or the Rooms page with filters (name, price range).
-3. View room details including images, description, location on a map, and owner info.
-4. Book a room. The room status changes to "booked".
-
-### Householder Flow
-1. Register and log in as a **Householder**.
-2. Access a dedicated dashboard showing all created rooms and their pending booking requests.
-3. Create new rooms with details, pricing, location (map picker), and up to 5 images.
-4. Manage booking requests by approving or rejecting them.
+React + TypeScript single-page application for the Itersapiens student housing platform. It provides role-aware flows for students and householders, room search, booking management, maps, authentication, and localized UI.
 
 ## Tech Stack
 
-| Layer              | Technology                                  |
-|--------------------|---------------------------------------------|
-| Framework          | React 19 + TypeScript                       |
-| Build Tool         | Vite 7                                      |
-| Routing            | React Router v7                             |
-| Styling            | Tailwind CSS 4                              |
-| Forms              | React Hook Form + Zod validation            |
-| Server State       | TanStack React Query                        |
-| Client State       | Zustand (auth persistence)                  |
-| HTTP Client        | Fetch API (custom wrapper)                  |
-| Maps               | Google Maps (@vis.gl/react-google-maps)     |
-| Notifications      | Sonner (toast)                              |
-| Linter / Formatter | Biome                                       |
-| Git Hooks          | Husky                                       |
+| Concern | Technology |
+| --- | --- |
+| Framework | React 19 + TypeScript |
+| Build | Vite 7 |
+| Routing | React Router v7 |
+| Styling | Tailwind CSS 4 |
+| Forms | React Hook Form + Zod |
+| Server state | TanStack Query |
+| Client state | Zustand |
+| Testing | Vitest + Testing Library |
+| Lint/format | Biome |
+| Container runtime | NGINX unprivileged image |
 
 ## Project Structure
 
-```
+```text
 src/
-├── assets/                        # Static assets (SVGs, placeholder images)
-├── features/                      # Feature-based modules (FDA)
-│   ├── auth/                      # Authentication (login, register, JWT, store)
-│   │   ├── components/            # NationalitySelector, PhoneInput
-│   │   ├── pages/                 # login.tsx, register.tsx
-│   │   ├── store/                 # authStore.ts (Zustand)
-│   │   ├── types/                 # DTOs (loginRequest, registerDto, user, etc.)
-│   │   └── utils/                 # tokenClaims.ts (JWT parsing)
-│   ├── home/                      # Student home page (search, featured rooms)
-│   ├── rooms/                     # Room search & filtering with map
-│   ├── room-details/              # Individual room detail view & booking
-│   ├── bookings/                  # Student's booked rooms list
-│   ├── new-room/                  # Room creation form (Householder)
-│   ├── owner-home/                # Householder dashboard
-│   ├── owner-room-details/        # Householder room management & booking approval
-│   ├── shared/                    # Reusable components (RoomCard, Footer)
-│   └── not-found/                 # 404 page
-├── layout/                        # MainLayout (navbar, footer, content outlet)
-├── routers/                       # Route definitions, ProtectedRoute, GuestRoute
-├── services/                      # API service layer
-│   ├── apiService.ts              # Fetch wrapper (auth headers, error handling)
-│   ├── authService.ts             # Login & register endpoints
-│   ├── roomService.ts             # Room CRUD, search, image upload
-│   └── bookingService.ts          # Booking CRUD & approval
-├── App.tsx                        # Root component (providers)
-├── main.tsx                       # Entry point (RouterProvider)
-└── index.css                      # Global styles & Tailwind theme
+|-- assets/
+|-- features/
+|   |-- auth/
+|   |-- bookings/
+|   |-- home/
+|   |-- new-room/
+|   |-- owner-home/
+|   |-- owner-room-details/
+|   |-- room-details/
+|   `-- rooms/
+|-- layout/
+|-- routers/
+|-- services/
+|-- shared/
+|   |-- components/
+|   `-- providers/
+|-- App.tsx
+|-- i18n.ts
+|-- main.tsx
+`-- index.css
 ```
 
-## Getting Started
-
-### Prerequisites
-
-- **Node.js** >= 18
-- **npm**
-- A running instance of the .NET backend API (default: `http://localhost:5065`)
-- A Google Maps API key
-
-### Installation
-
-```bash
-# Clone the repository and navigate to the frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
-# Create a .env file (see Environment Variables section)
-
-# Start the development server
-npm run dev
-```
-
-The app will be available at `http://localhost:5173` by default.
+The app follows a feature-driven structure: feature-owned pages/components/types stay under `src/features`, while cross-cutting reusable UI/providers live under `src/shared`.
 
 ## Environment Variables
 
-Create a `.env` file in the project root with the following variables:
+Create `frontend/.env` for local non-container development:
 
-| Variable                    | Description                         | Example                   |
-|-----------------------------|-------------------------------------|---------------------------|
-| `VITE_API_URL`              | Backend API base URL                | `http://localhost:5065`   |
-| `VITE_GOOGLE_MAPS_API_KEY`  | Google Maps JavaScript API key      | `XXXXX...`               |
+```env
+VITE_API_URL=http://localhost:5065
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
+VITE_GOOGLE_MAPS_ID=your_google_maps_id
+VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+```
+
+| Variable | Purpose |
+| --- | --- |
+| `VITE_API_URL` | Base URL of the backend API |
+| `VITE_GOOGLE_MAPS_API_KEY` | Google Maps JavaScript API key |
+| `VITE_GOOGLE_MAPS_ID` | Google Maps map ID |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID for the Google sign-in button |
+
+For Docker Compose, these values are read from the root `.env` file.
+
+## Run Locally
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Default local URL:
+
+```text
+http://localhost:5173
+```
+
+Make sure the backend is reachable through `VITE_API_URL`.
 
 ## Available Scripts
 
-| Command            | Description                                   |
-|--------------------|-----------------------------------------------|
-| `npm run dev`      | Start Vite development server with HMR        |
-| `npm run build`    | Type-check with TypeScript and build for production |
-| `npm run preview`  | Preview the production build locally           |
-| `npm run lint`     | Run Biome linter on `src/`                     |
-| `npm run format`   | Format code with Biome                         |
-| `npm run lint-format` | Lint and format in one pass                 |
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Starts the Vite dev server with HMR |
+| `npm run build` | Runs TypeScript build and creates the production bundle |
+| `npm run preview` | Serves the production bundle locally with Vite preview |
+| `npm run lint` | Runs Biome checks over `src/` |
+| `npm run format` | Formats `src/` with Biome |
+| `npm run lint-format` | Runs Biome checks with safe writes |
+| `npm run test` | Runs Vitest |
+| `npm run test -- --run` | Runs Vitest once, suitable for CI |
 
-## Architecture
+## Testing
 
-The project follows a **Feature-Driven Architecture (FDA)**. Each feature is a self-contained module under `src/features/` with its own pages, components, types, and utilities.
+Run the frontend validation suite locally:
 
-### Key Architectural Decisions
+```bash
+npm run lint
+npm run test -- --run
+npm run build
+```
 
-- **Feature isolation**: Each feature owns its pages, components, and types. Shared UI lives in `features/shared/`.
-- **Service layer**: All API communication goes through `src/services/`. The base `apiService.ts` handles auth token injection, content-type negotiation (JSON vs FormData), and global error handling (401 logout, 403 redirect).
-- **No mocked data**: The application is designed to work with a real .NET backend API.
-- **Role-based rendering**: The home route (`/`) dynamically renders either `HomePage` (Student) or `OwnerHomePage` (Householder) based on the JWT role claim.
+Focused examples:
 
-## Features
+```bash
+npx vitest run src/i18n.test.ts
+npx vitest run src/features/bookings/pages/index.test.tsx
+```
 
-### Authentication
-- Email/password login with form validation (Zod).
-- Multi-step registration form supporting Student and Householder roles.
-- Fields include: personal info, nationality (Latin American countries), phone with country code, profile image, gender, and birthdate.
-
-### Room Search (Student)
-- Full-text search by room name.
-- Price range filters (min/max).
-- Sort by price or name (ascending/descending).
-
-### Room Details
-- Image carousel with navigation.
-- Room description, price, and status (Available / Booked / Unavailable).
-- Owner/landlord information display.
-- Google Maps location view.
-- Book / Cancel booking actions.
-
-### Room Creation (Householder)
-- Form with name, description, price, and status.
-- Map picker for latitude/longitude selection.
-- Multi-image upload (up to 5 images) via drag-and-drop, sent as `FormData`.
-
-### Booking System
-- Students can book available rooms and cancel their bookings.
-- Householders can view all booking requests per room and **approve or reject** them via a confirmation dialog.
-- Booking statuses are tracked and displayed with visual indicators.
-
-### Shared Components
-- **RoomCard**: Reusable card with image carousel, price formatting (es-BO locale), and broken image fallback.
-- **Footer**: Navigation links, contact info, and logout.
-- **Skeleton loaders**: Displayed during data fetching for a smooth loading experience.
-
-## Routing
-
-| Path                 | Access       | Page                              |
-|----------------------|--------------|-----------------------------------|
-| `/login`             | Guest only   | Login                             |
-| `/register`          | Guest only   | Registration                      |
-| `/`                  | Protected    | Student Home or Householder Home  |
-| `/rooms`             | Protected    | Room search (Student only)        |
-| `/bookings`          | Protected    | Booked rooms list (Student only)  |
-| `/details/:id`       | Protected    | Room detail view                  |
-| `/owner/rooms/new`   | Protected    | Create room (Householder only)    |
-| `/owner/rooms/:id`   | Protected    | Manage room (Householder only)    |
-| `*`                  | Public       | 404 Not Found                     |
-
-**Route guards:**
-- `ProtectedRoute` — redirects unauthenticated users to `/login`.
-- `GuestRoute` — redirects authenticated users to `/`.
-
-## State Management
-
-### Authentication (Zustand)
-The auth store (`features/auth/store/authStore.ts`) uses Zustand with the `persist` middleware to save the access token to `localStorage`. It exposes:
-- `useUser()` — current user info
-- `useAccessToken()` — JWT access token
-- `useAuthActions()` — `setUser`, `setAccessToken`, `setRefreshToken`, `clearAll`
-
-### Server State (TanStack Query)
-All API data fetching uses React Query with query keys such as:
-- `["rooms"]`, `["rooms", "search", params]` — room listings
-- `["room", id]`, `["owner-room", id]` — room details
-- `["user-booking", id]` — booking status
-- `["owner", "rooms"]` — householder rooms
-
-Mutations automatically invalidate relevant queries to keep the UI in sync.
-
-## API Integration
-
-All HTTP requests are routed through `src/services/apiService.ts`, which provides:
-
-- **Automatic auth**: Injects `Authorization: Bearer <token>` on every request.
-- **Content handling**: Automatically sets `Content-Type` for JSON; omits it for `FormData` (image uploads).
-- **Global error handling**:
-  - `401 Unauthorized` — clears auth state, redirects to `/login`, shows a toast.
-  - `403 Forbidden` — redirects to `/not-found`.
-  - `204 No Content` — returns `null` gracefully.
-- **Typed responses**: All service methods are generic-typed (`get<T>`, `post<T>`, etc.).
-
-### API Endpoints
-
-| Method   | Endpoint                         | Description                     |
-|----------|----------------------------------|---------------------------------|
-| `POST`   | `/api/login`                     | Authenticate user               |
-| `POST`   | `/api/register`                  | Register new user               |
-| `GET`    | `/api/rooms`                     | List all rooms                  |
-| `GET`    | `/api/rooms?name=&minPrice=&...` | Search rooms with filters       |
-| `GET`    | `/api/rooms/:id`                 | Get room details                |
-| `GET`    | `/api/rooms/householder`         | List householder's rooms        |
-| `GET`    | `/api/rooms/householder/:id`     | Get householder's room details  |
-| `POST`   | `/api/rooms`                     | Create room (FormData)          |
-| `GET`    | `/api/bookings`                  | List student's bookings         |
-| `GET`    | `/api/bookings/:roomId`          | Check booking status for a room |
-| `POST`   | `/api/bookings`                  | Create a booking                |
-| `DELETE` | `/api/bookings/:roomId`          | Cancel a booking                |
-| `PUT`    | `/api/bookings/approve/:id`      | Approve a booking request       |
-| `PUT`    | `/api/bookings/reject/:id`       | Reject a booking request        |
-
-## Authentication
-
-1. **Login**: User submits credentials -> backend returns a JWT `accessToken` -> stored in Zustand (persisted to `localStorage`).
-2. **Role detection**: The JWT payload contains a `role` claim (`"Student"` or `"Householder"`), parsed via `getRoleFromAccessToken()`.
-3. **Session persistence**: The token is restored from `localStorage` on page reload. `ProtectedRoute` checks for its existence.
-4. **Logout**: Clears the Zustand store and redirects to `/login`.
+Tests use Vitest with the `jsdom` environment and `src/test/setupTests.ts`.
 
 ## Docker
 
-The application includes a `Dockerfile` for containerized deployment:
+The frontend Dockerfile is multi-stage:
+
+1. `node:20-alpine` builder installs dependencies with `npm ci`.
+2. Vite builds the static bundle using the provided build args.
+3. `nginxinc/nginx-unprivileged:alpine` serves `dist/` on container port `8080`.
+
+Build and run the image directly:
 
 ```bash
-# Build and run
-docker build -t itersapiens-frontend .
-docker run -p 3000:3000 itersapiens-frontend
+docker build \
+  --build-arg VITE_API_URL=http://localhost:8080 \
+  --build-arg VITE_GOOGLE_MAPS_API_KEY=your_key \
+  --build-arg VITE_GOOGLE_MAPS_ID=your_map_id \
+  --build-arg VITE_GOOGLE_CLIENT_ID=your_client_id \
+  -t itersapiens-frontend .
+
+docker run -p 3000:8080 itersapiens-frontend
 ```
 
-The container uses a multi-step process:
-1. Installs dependencies with `npm ci`.
-2. Builds the production bundle with `npm run build`.
-3. Serves the static `dist/` folder via `serve` on port **3000**.
+The included `nginx.conf` supports SPA routing with:
 
-**Base image**: `node:24.14-alpine3.23`
+```nginx
+try_files $uri $uri/ /index.html;
+```
+
+## Docker Compose
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+Development Compose uses the `builder` target and runs:
+
+```bash
+npm run dev -- --host
+```
+
+It bind-mounts `./frontend/src` for source hot reload and exposes `${FRONTEND_PORT:-5173}`.
+
+Production-like Compose:
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.prod.yml up --build -d frontend
+```
+
+The production frontend container exposes NGINX on container port `8080`, mapped to `${FRONTEND_PORT:-3000}`.
+
+## CI/CD
+
+Frontend validation is handled by `.github/workflows/frontend-validation.yml`.
+
+Triggers:
+
+- Pushes to `feature/**`.
+- Pull requests targeting `develop`.
+
+Pipeline steps:
+
+1. Checkout repository.
+2. Setup Node.js 21.
+3. Install dependencies with `npm install`.
+4. Run `npm run lint`.
+5. Run Vitest with verbose reporter.
+6. Run `npm run build`.
+
+Production deployment is handled by the root `.github/workflows/app-deploy.yml`. That workflow builds the frontend Docker image with production Vite build args, pushes it to Docker Hub, then restarts the frontend container on the server through SSH.
+
+## API Integration
+
+All HTTP calls go through `src/services/apiService.ts`, which handles:
+
+- Base URL from `VITE_API_URL`.
+- JWT authorization header injection.
+- JSON vs `FormData` content handling.
+- Global `401`/`403` handling.
+- Typed service responses.

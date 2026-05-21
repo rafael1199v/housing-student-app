@@ -157,7 +157,7 @@ export function ServicesPoliciesStep({
 									<img
 										src={service.icon}
 										alt=""
-										className="h-4 w-4 brightness-0"
+										className="h-4 w-4 brightness-0 opacity-60"
 										aria-hidden="true"
 									/>
 								)}

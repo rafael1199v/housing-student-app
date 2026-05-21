@@ -126,7 +126,10 @@
 		"loadError": "Não foi possível carregar os quartos. Tente novamente mais tarde.",
 		"noMatch": "Nenhum quarto corresponde aos filtros atuais. Tente ajustar sua busca.",
 		"maxResultsTitle": "Mostrando até 20 resultados.",
-		"maxResultsHint": "Não encontrou o que procurava? Tente refinar sua busca com um nome mais específico ou uma faixa de preço mais restrita para obter resultados mais relevantes."
+		"maxResultsHint": "Não encontrou o que procurava? Tente refinar sua busca com um nome mais específico ou uma faixa de preço mais restrita para obter resultados mais relevantes.",
+		"servicesFilter": "Serviços",
+		"servicesFilterHint": "Selecione os serviços pelos quais deseja filtrar.",
+		"clearServices": "Limpar"
 	},
 	"bookings": {
 		"title": "Quartos reservados",
