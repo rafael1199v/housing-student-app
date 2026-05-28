@@ -1,3 +1,3 @@
 ﻿namespace HousingApp.Application.RoomService.DTOs;
 
-public record RoomServiceDto(int Id);
+public record ServiceDto(int Id);
