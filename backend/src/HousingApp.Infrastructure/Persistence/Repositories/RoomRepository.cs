@@ -44,7 +44,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         if (filters.Services is not null && filters.Services.Length > 0)
         {
             int[] serviceIds = filters.Services;
-            query = query.Where(r => serviceIds.All(id => r.Services.Any(s => !s.IsDeleted && s.Id == id)));
+            query = query.Where(r => serviceIds.All(id => r.Services.Any(s => !s.IsDeleted && s.ServiceId == id)));
         }
 
         List<Room> rooms = await query
@@ -247,9 +247,9 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
             Price = (decimal)room.Price,
             PersonId = room.PersonId,
             RoomStatusId = (int)room.RoomStatus,
-            RoomPolicies = [..room.Policies.Select(policy => new RoomPolicyModel { PolicyId = policy.Id, Description = policy.Description })],
-            Services = [..room.Services.Select(serviceId => new ServiceModel{ Id = serviceId })],
-            RoomImages = [..room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image })]
+            RoomPolicies = [.. room.Policies.Select(policy => new RoomPolicyModel { PolicyId = policy.Id, Description = policy.Description })],
+            Services = [.. room.Services.Select(serviceId => new RoomServiceModel { ServiceId = serviceId })],
+            RoomImages = [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image })]
         };
     }
 }
