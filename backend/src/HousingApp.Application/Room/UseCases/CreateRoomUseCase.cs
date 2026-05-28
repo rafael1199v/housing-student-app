@@ -26,10 +26,10 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
         if (createRoomDto.Price <= 0)
             return Result<CreatedRoomDto>.Failure(RoomError.InvalidPrice);
 
-        if (createRoomDto.Latitude < -90 || createRoomDto.Latitude > 90)
+        if (createRoomDto.Latitude is < -90 or > 90)
             return Result<CreatedRoomDto>.Failure(RoomError.InvalidLatitude);
 
-        if (createRoomDto.Longitude < -180 || createRoomDto.Longitude > 180)
+        if (createRoomDto.Longitude is < -180 or > 180)
             return Result<CreatedRoomDto>.Failure(RoomError.InvalidLongitude);
 
         if (!Enum.IsDefined(typeof(RoomStatus), createRoomDto.RoomStatusId) || (RoomStatus)createRoomDto.RoomStatusId is RoomStatus.Booked)
@@ -50,7 +50,7 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
             roomStatusId: createRoomDto.RoomStatusId,
             personId: userId,
             services: [.. createRoomDto.Services.Select(s => s.Id)],
-            policies: [.. createRoomDto.Policies.Select(p => new Policy { Id = p.Id, Description = p.Description })]
+            policies: [.. createRoomDto.Policies.Select(p => new Domain.Entities.Policy { Id = p.Id, Description = p.Description })]
         );
 
         await unitOfWork.BeginTransactionAsync();
