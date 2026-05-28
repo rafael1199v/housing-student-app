@@ -4,5 +4,5 @@ namespace HousingApp.Application.Repositories;
 
 public interface IServiceRepository
 {
-    Task<List<RoomServiceDto>> GetAllAsync();
+    Task<List<ServiceDto>> GetAllAsync();
 }
