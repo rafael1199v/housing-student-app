@@ -22,6 +22,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IPolicyRepository, PolicyRepository>();
+        services.AddScoped<IServiceRepository, ServiceRepository>();
 
         //Unit of work
         services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();

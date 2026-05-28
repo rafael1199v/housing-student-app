@@ -3,6 +3,7 @@ using System;
 using HousingApp.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HousingApp.Infrastructure.Migrations
 {
     [DbContext(typeof(HousingApplicationDbContext))]
-    partial class HousingApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260528005130_ServiceAndPolicyTableUpdated")]
+    partial class ServiceAndPolicyTableUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -329,10 +332,6 @@ namespace HousingApp.Infrastructure.Migrations
 
                     b.HasKey("UserId")
                         .HasName("pk_persons");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("ix_persons_email");
 
                     b.ToTable("persons", (string)null);
                 });
