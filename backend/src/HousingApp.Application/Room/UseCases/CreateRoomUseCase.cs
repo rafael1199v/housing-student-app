@@ -1,5 +1,8 @@
+using HousingApp.Application.Policy.DTOs;
+using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.Upload;
+using HousingApp.Application.RoomService.DTOs;
 using HousingApp.Application.Storage;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
@@ -8,7 +11,7 @@ using HousingApp.Domain.Error;
 
 namespace HousingApp.Application.Room.UseCases;
 
-public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService storageService) : ICreateRoomUseCase
+public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService storageService, IServiceRepository serviceRepository, IPolicyRepository policyRepository) : ICreateRoomUseCase
 {
     public async Task<Result<CreatedRoomDto>> ExecuteAsync(string userId, CreateRoomDto createRoomDto,
         CancellationToken cancellationToken)
@@ -40,6 +43,17 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
 
         if (createRoomDto.Images.Count > Images.MaxImagesAllowed)
             return Result<CreatedRoomDto>.Failure(RoomError.MaxImagesExceeded(Images.MaxImagesAllowed));
+
+        // Service and Policy validation
+        List<ServiceDto> serviceDtoList = await serviceRepository.GetAllAsync();
+
+        if (NotExistAllServices(createRoomDto.Services, serviceDtoList))
+            return Result<CreatedRoomDto>.Failure(RoomError.InvalidServiceType);
+
+        List<PolicyDto> policyDtoList = await policyRepository.GetAllAsync();
+
+        if (NotExistAllPolicies(createRoomDto.Policies, policyDtoList))
+            return Result<CreatedRoomDto>.Failure(RoomError.InvalidPolicyType);
 
         Domain.Entities.Room room = Domain.Entities.Room.Create(
             name: createRoomDto.Name,
@@ -104,5 +118,17 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
         return images.Any(image =>
             string.IsNullOrWhiteSpace(image.ContentType)
             || !image.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool NotExistAllServices(List<CreateRoomServiceDto> createRoomServiceDtoList, List<ServiceDto> services)
+    {
+        List<int> servicesIds = [.. services.Select(service => service.Id)];
+        return createRoomServiceDtoList.Any(createRoomService => !servicesIds.Contains(createRoomService.Id));
+    }
+
+    private static bool NotExistAllPolicies(List<CreateRoomPolicyDto> createRoomPolicyList, List<PolicyDto> policies)
+    {
+        List<int> policiesIds = [.. policies.Select(policy => policy.Id)];
+        return createRoomPolicyList.Any(createRoomPolicy => !policiesIds.Contains(createRoomPolicy.Id));
     }
 }

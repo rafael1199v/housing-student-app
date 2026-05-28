@@ -22,6 +22,12 @@ public static class RoomError
     public static readonly Error InvalidImageType =
         new("room.invalid.image.type", "Solo se permiten archivos de imagen");
 
+    public static readonly Error InvalidServiceType =
+        new("room.invalid.service.type", "Uno de los servicios solicitados es inválido");
+
+    public static readonly Error InvalidPolicyType =
+        new("room.invalid.policy.type", "Una de las políticas solitadas es inválida");
+
     public static readonly Error RoomNotFound = new("room.not.found", "El alojamiento no fue encontrado");
 
     public static Error FilterDoesNotExist(string filter)
