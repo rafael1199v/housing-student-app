@@ -11,7 +11,7 @@ on:
         default: 'Release'
       build-target:
         type: string
-        default: './HousingApp.sln'
+        default: './HousingApp.slnx'
       build-artifact-name:
         type: string
         default: 'backend-build-output'
