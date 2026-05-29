@@ -18,7 +18,7 @@ jobs:
   backend-build:
     uses: ./.github/workflows/_build-reusable.yml
     with:
-      build-target: ./HousingApp.sln
+      build-target: ./HousingApp.slnx
 
   backend-unit-tests:
     needs: backend-build
