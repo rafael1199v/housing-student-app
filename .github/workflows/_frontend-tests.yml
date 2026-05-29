@@ -1,0 +1,52 @@
+name: Frontend Tests (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        default: '21'
+      skip-build:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint check
+        run: npm run lint
+
+      - name: Unit tests
+        run: npx vitest --reporter=verbose --run
+
+      - name: Build (validates Vite config)
+        if: ${{ !inputs.skip-build }}
+        run: npm run build
+        env:
+          VITE_API_URL: http://localhost:8080
+          VITE_GOOGLE_MAPS_API_KEY: dummy-key-for-build
+          VITE_GOOGLE_MAPS_ID: dummy-id-for-build
+          VITE_GOOGLE_CLIENT_ID: dummy-client-for-build

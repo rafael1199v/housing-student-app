@@ -1,11 +1,13 @@
 using HousingApp.Infrastructure.Persistence.Models.Common;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HousingApp.Infrastructure.Persistence.Models;
 
 [Table("persons")]
+[Index(nameof(Email), IsUnique = true)]
 public class PersonModel : AuditableModel
 {
     [Key][MaxLength(450)] public string UserId { get; set; } = string.Empty;

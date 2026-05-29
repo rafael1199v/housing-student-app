@@ -19,7 +19,7 @@ public static class DatabaseExtensions
 
     public static async Task ApplyMigrationsAndSeedDataAsync(this WebApplication app)
     {
-        
+
         using IServiceScope scope = app.Services.CreateScope();
         IHousingAppSeeder housingAppSeeder = scope.ServiceProvider.GetRequiredService<IHousingAppSeeder>();
         await housingAppSeeder.SeedAsync();

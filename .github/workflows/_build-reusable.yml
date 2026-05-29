@@ -1,20 +1,20 @@
-name: Backend Build Reusable
+name: Backend Build (Reusable)
 
 on:
   workflow_call:
     inputs:
       dotnet-version:
         type: string
-        default: 10.0.x
+        default: '10.0.x'
       configuration:
         type: string
-        default: Release
+        default: 'Release'
       build-target:
         type: string
-        default: ./HousingApp.sln
+        default: './HousingApp.slnx'
       build-artifact-name:
         type: string
-        default: backend-build-output
+        default: 'backend-build-output'
     outputs:
       build-artifact-name:
         description: Name of the uploaded backend build artifact
@@ -39,7 +39,8 @@ jobs:
       CONFIGURATION: ${{ inputs.configuration }}
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v6
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -67,3 +68,4 @@ jobs:
           name: ${{ inputs.build-artifact-name }}
           path: backend/
           retention-days: 7
+          include-hidden-files: false

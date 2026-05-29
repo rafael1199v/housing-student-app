@@ -12,66 +12,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
     public async Task<int> CreateRoomAsync(Room room)
     {
         RoomModel roomModel = ToModel(room);
-
-        List<PolicyModel> policyModels = await context.Policies
-            .Where(policyModel => room.Policies.Select(policy => policy.Id).Contains(policyModel.Id) && !policyModel.IsDeleted)
-            .ToListAsync();
-
-        List<ServiceModel> serviceModels = await context.Services
-            .Where(serviceModel => room.Services.Contains(serviceModel.Id) && !serviceModel.IsDeleted)
-            .ToListAsync();
-
-        if (policyModels.Count != room.Policies.Count)
-        {
-            throw new Exception("Some required policies do not exist");
-        }
-
-        if (serviceModels.Count != room.Services.Count)
-        {
-            throw new Exception("Some required services do not exist");
-        }
-
-        roomModel.Services = serviceModels;
-        roomModel.Policies = policyModels;
-
         await context.Rooms.AddAsync(roomModel);
-
-        Dictionary<int, string> policyDescriptions = room.Policies
-            .GroupBy(policy => policy.Id)
-            .ToDictionary(group => group.Key, group => group.First().Description);
-
-        List<RoomServiceModel> roomServices =
-            [.. serviceModels.Select(service => new RoomServiceModel
-            {
-                Room = roomModel,
-                ServiceId = service.Id
-            })];
-
-        List<RoomPolicyModel> roomPolicies =
-            [.. policyModels.Select(policy => new RoomPolicyModel
-            {
-                Room = roomModel,
-                PolicyId = policy.Id,
-                Description = policyDescriptions.TryGetValue(policy.Id, out string? description)
-                    ? description
-                    : string.Empty
-            })];
-
-        if (roomServices.Count > 0)
-        {
-            await context.RoomServices.AddRangeAsync(roomServices);
-        }
-
-        if (roomPolicies.Count > 0)
-        {
-            await context.RoomPolicies.AddRangeAsync(roomPolicies);
-        }
-
-        List<RoomImagesModel> roomImages =
-            [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image, Room = roomModel })];
-
-        await context.RoomImages.AddRangeAsync(roomImages);
-
         await context.SaveChangesAsync();
 
         return roomModel.Id;
@@ -103,7 +44,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         if (filters.Services is not null && filters.Services.Length > 0)
         {
             int[] serviceIds = filters.Services;
-            query = query.Where(r => serviceIds.All(id => r.Services.Any(s => !s.IsDeleted && s.Id == id)));
+            query = query.Where(r => serviceIds.All(id => r.Services.Any(s => !s.IsDeleted && s.ServiceId == id)));
         }
 
         List<Room> rooms = await query
@@ -306,8 +247,9 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
             Price = (decimal)room.Price,
             PersonId = room.PersonId,
             RoomStatusId = (int)room.RoomStatus,
-            Policies = [],
-            Services = [],
+            RoomPolicies = [.. room.Policies.Select(policy => new RoomPolicyModel { PolicyId = policy.Id, Description = policy.Description })],
+            Services = [.. room.Services.Select(serviceId => new RoomServiceModel { ServiceId = serviceId })],
+            RoomImages = [.. room.ImageUrls.Select(image => new RoomImagesModel { ImageUrl = image })]
         };
     }
 }

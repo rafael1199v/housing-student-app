@@ -1,0 +1,66 @@
+name: Backend Unit Tests (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        type: string
+        default: '10.0.x'
+      configuration:
+        type: string
+        default: 'Release'
+      build-artifact-name:
+        type: string
+        default: 'backend-build-output'
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      UNIT_TEST_PROJECT: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: |
+            backend/**/packages.lock.json
+            backend/Directory.Packages.props
+            backend/**/*.csproj
+
+      - name: Download compiled backend output
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ inputs.build-artifact-name }}
+          path: backend/
+
+      - name: Run unit tests
+        run: |
+          dotnet test ${{ env.UNIT_TEST_PROJECT }} \
+            --configuration ${{ inputs.configuration }} \
+            --no-build --no-restore \
+            --verbosity normal \
+            --logger "trx;LogFileName=unit-tests.trx" \
+            --results-directory ./TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-unit-test-results
+          path: backend/TestResults/
+          retention-days: 7

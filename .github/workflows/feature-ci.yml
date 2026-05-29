@@ -1,0 +1,46 @@
+name: Feature Branch CI
+
+on:
+  push:
+    branches: ['feature/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: feature-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            backend:
+              - 'backend/**'
+
+  frontend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    uses: ./.github/workflows/_frontend-tests.yml
+
+  backend-build:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
+    uses: ./.github/workflows/_build-reusable.yml
+    with:
+      build-target: ./tests/HousingApp.Application.Tests/HousingApp.Application.Tests.csproj
+
+  backend-unit-tests:
+    needs: [detect-changes, backend-build]
+    if: needs.detect-changes.outputs.backend == 'true'
+    uses: ./.github/workflows/_backend-unit-tests.yml
