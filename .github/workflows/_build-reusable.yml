@@ -1,0 +1,71 @@
+name: Backend Build (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        type: string
+        default: '10.0.x'
+      configuration:
+        type: string
+        default: 'Release'
+      build-target:
+        type: string
+        default: './HousingApp.sln'
+      build-artifact-name:
+        type: string
+        default: 'backend-build-output'
+    outputs:
+      build-artifact-name:
+        description: Name of the uploaded backend build artifact
+        value: ${{ jobs.build.outputs.build-artifact-name }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      build-artifact-name: ${{ steps.build-metadata.outputs.build-artifact-name }}
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      BUILD_TARGET: ${{ inputs.build-target }}
+      CONFIGURATION: ${{ inputs.configuration }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+          cache: true
+          cache-dependency-path: |
+            backend/**/packages.lock.json
+            backend/Directory.Packages.props
+            backend/**/*.csproj
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.BUILD_TARGET }}
+
+      - name: Build
+        run: dotnet build ${{ env.BUILD_TARGET }} --configuration ${{ env.CONFIGURATION }} --no-restore
+
+      - name: Expose artifact metadata
+        id: build-metadata
+        run: echo "build-artifact-name=${{ inputs.build-artifact-name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload compiled backend output
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.build-artifact-name }}
+          path: backend/
+          retention-days: 7
+          include-hidden-files: false
