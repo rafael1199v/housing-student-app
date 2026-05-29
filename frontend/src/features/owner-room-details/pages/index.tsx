@@ -337,7 +337,10 @@ export function OwnerRoomDetailsPage() {
 											</h3>
 											<p className="text-sm text-slate-600">
 												{t("ownerRoomDetails.bookerContact", {
-													phone: booking.bookerPhoneNumber,
+													phone:
+														booking.bookerPhoneNumber == ""
+															? t("ownerRoomDetails.noPhone")
+															: booking.bookerPhoneNumber,
 													email: booking.bookerEmail,
 												})}
 											</p>
