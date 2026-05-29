@@ -107,7 +107,7 @@
 		"searchPlaceholder": "Search room by name",
 		"searchAriaLabel": "Search rooms",
 		"locationLabel": "Location",
-		"locationSelected": "Selected location: {{lat}}, {{lng}}",
+		"locationSelected": "Selected location: {{latitude}}, {{longitude}}",
 		"noLocation": "No location selected.",
 		"removeMarker": "Remove marker",
 		"priceRange": "Price range",

@@ -107,7 +107,7 @@
 		"searchPlaceholder": "Buscar quarto por nome",
 		"searchAriaLabel": "Buscar quartos",
 		"locationLabel": "Localização",
-		"locationSelected": "Localização selecionada: {{lat}}, {{lng}}",
+		"locationSelected": "Localização selecionada: {{latitude}}, {{longitude}}",
 		"noLocation": "Nenhuma localização selecionada.",
 		"removeMarker": "Remover marcador",
 		"priceRange": "Faixa de preço",

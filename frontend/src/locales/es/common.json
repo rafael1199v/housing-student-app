@@ -107,7 +107,7 @@
 		"searchPlaceholder": "Buscar habitación por nombre",
 		"searchAriaLabel": "Buscar habitaciones",
 		"locationLabel": "Ubicación",
-		"locationSelected": "Ubicación seleccionada: {{lat}}, {{lng}}",
+		"locationSelected": "Ubicación seleccionada: {{latitude}}, {{longitude}}",
 		"noLocation": "No se ha seleccionado ubicación.",
 		"removeMarker": "Quitar marcador",
 		"priceRange": "Rango de precio",
