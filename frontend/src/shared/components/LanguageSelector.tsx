@@ -34,7 +34,7 @@ export function LanguageSelector() {
 				onClick={() => setOpen((prev) => !prev)}
 				aria-haspopup="listbox"
 				aria-expanded={open}
-				className="rounded-full bg-surface-container-high px-3 py-2 text-xs font-medium transition hover:brightness-95 flex items-center gap-2"
+				className="rounded-full bg-surface-container-high px-3 py-2 text-sm font-medium transition hover:brightness-95 flex items-center gap-2"
 			>
 				<img src={current.flag} alt={current.code} className="w-4 h-4" />
 				{current.label} ▾
