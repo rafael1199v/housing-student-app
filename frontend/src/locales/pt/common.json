@@ -9,7 +9,8 @@
 		"createRoom": "Criar quarto",
 		"profileSettings": "Configurações de perfil",
 		"logout": "Sair",
-		"loggedOut": "Sessão encerrada"
+		"loggedOut": "Sessão encerrada",
+		"menu": "Menu"
 	},
 	"footer": {
 		"contactInfo": "Informações de contato",

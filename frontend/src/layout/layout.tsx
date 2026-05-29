@@ -42,8 +42,15 @@ export function MainLayout() {
 					</div>
 					<section className="md:hidden">
 						{/* Activar lista desplegable para móviles */}
-						<button onClick={() => setOpen(!open)}>
-							{!open ? t("nav.menu") : t("nav.close")}
+						<button
+							onClick={() => setOpen(!open)}
+							className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+								open
+									? "bg-primary text-on-primary"
+									: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
+							}`}
+						>
+							{t("nav.menu")}
 						</button>
 					</section>
 					<section className="not-md:hidden">

@@ -9,7 +9,8 @@
 		"createRoom": "Create Room",
 		"profileSettings": "Profile Settings",
 		"logout": "Log out",
-		"loggedOut": "Logged out"
+		"loggedOut": "Logged out",
+		"menu": "Menu"
 	},
 	"footer": {
 		"contactInfo": "Contact Information",
