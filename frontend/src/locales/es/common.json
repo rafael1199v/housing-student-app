@@ -235,7 +235,7 @@
 		"statusUnavailable": "No disponible",
 		"locationSection": "Ubicación",
 		"locationHint": "Haz clic en el mapa para colocar un marcador en la ubicación de la habitación.",
-		"locationSelected": "Ubicación seleccionada: {{lat}}, {{lng}}",
+		"locationSelected": "Ubicación seleccionada: {{latitude}}, {{longitude}}",
 		"noLocation": "No se ha seleccionado ubicación.",
 		"removeMarker": "Quitar marcador",
 		"imagesSection": "Imágenes",

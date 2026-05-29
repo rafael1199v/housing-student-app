@@ -199,7 +199,8 @@ export function RoomDetailsStep({
 						style={{ height: "360px", width: "100%" }}
 						defaultCenter={DEFAULT_MAP_CENTER}
 						defaultZoom={13}
-						gestureHandling="greedy"
+						gestureHandling="cooperative"
+						fullscreenControl={false}
 						onClick={handleMapClick}
 					>
 						{selectedPosition && (
@@ -218,8 +219,8 @@ export function RoomDetailsStep({
 					{selectedPosition ? (
 						<p>
 							{t("newRoom.locationSelected", {
-								lat: selectedPosition.lat.toFixed(6),
-								lng: selectedPosition.lng.toFixed(6),
+								latitude: selectedPosition.lat.toFixed(6),
+								longitude: selectedPosition.lng.toFixed(6),
 							})}
 						</p>
 					) : (

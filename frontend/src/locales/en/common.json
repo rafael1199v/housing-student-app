@@ -235,7 +235,7 @@
 		"statusUnavailable": "Not available",
 		"locationSection": "Location",
 		"locationHint": "Click on the map to place a marker at the room's location.",
-		"locationSelected": "Selected location: {{lat}}, {{lng}}",
+		"locationSelected": "Selected location: {{latitude}}, {{longitude}}",
 		"noLocation": "No location selected.",
 		"removeMarker": "Remove marker",
 		"imagesSection": "Images",
