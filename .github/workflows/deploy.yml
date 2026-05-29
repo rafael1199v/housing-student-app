@@ -1,0 +1,163 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy (default: current SHA)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  frontend-tests:
+    uses: ./.github/workflows/_frontend-tests.yml
+
+  backend-build:
+    uses: ./.github/workflows/_build-reusable.yml
+    with:
+      build-target: ./HousingApp.slnx
+
+  backend-unit-tests:
+    needs: backend-build
+    uses: ./.github/workflows/_backend-unit-tests.yml
+
+  backend-integration-tests:
+    needs: backend-build
+    uses: ./.github/workflows/_backend-integration-tests.yml
+
+  build-push-scan:
+    name: Build, push and scan images
+    needs: [frontend-tests, backend-unit-tests, backend-integration-tests]
+    runs-on: ubuntu-24.04
+    environment: itersapiens-prod
+    timeout-minutes: 30
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Compute image tag
+        id: meta
+        run: |
+          if [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v7
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:${{ steps.meta.outputs.tag }}
+            ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:latest
+          build-args: |
+            VITE_API_URL=https://api.itersapiens.rafael-vargas.dev
+            VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+            VITE_GOOGLE_MAPS_ID=${{ secrets.VITE_GOOGLE_MAPS_ID }}
+            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v7
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:${{ steps.meta.outputs.tag }}
+            ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:latest
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+  deploy:
+    name: Deploy to production EC2
+    needs: build-push-scan
+    runs-on: ubuntu-24.04
+    environment: itersapiens-prod
+    timeout-minutes: 10
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_TAG: ${{ needs.build-push-scan.outputs.image-tag }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          envs: IMAGE_TAG
+          script: |
+            set -euo pipefail
+
+            # Crear .env temporal con permisos restringidos
+            umask 077
+            ENV_FILE=$(mktemp /tmp/itersapiens.env.XXXXXX)
+            trap 'shred -u "$ENV_FILE" 2>/dev/null || rm -f "$ENV_FILE"' EXIT
+
+            cat > "$ENV_FILE" << 'EOF'
+            ASPNETCORE_ENVIRONMENT=Production
+            ASPNETCORE_URLS=http://+:8080
+            Frontend__Origin=https://itersapiens.rafael-vargas.dev
+            Jwt__SecretKey=${{ secrets.JWT_SECRET_KEY }}
+            Jwt__Issuer=https://api.itersapiens.rafael-vargas.dev
+            Jwt__Audience=https://itersapiens.rafael-vargas.dev
+            Jwt__ExpirationInMinutes=${{ secrets.JWT_EXPIRATION_MINUTES }}
+            AWS__AccessKey=${{ secrets.AWS_ACCESS_KEY }}
+            AWS__SecretKey=${{ secrets.AWS_SECRET_KEY }}
+            AWS__Region=${{ vars.AWS_REGION }}
+            Storage__BucketName=${{ vars.STORAGE_BUCKET_NAME }}
+            Google__ClientId=${{ secrets.GOOGLE_CLIENT_ID }}
+            Resend__ApiKey=${{ secrets.RESEND_API_KEY }}
+            Resend__FromEmail=${{ vars.RESEND_FROM_EMAIL }}
+            ConnectionStrings__DefaultConnection=${{ secrets.CONNECTION_STRING_DEFAULT_CONNECTION }}
+            EOF
+
+            # Pull de la versión específica (SHA), no de :latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:$IMAGE_TAG
+            docker pull ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:$IMAGE_TAG
+
+            # Reemplazar containers
+            docker stop itersapiens-frontend itersapiens-backend 2>/dev/null || true
+            docker rm   itersapiens-frontend itersapiens-backend 2>/dev/null || true
+
+            docker run -d \
+              --name itersapiens-backend \
+              --restart unless-stopped \
+              --env-file "$ENV_FILE" \
+              -p ${{ vars.BACKEND_PORT }}:8080 \
+              ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:$IMAGE_TAG
+
+            docker run -d \
+              --name itersapiens-frontend \
+              --restart unless-stopped \
+              -p ${{ vars.FRONTEND_PORT }}:8080 \
+              ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:$IMAGE_TAG
+
+            # Health check básico
+            sleep 5
+            docker ps --filter "name=itersapiens-" --format "table {{.Names}}\t{{.Status}}"
+
+            # Limpiar imágenes viejas para no llenar disco
+            docker image prune -af --filter "until=168h"
