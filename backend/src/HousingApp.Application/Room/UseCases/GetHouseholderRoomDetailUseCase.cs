@@ -18,6 +18,9 @@ public class GetHouseholderRoomDetailUseCase(IRoomRepository roomRepository, ISt
             return Result<RoomHouseholderDetailDto>.Failure(RoomError.RoomNotFound);
         }
 
+        List<RoomImageDto> images =
+            [.. roomDetail.Images.Select(image => new RoomImageDto(image.Id, storageService.GeneratePresignedDownloadUrl(image.Key)))];
+
         RoomHouseholderDetailDto roomHouseholderDetail = new(
             roomDetail.Id,
             roomDetail.Name,
@@ -26,7 +29,8 @@ public class GetHouseholderRoomDetailUseCase(IRoomRepository roomRepository, ISt
             roomDetail.Description,
             (decimal)roomDetail.Price,
             roomDetail.Status.ToString(),
-            [.. roomDetail.ImageRoomUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))],
+            [.. images.Select(image => image.Url)],
+            images,
             [.. roomDetail.ServiceCodes],
             [.. roomDetail.Policies.Select(policy => new RoomPolicyDto(policy.Code, policy.Description))],
             [

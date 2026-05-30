@@ -203,7 +203,8 @@
 		"approveSuccess": "Reserva aprovada com sucesso.",
 		"approveError": "Erro ao aprovar a reserva. {{message}}",
 		"rejectSuccess": "Reserva rejeitada com sucesso.",
-		"rejectError": "Erro ao rejeitar a reserva. {{message}}"
+		"rejectError": "Erro ao rejeitar a reserva. {{message}}",
+		"editAriaLabel": "Editar quarto"
 	},
 	"bookingDialog": {
 		"titleApprove": "Confirmar aprovação da reserva",
@@ -340,7 +341,14 @@
 		"submitPending": "Criando...",
 		"submitButton": "Criar quarto",
 		"successToast": "Quarto criado com sucesso!",
-		"errorToast": "Erro ao criar o quarto. {{message}}"
+		"errorToast": "Erro ao criar o quarto. {{message}}",
+		"editTitle": "Editar quarto",
+		"editSubtitle": "Atualize os detalhes do seu quarto.",
+		"saveChangesButton": "Salvar alterações",
+		"editSubmitPending": "Salvando...",
+		"editSuccessToast": "Quarto atualizado com sucesso!",
+		"editErrorToast": "Erro ao atualizar o quarto. {{message}}",
+		"removeExistingImageAriaLabel": "Remover imagem atual {{n}}"
 	},
 	"notFound": {
 		"title": "Página não encontrada (404)",

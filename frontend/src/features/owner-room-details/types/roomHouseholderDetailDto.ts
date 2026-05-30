@@ -8,6 +8,11 @@ export interface BookingDto {
 	roomId: number;
 }
 
+export interface RoomImageInfo {
+	id: number;
+	url: string;
+}
+
 export interface RoomHouseholderDetailDto {
 	id: number;
 	name: string;
@@ -17,6 +22,7 @@ export interface RoomHouseholderDetailDto {
 	price: number;
 	roomStatus: string;
 	imageRoomUrls: string[];
+	images: RoomImageInfo[];
 	services: string[];
 	policies: RoomPolicyDto[];
 	bookings: BookingDto[];

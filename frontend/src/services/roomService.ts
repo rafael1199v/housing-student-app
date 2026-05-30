@@ -1,3 +1,4 @@
+import type { UpdateRoomDto } from "../features/edit-room/types/updateRoomDto";
 import type { RoomData } from "../features/home/types/roomDataDto";
 import type { CreateRoomDto } from "../features/new-room/types/createRoomDto";
 import type { RoomHouseholderDto } from "../features/owner-home/types/roomHouseholderDto";
@@ -15,7 +16,19 @@ export interface RoomSearchParams {
 	services?: number[];
 }
 
-function buildRoomFormData(dto: CreateRoomDto): FormData {
+type RoomFormFields = Pick<
+	CreateRoomDto,
+	| "name"
+	| "latitude"
+	| "longitude"
+	| "description"
+	| "price"
+	| "roomStatus"
+	| "services"
+	| "policies"
+>;
+
+function buildRoomFormData(dto: RoomFormFields): FormData {
 	const formData = new FormData();
 	formData.append("name", dto.name);
 	formData.append("latitude", String(dto.latitude));
@@ -63,6 +76,17 @@ const roomService = {
 			formData.append("Images", imageFile);
 		}
 		return api.post<void>("/api/rooms", formData);
+	},
+	updateRoom: async (dto: UpdateRoomDto) => {
+		const formData = buildRoomFormData(dto);
+		dto.keptImageIds.forEach((imageId, index) => {
+			formData.append(`KeptImageIds[${index}]`, String(imageId));
+		});
+		const compressedImages = await compressImages(dto.imageRoomFiles);
+		for (const imageFile of compressedImages) {
+			formData.append("Images", imageFile);
+		}
+		return api.put<void>(`/api/rooms/${dto.roomId}`, formData);
 	},
 	getHouseholderRoomDetail: (id: string) =>
 		api.get<RoomHouseholderDetailDto>(`/api/rooms/householder/${id}`),

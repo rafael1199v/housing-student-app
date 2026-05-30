@@ -203,7 +203,8 @@
 		"approveSuccess": "Booking approved successfully.",
 		"approveError": "Error approving booking. {{message}}",
 		"rejectSuccess": "Booking rejected successfully.",
-		"rejectError": "Error rejecting booking. {{message}}"
+		"rejectError": "Error rejecting booking. {{message}}",
+		"editAriaLabel": "Edit room"
 	},
 	"bookingDialog": {
 		"titleApprove": "Confirm booking approval",
@@ -340,7 +341,14 @@
 		"submitPending": "Creating...",
 		"submitButton": "Create room",
 		"successToast": "Room created successfully!",
-		"errorToast": "Error creating the room. {{message}}"
+		"errorToast": "Error creating the room. {{message}}",
+		"editTitle": "Edit room",
+		"editSubtitle": "Update the details of your room.",
+		"saveChangesButton": "Save changes",
+		"editSubmitPending": "Saving...",
+		"editSuccessToast": "Room updated successfully!",
+		"editErrorToast": "Error updating the room. {{message}}",
+		"removeExistingImageAriaLabel": "Remove current image {{n}}"
 	},
 	"notFound": {
 		"title": "Page not found (404)",
