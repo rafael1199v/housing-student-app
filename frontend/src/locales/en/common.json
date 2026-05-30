@@ -10,7 +10,9 @@
 		"profileSettings": "Profile Settings",
 		"logout": "Log out",
 		"loggedOut": "Logged out",
-		"menu": "Menu"
+		"menu": "Menu",
+		"language": "Language",
+		"close": "Close"
 	},
 	"footer": {
 		"contactInfo": "Contact Information",

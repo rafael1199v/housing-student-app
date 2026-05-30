@@ -10,7 +10,9 @@
 		"profileSettings": "Configuración de perfil",
 		"logout": "Cerrar sesión",
 		"loggedOut": "Sesión cerrada",
-		"menu": "Menú"
+		"menu": "Menú",
+		"language": "Idioma",
+		"close": "Cerrar"
 	},
 	"footer": {
 		"contactInfo": "Información de contacto",
