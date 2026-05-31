@@ -22,8 +22,10 @@ public class RoomController(
     IGetRoomDetailUseCase getRoomDetailUseCase,
     IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase,
     ICreateRoomUseCase createRoomUseCase,
+    IUpdateRoomUseCase updateRoomUseCase,
     IGetHouseholderRoomDetailUseCase getHouseholderRoomDetailUseCase,
-    IValidator<CreateRoomRequest> validator) : ControllerBase
+    IValidator<CreateRoomRequest> validator,
+    IValidator<UpdateRoomRequest> updateValidator) : ControllerBase
 {
     [HttpGet]
     [Authorize(Roles = RolesDescription.Student + "," + RolesDescription.Householder)]
@@ -88,6 +90,37 @@ public class RoomController(
 
         CreateRoomDto createRoomDto = GetCreateRoomDto(request);
         Result<CreatedRoomDto> result = await createRoomUseCase.ExecuteAsync(userId, createRoomDto, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpPut("{roomId:int}")]
+    [Authorize(Roles = RolesDescription.Householder)]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(typeof(CreatedRoomDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdateRoom(int roomId, [FromForm] UpdateRoomRequest request,
+        CancellationToken cancellationToken)
+    {
+        ValidationResult? validationResult = await updateValidator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
+        string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        UpdateRoomDto updateRoomDto = GetUpdateRoomDto(roomId, request);
+        Result<CreatedRoomDto> result = await updateRoomUseCase.ExecuteAsync(userId, updateRoomDto, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -174,6 +207,28 @@ public class RoomController(
         );
 
         return createRoomDto;
+    }
+
+    private static UpdateRoomDto GetUpdateRoomDto(int roomId, UpdateRoomRequest request)
+    {
+        UpdateRoomDto updateRoomDto = new(
+            roomId,
+            request.Name,
+            request.Description,
+            request.Latitude,
+            request.Longitude,
+            request.Price,
+            request.RoomStatusId,
+            [
+                .. request.Images.Select(image =>
+                    new ImageRoomUpload(image.OpenReadStream, image.FileName, image.ContentType))
+            ],
+            KeptImageIds: request.KeptImageIds,
+            Policies: request.Policies,
+            Services: request.Services
+        );
+
+        return updateRoomDto;
     }
 
     private static bool TryParseNullableDouble(string? value, out double? result)

@@ -9,6 +9,7 @@ public record RoomHouseholderDetailDto(
     decimal Price,
     string RoomStatus,
     List<string> ImageRoomUrls,
+    List<RoomImageDto> Images,
     List<string> Services,
     List<RoomPolicyDto> Policies,
     List<BookingDto> Bookings

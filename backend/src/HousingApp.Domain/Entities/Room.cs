@@ -45,4 +45,32 @@ public class Room
             Services = services,
         };
     }
+
+    public static Room Update(
+        int id,
+        string name,
+        double latitude,
+        double longitude,
+        string description,
+        double price,
+        string personId,
+        List<Policy> policies,
+        List<int> services,
+        int roomStatusId
+    )
+    {
+        return new Room
+        {
+            Id = id,
+            Name = name.Trim(),
+            Description = description.Trim(),
+            Latitude = latitude,
+            Longitude = longitude,
+            Price = price,
+            PersonId = personId,
+            RoomStatus = (RoomStatus)roomStatusId,
+            Policies = policies,
+            Services = services,
+        };
+    }
 }

@@ -27,6 +27,16 @@ public class S3StorageService(IAmazonS3 s3Client, IOptions<StorageSettings> sett
         return key;
     }
 
+    public async Task DeleteAsync(string key, CancellationToken cancellationToken)
+    {
+        await s3Client.DeleteObjectAsync(
+            new DeleteObjectRequest
+            {
+                BucketName = settings.Value.BucketName,
+                Key = key
+            }, cancellationToken);
+    }
+
     public string GeneratePresignedDownloadUrl(string key, TimeSpan? expiration = null)
     {
         return s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
