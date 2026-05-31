@@ -9,7 +9,10 @@
 		"createRoom": "Crear habitación",
 		"profileSettings": "Configuración de perfil",
 		"logout": "Cerrar sesión",
-		"loggedOut": "Sesión cerrada"
+		"loggedOut": "Sesión cerrada",
+		"menu": "Menú",
+		"language": "Idioma",
+		"close": "Cerrar"
 	},
 	"footer": {
 		"contactInfo": "Información de contacto",
