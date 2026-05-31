@@ -8,11 +8,11 @@ import type {
 	RoomImageInfo,
 } from "../../owner-room-details/types/roomHouseholderDetailDto";
 
-const SERVICE_ID_BY_CODE = new Map(
+const SERVICE_ID_BY_CODE = new Map<string, number>(
 	ROOM_SERVICE_OPTIONS.map((service) => [service.code, service.id]),
 );
 
-const POLICY_ID_BY_CODE = new Map(
+const POLICY_ID_BY_CODE = new Map<string, number>(
 	ROOM_POLICY_OPTIONS.map((policy) => [policy.code, policy.id]),
 );
 
