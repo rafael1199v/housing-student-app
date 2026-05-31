@@ -222,7 +222,7 @@ export function RoomDetails() {
 							style={{ height: "400px", width: "100%" }}
 							defaultCenter={{ lat: room.latitude, lng: room.longitude }}
 							defaultZoom={15}
-							gestureHandling="greedy"
+							gestureHandling="cooperative"
 						>
 							<AdvancedMarker
 								position={{ lat: room.latitude, lng: room.longitude }}
