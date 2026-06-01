@@ -2,6 +2,7 @@ using FluentAssertions;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Domain.Enums;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace HousingApp.Application.Tests.Booking;
@@ -14,7 +15,7 @@ public class DeleteBookingUseCaseTests
     public DeleteBookingUseCaseTests()
     {
         _bookingRepository = Substitute.For<IBookingRepository>();
-        _deleteBookingUseCase = new DeleteBookingUseCase(_bookingRepository);
+        _deleteBookingUseCase = new DeleteBookingUseCase(_bookingRepository, NullLogger<DeleteBookingUseCase>.Instance);
     }
 
     [Fact]

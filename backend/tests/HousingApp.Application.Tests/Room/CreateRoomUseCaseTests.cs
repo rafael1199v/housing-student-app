@@ -10,6 +10,7 @@ using HousingApp.Application.Storage;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace HousingApp.Application.Tests.Room;
@@ -38,7 +39,7 @@ public class CreateRoomUseCaseTests
         _unitOfWork.RoomRepository.Returns(_roomRepository);
         _unitOfWork.PersonRepository.Returns(_personRepository);
 
-        _createRoomUseCase = new CreateRoomUseCase(_unitOfWork, _storageService, _serviceRepository, _policyRepository);
+        _createRoomUseCase = new CreateRoomUseCase(_unitOfWork, _storageService, _serviceRepository, _policyRepository, NullLogger<CreateRoomUseCase>.Instance);
     }
 
     [Theory]
