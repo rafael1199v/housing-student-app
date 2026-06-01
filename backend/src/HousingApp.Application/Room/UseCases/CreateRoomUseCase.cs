@@ -8,10 +8,11 @@ using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging;
 
 namespace HousingApp.Application.Room.UseCases;
 
-public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService storageService, IServiceRepository serviceRepository, IPolicyRepository policyRepository) : ICreateRoomUseCase
+public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService storageService, IServiceRepository serviceRepository, IPolicyRepository policyRepository, ILogger<CreateRoomUseCase> logger) : ICreateRoomUseCase
 {
     public async Task<Result<CreatedRoomDto>> ExecuteAsync(string userId, CreateRoomDto createRoomDto,
         CancellationToken cancellationToken)
@@ -89,6 +90,11 @@ public class CreateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
 
             await unitOfWork.RoomRepository.AddImagesAsync(roomId, [.. keys]);
             await unitOfWork.CommitTransactionAsync();
+            logger.LogInformation(
+                "Room created RoomId={RoomId} UserId={UserId} ImageCount={ImageCount}",
+                roomId,
+                userId,
+                keys.Length);
 
             CreatedRoomDto response = new(
                 Name: room.Name,

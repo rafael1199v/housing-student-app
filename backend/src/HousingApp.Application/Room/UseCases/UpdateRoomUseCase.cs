@@ -8,10 +8,11 @@ using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging;
 
 namespace HousingApp.Application.Room.UseCases;
 
-public class UpdateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService storageService, IServiceRepository serviceRepository, IPolicyRepository policyRepository) : IUpdateRoomUseCase
+public class UpdateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService storageService, IServiceRepository serviceRepository, IPolicyRepository policyRepository, ILogger<UpdateRoomUseCase> logger) : IUpdateRoomUseCase
 {
     public async Task<Result<CreatedRoomDto>> ExecuteAsync(string userId, UpdateRoomDto updateRoomDto,
         CancellationToken cancellationToken)
@@ -99,6 +100,12 @@ public class UpdateRoomUseCase(IRoomUnitOfWork unitOfWork, IStorageService stora
 
             await unitOfWork.RoomRepository.AddImagesAsync(updateRoomDto.RoomId, [.. newKeys]);
             await unitOfWork.CommitTransactionAsync();
+            logger.LogInformation(
+                "Room updated RoomId={RoomId} UserId={UserId} AddedImages={AddedImages} RemovedImages={RemovedImages}",
+                updateRoomDto.RoomId,
+                userId,
+                newKeys.Length,
+                removedImageKeys.Count);
 
             // S3 is not transactional: only delete removed blobs after the DB commit succeeds.
             if (removedImageKeys.Count > 0)

@@ -55,6 +55,8 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
 
             await unitOfWork.PersonRepository.CreatePerson(person);
             await unitOfWork.CommitTransactionAsync();
+
+            logger.LogInformation("User registered UserId={UserId} Role={Role}", userId, role);
         }
         catch
         {
@@ -74,7 +76,7 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error sending confirmation email {Message}", ex.Message);
+            logger.LogWarning(ex, "Confirmation email could not be sent UserId={UserId}: {Message}", userId, ex.Message);
         }
 
 

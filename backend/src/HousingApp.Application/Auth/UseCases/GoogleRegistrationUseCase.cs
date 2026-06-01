@@ -4,10 +4,11 @@ using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging;
 
 namespace HousingApp.Application.Auth.UseCases;
 
-public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAuthUnitOfWork authUnitOfWork, IGenerateRefreshTokenUseCase generateRefreshTokenUseCase, IAccessTokenService accessTokenService) : IGoogleRegistrationUseCase
+public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAuthUnitOfWork authUnitOfWork, IGenerateRefreshTokenUseCase generateRefreshTokenUseCase, IAccessTokenService accessTokenService, ILogger<GoogleRegistrationUseCase> logger) : IGoogleRegistrationUseCase
 {
     public async Task<Result<CredentialsDto>> ExecuteAsync(GoogleRegisterDto googleRegisterDto)
     {
@@ -50,6 +51,7 @@ public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAu
 
             await authUnitOfWork.PersonRepository.CreatePerson(person);
             await authUnitOfWork.CommitTransactionAsync();
+            logger.LogInformation("Google user registered UserId={UserId} Role={Role}", userId, role);
 
             Domain.Entities.User? userCreated = await authUnitOfWork.UserRepository.GetUserByIdAsync(userId);
 
@@ -73,7 +75,8 @@ public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAu
         catch (Exception ex)
         {
             await authUnitOfWork.RollbackTransactionAsync();
-            throw new Exception(ex.Message);
+            logger.LogError(ex, "Google registration failed during transaction");
+            throw;
         }
     }
 }
