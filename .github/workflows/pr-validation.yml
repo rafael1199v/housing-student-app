@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  checks: write
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
@@ -40,12 +41,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      - name: Prepare scan report directory
+        run: mkdir -p trivy-reports
+
       - name: Validate frontend Dockerfile
         uses: docker/build-push-action@v7
         with:
           context: ./frontend
           push: false
-          load: false
+          load: true
+          tags: itersapiens-frontend:pr-${{ github.run_id }}
           build-args: |
             VITE_API_URL=http://localhost:8080
             VITE_GOOGLE_MAPS_API_KEY=dummy-key-for-pr
@@ -59,6 +64,68 @@ jobs:
         with:
           context: ./backend
           push: false
-          load: false
+          load: true
+          tags: itersapiens-backend:pr-${{ github.run_id }}
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
+
+      - name: Generate frontend SARIF
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: itersapiens-frontend:pr-${{ github.run_id }}
+          format: sarif
+          output: trivy-reports/frontend-pr.sarif
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+          limit-severities-for-sarif: true
+
+      - name: Generate backend SARIF
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: itersapiens-backend:pr-${{ github.run_id }}
+          format: sarif
+          output: trivy-reports/backend-pr.sarif
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+          limit-severities-for-sarif: true
+
+      - name: Upload PR SARIF reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-trivy-sarif-reports
+          path: trivy-reports/*.sarif
+          retention-days: 14
+
+      - name: Write PR security scan summary
+        run: |
+          {
+            echo "## PR Docker Security Scan"
+            echo ""
+            echo "| Image | Tag | SARIF report | Blocking severity |"
+            echo "| --- | --- | --- | --- |"
+            echo "| Frontend | \`itersapiens-frontend:pr-${{ github.run_id }}\` | \`frontend-pr.sarif\` | CRITICAL |"
+            echo "| Backend | \`itersapiens-backend:pr-${{ github.run_id }}\` | \`backend-pr.sarif\` | CRITICAL |"
+            echo ""
+            echo "PR validation generates SARIF artifacts and enforces the blocking policy separately. SARIF is not uploaded to Code Scanning from PR validation to avoid permission issues."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce frontend critical vulnerability policy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: itersapiens-frontend:pr-${{ github.run_id }}
+          format: table
+          severity: CRITICAL
+          vuln-type: os,library
+          exit-code: '1'
+
+      - name: Enforce backend critical vulnerability policy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: itersapiens-backend:pr-${{ github.run_id }}
+          format: table
+          severity: CRITICAL
+          vuln-type: os,library
+          exit-code: '1'
