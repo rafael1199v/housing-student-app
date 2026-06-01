@@ -12,6 +12,8 @@ on:
 
 permissions:
   contents: read
+  checks: write
+  security-events: write
 
 concurrency:
   group: deploy-prod
@@ -58,6 +60,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      - name: Prepare scan report directory
+        run: mkdir -p trivy-reports
+
       - name: Login to Docker Hub
         uses: docker/login-action@v4
         with:
@@ -91,6 +96,81 @@ jobs:
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
 
+      - name: Generate frontend SARIF
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:${{ steps.meta.outputs.tag }}
+          format: sarif
+          output: trivy-reports/frontend.sarif
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+          limit-severities-for-sarif: true
+
+      - name: Generate backend SARIF
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:${{ steps.meta.outputs.tag }}
+          format: sarif
+          output: trivy-reports/backend.sarif
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+          limit-severities-for-sarif: true
+
+      - name: Upload frontend SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true
+        with:
+          sarif_file: trivy-reports/frontend.sarif
+          category: trivy-frontend-image
+
+      - name: Upload backend SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true
+        with:
+          sarif_file: trivy-reports/backend.sarif
+          category: trivy-backend-image
+
+      - name: Upload Trivy reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: trivy-image-sarif-reports
+          path: trivy-reports/*.sarif
+          retention-days: 14
+
+      - name: Write image security scan summary
+        run: |
+          {
+            echo "## Docker Image Security Scan"
+            echo ""
+            echo "| Image | Tag | SARIF category | Reported severities | Blocking severity |"
+            echo "| --- | --- | --- | --- | --- |"
+            echo "| Frontend | \`${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:${{ steps.meta.outputs.tag }}\` | trivy-frontend-image | HIGH, CRITICAL | CRITICAL |"
+            echo "| Backend | \`${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:${{ steps.meta.outputs.tag }}\` | trivy-backend-image | HIGH, CRITICAL | CRITICAL |"
+            echo ""
+            echo "SARIF upload is configured as the primary security report path for Code Scanning. If repository permissions or Code Security settings block SARIF, the generated SARIF files are still uploaded as workflow artifacts."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce frontend critical vulnerability policy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/itersapiens-frontend:${{ steps.meta.outputs.tag }}
+          format: table
+          severity: CRITICAL
+          vuln-type: os,library
+          exit-code: '1'
+
+      - name: Enforce backend critical vulnerability policy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/itersapiens-backend:${{ steps.meta.outputs.tag }}
+          format: table
+          severity: CRITICAL
+          vuln-type: os,library
+          exit-code: '1'
+
   deploy:
     name: Deploy to production EC2
     needs: build-push-scan
@@ -99,6 +179,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Deploy via SSH
+        id: deploy-ssh
         uses: appleboy/ssh-action@v1
         env:
           IMAGE_TAG: ${{ needs.build-push-scan.outputs.image-tag }}
@@ -161,3 +242,35 @@ jobs:
 
             # Limpiar imágenes viejas para no llenar disco
             docker image prune -af --filter "until=168h"
+
+      - name: Smoke test API
+        id: smoke-test
+        run: |
+          for attempt in {1..12}; do
+            response="$(curl -fsS --max-time 5 https://api.itersapiens.rafael-vargas.dev/api/ping || true)"
+
+            if [ "$response" = "Pong" ]; then
+              echo "API smoke test passed on attempt $attempt."
+              exit 0
+            fi
+
+            echo "Waiting for API readiness. Attempt $attempt/12 returned: ${response:-no response}"
+            sleep 5
+          done
+
+          echo "API smoke test failed: /api/ping did not return Pong."
+          exit 1
+
+      - name: Write deployment summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "## Production Deployment"
+            echo ""
+            echo "| Stage | Result |"
+            echo "| --- | --- |"
+            echo "| Image tag | \`${{ needs.build-push-scan.outputs.image-tag }}\` |"
+            echo "| SSH deploy | ${{ steps.deploy-ssh.outcome }} |"
+            echo "| Smoke test | ${{ steps.smoke-test.outcome }} |"
+            echo "| API health endpoint | \`https://api.itersapiens.rafael-vargas.dev/api/ping\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
