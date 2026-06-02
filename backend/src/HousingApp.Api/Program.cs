@@ -1,8 +1,8 @@
 using HousingApp.Api.Exception;
 using HousingApp.Api.Extensions;
+using Prometheus;
 using Scalar.AspNetCore;
 using Serilog;
-using Serilog.Events;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -67,19 +67,12 @@ app.UseSerilogRequestLogging(options =>
 });
 app.UseCors(myAllowSpecificOrigins);
 
+app.UseHttpsRedirection(); 
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapMetrics();
 
 app.Run();
-
-static LogEventLevel GetLogLevel(IConfiguration configuration, string key, LogEventLevel fallback)
-{
-    string? configuredValue = configuration[key];
-
-    return Enum.TryParse(configuredValue, ignoreCase: true, out LogEventLevel level)
-        ? level
-        : fallback;
-}
