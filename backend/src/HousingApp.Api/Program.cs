@@ -1,6 +1,5 @@
 using HousingApp.Api.Exception;
 using HousingApp.Api.Extensions;
-using Prometheus;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Globalization;
@@ -15,8 +14,7 @@ const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, configuration) =>
-    configuration.ReadFrom.Configuration(context.Configuration));
+builder.Host.AddSerilogConfiguration(builder.Configuration, builder.Environment);
 
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentityConfiguration();
@@ -34,6 +32,7 @@ builder.Services.AddFluentValidation();
 builder.Services.AddEmailConfiguration(builder.Configuration);
 
 builder.Services.AddAuthorization();
+builder.Services.AddOpenTelemetryMonitoringTools(builder.Configuration, builder.Environment);
 
 WebApplication app = builder.Build();
 
@@ -48,23 +47,10 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
 app.UseExceptionHandler(_ => { });
 
-app.UseSerilogRequestLogging(options =>
-{
-    options.MessageTemplate =
-        "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms TraceId={TraceId} UserId={UserId}";
-
-    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
-    {
-        string? userId =
-            httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Sub)
-            ?? httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        diagnosticContext.Set("TraceId", httpContext.TraceIdentifier);
-        diagnosticContext.Set("UserId", userId ?? "anonymous");
-    };
-});
+app.UseSerilogRequestLoggingSetup();
 app.UseCors(myAllowSpecificOrigins);
 
 app.UseHttpsRedirection(); 
@@ -73,6 +59,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapMetrics();
 
 app.Run();
