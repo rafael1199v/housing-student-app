@@ -5,6 +5,8 @@ namespace HousingApp.Application.Repositories;
 public interface IRoomRepository
 {
     Task<int> CreateRoomAsync(Domain.Entities.Room room);
+    Task UpdateRoomAsync(Domain.Entities.Room room);
+    Task RemoveImagesAsync(IEnumerable<int> imageIds);
     Task<List<Domain.Entities.Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20);
     Task<Domain.Entities.Room?> GetRoomByIdAsync(int roomId);
     Task<bool> TryMarkAsBookedAsync(int roomId);

@@ -7,6 +7,7 @@ import Register from "../features/auth/pages/register";
 import { useAccessToken } from "../features/auth/store/authStore";
 import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { BookingsPage } from "../features/bookings/pages";
+import { EditRoomPage } from "../features/edit-room/pages";
 import { ForbiddenPage } from "../features/forbidden/pages";
 import { HomePage } from "../features/home/pages";
 import { NewRoomPage } from "../features/new-room/pages";
@@ -95,6 +96,10 @@ export const router = createBrowserRouter([
 									{
 										path: "owner/rooms/new",
 										Component: NewRoomPage,
+									},
+									{
+										path: "owner/rooms/:id/edit",
+										Component: EditRoomPage,
 									},
 									{
 										path: "owner/rooms/:id",

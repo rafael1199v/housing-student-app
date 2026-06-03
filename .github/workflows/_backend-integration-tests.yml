@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
   integration-tests:
@@ -56,6 +57,35 @@ jobs:
             --verbosity normal \
             --logger "trx;LogFileName=integration-tests.trx" \
             --results-directory ./TestResults
+
+      - name: Publish integration test report
+        id: integration-test-report
+        uses: dorny/test-reporter@v3
+        if: ${{ !cancelled() }}
+        with:
+          name: Backend Integration Tests
+          path: backend/TestResults/integration-tests.trx
+          reporter: dotnet-trx
+          use-actions-summary: true
+          report-title: Backend Integration Tests
+          badge-title: integration tests
+          fail-on-error: true
+          fail-on-empty: true
+
+      - name: Write integration test summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "## Backend Integration Tests"
+            echo ""
+            echo "| Metric | Value |"
+            echo "| --- | --- |"
+            echo "| Conclusion | ${{ steps.integration-test-report.outputs.conclusion }} |"
+            echo "| Passed | ${{ steps.integration-test-report.outputs.passed }} |"
+            echo "| Failed | ${{ steps.integration-test-report.outputs.failed }} |"
+            echo "| Skipped | ${{ steps.integration-test-report.outputs.skipped }} |"
+            echo "| Report | ${{ steps.integration-test-report.outputs.url_html }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload test results
         if: always()

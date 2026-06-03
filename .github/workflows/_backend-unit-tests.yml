@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
   unit-tests:
@@ -56,6 +57,35 @@ jobs:
             --verbosity normal \
             --logger "trx;LogFileName=unit-tests.trx" \
             --results-directory ./TestResults
+
+      - name: Publish unit test report
+        id: unit-test-report
+        uses: dorny/test-reporter@v3
+        if: ${{ !cancelled() }}
+        with:
+          name: Backend Unit Tests
+          path: backend/TestResults/unit-tests.trx
+          reporter: dotnet-trx
+          use-actions-summary: true
+          report-title: Backend Unit Tests
+          badge-title: unit tests
+          fail-on-error: true
+          fail-on-empty: true
+
+      - name: Write unit test summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "## Backend Unit Tests"
+            echo ""
+            echo "| Metric | Value |"
+            echo "| --- | --- |"
+            echo "| Conclusion | ${{ steps.unit-test-report.outputs.conclusion }} |"
+            echo "| Passed | ${{ steps.unit-test-report.outputs.passed }} |"
+            echo "| Failed | ${{ steps.unit-test-report.outputs.failed }} |"
+            echo "| Skipped | ${{ steps.unit-test-report.outputs.skipped }} |"
+            echo "| Report | ${{ steps.unit-test-report.outputs.url_html }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload test results
         if: always()

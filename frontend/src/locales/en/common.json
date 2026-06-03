@@ -9,7 +9,10 @@
 		"createRoom": "Create Room",
 		"profileSettings": "Profile Settings",
 		"logout": "Log out",
-		"loggedOut": "Logged out"
+		"loggedOut": "Logged out",
+		"menu": "Menu",
+		"language": "Language",
+		"close": "Close"
 	},
 	"footer": {
 		"contactInfo": "Contact Information",
@@ -107,7 +110,7 @@
 		"searchPlaceholder": "Search room by name",
 		"searchAriaLabel": "Search rooms",
 		"locationLabel": "Location",
-		"locationSelected": "Selected location: {{lat}}, {{lng}}",
+		"locationSelected": "Selected location: {{latitude}}, {{longitude}}",
 		"noLocation": "No location selected.",
 		"removeMarker": "Remove marker",
 		"priceRange": "Price range",
@@ -204,7 +207,8 @@
 		"approveSuccess": "Booking approved successfully.",
 		"approveError": "Error approving booking. {{message}}",
 		"rejectSuccess": "Booking rejected successfully.",
-		"rejectError": "Error rejecting booking. {{message}}"
+		"rejectError": "Error rejecting booking. {{message}}",
+		"editAriaLabel": "Edit room"
 	},
 	"bookingDialog": {
 		"titleApprove": "Confirm booking approval",
@@ -236,7 +240,7 @@
 		"statusUnavailable": "Not available",
 		"locationSection": "Location",
 		"locationHint": "Click on the map to place a marker at the room's location.",
-		"locationSelected": "Selected location: {{lat}}, {{lng}}",
+		"locationSelected": "Selected location: {{latitude}}, {{longitude}}",
 		"noLocation": "No location selected.",
 		"removeMarker": "Remove marker",
 		"imagesSection": "Images",
@@ -341,7 +345,14 @@
 		"submitPending": "Creating...",
 		"submitButton": "Create room",
 		"successToast": "Room created successfully!",
-		"errorToast": "Error creating the room. {{message}}"
+		"errorToast": "Error creating the room. {{message}}",
+		"editTitle": "Edit room",
+		"editSubtitle": "Update the details of your room.",
+		"saveChangesButton": "Save changes",
+		"editSubmitPending": "Saving...",
+		"editSuccessToast": "Room updated successfully!",
+		"editErrorToast": "Error updating the room. {{message}}",
+		"removeExistingImageAriaLabel": "Remove current image {{n}}"
 	},
 	"notFound": {
 		"title": "Page not found (404)",

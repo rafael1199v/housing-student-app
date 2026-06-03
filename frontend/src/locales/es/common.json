@@ -9,7 +9,10 @@
 		"createRoom": "Crear habitación",
 		"profileSettings": "Configuración de perfil",
 		"logout": "Cerrar sesión",
-		"loggedOut": "Sesión cerrada"
+		"loggedOut": "Sesión cerrada",
+		"menu": "Menú",
+		"language": "Idioma",
+		"close": "Cerrar"
 	},
 	"footer": {
 		"contactInfo": "Información de contacto",
@@ -107,7 +110,7 @@
 		"searchPlaceholder": "Buscar habitación por nombre",
 		"searchAriaLabel": "Buscar habitaciones",
 		"locationLabel": "Ubicación",
-		"locationSelected": "Ubicación seleccionada: {{lat}}, {{lng}}",
+		"locationSelected": "Ubicación seleccionada: {{latitude}}, {{longitude}}",
 		"noLocation": "No se ha seleccionado ubicación.",
 		"removeMarker": "Quitar marcador",
 		"priceRange": "Rango de precio",
@@ -204,7 +207,8 @@
 		"approveSuccess": "Reserva aprobada exitosamente.",
 		"approveError": "Error al aprobar la reserva. {{message}}",
 		"rejectSuccess": "Reserva rechazada exitosamente.",
-		"rejectError": "Error al rechazar la reserva. {{message}}"
+		"rejectError": "Error al rechazar la reserva. {{message}}",
+		"editAriaLabel": "Editar habitación"
 	},
 	"bookingDialog": {
 		"titleApprove": "Confirmar aprobación de reserva",
@@ -236,7 +240,7 @@
 		"statusUnavailable": "No disponible",
 		"locationSection": "Ubicación",
 		"locationHint": "Haz clic en el mapa para colocar un marcador en la ubicación de la habitación.",
-		"locationSelected": "Ubicación seleccionada: {{lat}}, {{lng}}",
+		"locationSelected": "Ubicación seleccionada: {{latitude}}, {{longitude}}",
 		"noLocation": "No se ha seleccionado ubicación.",
 		"removeMarker": "Quitar marcador",
 		"imagesSection": "Imágenes",
@@ -341,7 +345,14 @@
 		"submitPending": "Creando…",
 		"submitButton": "Crear habitación",
 		"successToast": "¡Habitación creada exitosamente!",
-		"errorToast": "Error al crear la habitación. {{message}}"
+		"errorToast": "Error al crear la habitación. {{message}}",
+		"editTitle": "Editar habitación",
+		"editSubtitle": "Actualiza los detalles de tu habitación.",
+		"saveChangesButton": "Guardar cambios",
+		"editSubmitPending": "Guardando…",
+		"editSuccessToast": "¡Habitación actualizada exitosamente!",
+		"editErrorToast": "Error al actualizar la habitación. {{message}}",
+		"removeExistingImageAriaLabel": "Eliminar imagen actual {{n}}"
 	},
 	"notFound": {
 		"title": "Página no encontrada (404)",

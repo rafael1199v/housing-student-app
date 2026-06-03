@@ -13,6 +13,7 @@ type RoomPreviewStepProps = {
 	policies: RoomDraftPolicy[];
 	previews: string[];
 	persistedImageNames: string[];
+	existingImageUrls?: string[];
 };
 
 function PreviewField({ label, value }: { label: string; value?: string }) {
@@ -30,8 +31,10 @@ export function RoomPreviewStep({
 	policies,
 	previews,
 	persistedImageNames,
+	existingImageUrls = [],
 }: RoomPreviewStepProps) {
 	const { t } = useTranslation();
+	const allImagePreviews = [...existingImageUrls, ...previews];
 
 	const selectedServiceOptions = ROOM_SERVICE_OPTIONS.filter((option) =>
 		selectedServices.includes(option.id),
@@ -170,9 +173,9 @@ export function RoomPreviewStep({
 				<h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
 					{t("newRoom.previewImagesTitle")}
 				</h3>
-				{previews.length > 0 ? (
+				{allImagePreviews.length > 0 ? (
 					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-						{previews.map((src, index) => (
+						{allImagePreviews.map((src, index) => (
 							<img
 								key={src}
 								src={src}

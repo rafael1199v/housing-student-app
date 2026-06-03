@@ -18,6 +18,55 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         return roomModel.Id;
     }
 
+    public async Task UpdateRoomAsync(Room room)
+    {
+        RoomModel? model = await context.Rooms
+            .Include(r => r.Services)
+            .Include(r => r.RoomPolicies)
+            .FirstOrDefaultAsync(r => r.Id == room.Id && !r.IsDeleted);
+
+        if (model is null)
+        {
+            return;
+        }
+
+        DateTime now = DateTime.UtcNow;
+
+        model.Name = room.Name;
+        model.Description = room.Description;
+        model.Latitude = room.Latitude;
+        model.Longitude = room.Longitude;
+        model.Price = (decimal)room.Price;
+        model.RoomStatusId = (int)room.RoomStatus;
+        model.UpdatedAt = now;
+
+        ReconcileServices(model, room.Services, now);
+        ReconcilePolicies(model, room.Policies, now);
+    }
+
+    public async Task RemoveImagesAsync(IEnumerable<int> imageIds)
+    {
+        List<int> ids = [.. imageIds];
+
+        if (ids.Count == 0)
+        {
+            return;
+        }
+
+        List<RoomImagesModel> images = await context.RoomImages
+            .Where(ri => ids.Contains(ri.Id) && !ri.IsDeleted)
+            .ToListAsync();
+
+        DateTime now = DateTime.UtcNow;
+
+        foreach (RoomImagesModel image in images)
+        {
+            image.IsDeleted = true;
+            image.DeletedAt = now;
+            image.UpdatedAt = now;
+        }
+    }
+
     public async Task<List<Room>> GetRoomsAsync(RoomSearchFilters filters, int quantity = 20)
     {
         IQueryable<RoomModel> query = context.Rooms
@@ -72,7 +121,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                     ImageUrl = model.Person.ImageUrl,
                     BirthDate = model.Person.BirthDate
                 },
-                ImageUrls = model.RoomImages.Select(ri => ri.ImageUrl).ToList()
+                ImageUrls = model.RoomImages.Where(ri => !ri.IsDeleted).Select(ri => ri.ImageUrl).ToList()
             })
             .ToListAsync();
 
@@ -106,7 +155,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                     ImageUrl = model.Person.ImageUrl,
                     BirthDate = model.Person.BirthDate
                 },
-                ImageUrls = model.RoomImages.Select(ri => ri.ImageUrl).ToList(),
+                ImageUrls = model.RoomImages.Where(ri => !ri.IsDeleted).Select(ri => ri.ImageUrl).ToList(),
                 ServiceCodes = context.RoomServices
                     .Where(roomService => roomService.RoomId == model.Id && !roomService.IsDeleted)
                     .Where(roomService => !roomService.Service.IsDeleted)
@@ -175,7 +224,7 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                 Price = (double)model.Price,
                 Status = (RoomStatus)model.RoomStatusId,
                 BookingRequests = model.Bookings.Count(b => !b.IsDeleted),
-                ImageRoomUrls = model.RoomImages.Select(ri => ri.ImageUrl).ToList()
+                ImageRoomUrls = model.RoomImages.Where(ri => !ri.IsDeleted).Select(ri => ri.ImageUrl).ToList()
             })
             .ToListAsync();
 
@@ -195,7 +244,10 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
                 Description = model.Description,
                 Price = (double)model.Price,
                 Status = (RoomStatus)model.RoomStatusId,
-                ImageRoomUrls = model.RoomImages.Select(ri => ri.ImageUrl).ToList(),
+                Images = model.RoomImages
+                    .Where(ri => !ri.IsDeleted)
+                    .Select(ri => new RoomImageData(ri.Id, ri.ImageUrl))
+                    .ToList(),
                 ServiceCodes = context.RoomServices
                     .Where(roomService => roomService.RoomId == model.Id && !roomService.IsDeleted)
                     .Where(roomService => !roomService.Service.IsDeleted)
@@ -234,6 +286,75 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
             .FirstOrDefaultAsync();
 
         return room;
+    }
+
+    private static void ReconcileServices(RoomModel model, List<int> desiredServiceIds, DateTime now)
+    {
+        HashSet<int> desired = [.. desiredServiceIds];
+
+        foreach (RoomServiceModel existing in model.Services)
+        {
+            bool wanted = desired.Contains(existing.ServiceId);
+
+            if (wanted && existing.IsDeleted)
+            {
+                existing.IsDeleted = false;
+                existing.DeletedAt = null;
+                existing.UpdatedAt = now;
+            }
+            else if (!wanted && !existing.IsDeleted)
+            {
+                existing.IsDeleted = true;
+                existing.DeletedAt = now;
+                existing.UpdatedAt = now;
+            }
+        }
+
+        HashSet<int> existingIds = [.. model.Services.Select(service => service.ServiceId)];
+
+        foreach (int serviceId in desired)
+        {
+            if (!existingIds.Contains(serviceId))
+            {
+                model.Services.Add(new RoomServiceModel { RoomId = model.Id, ServiceId = serviceId });
+            }
+        }
+    }
+
+    private static void ReconcilePolicies(RoomModel model, List<Policy> desiredPolicies, DateTime now)
+    {
+        Dictionary<int, string> desired = desiredPolicies.ToDictionary(policy => policy.Id, policy => policy.Description);
+
+        foreach (RoomPolicyModel existing in model.RoomPolicies)
+        {
+            if (desired.TryGetValue(existing.PolicyId, out string? description))
+            {
+                existing.Description = description;
+                existing.UpdatedAt = now;
+
+                if (existing.IsDeleted)
+                {
+                    existing.IsDeleted = false;
+                    existing.DeletedAt = null;
+                }
+            }
+            else if (!existing.IsDeleted)
+            {
+                existing.IsDeleted = true;
+                existing.DeletedAt = now;
+                existing.UpdatedAt = now;
+            }
+        }
+
+        HashSet<int> existingIds = [.. model.RoomPolicies.Select(policy => policy.PolicyId)];
+
+        foreach (Policy policy in desiredPolicies)
+        {
+            if (!existingIds.Contains(policy.Id))
+            {
+                model.RoomPolicies.Add(new RoomPolicyModel { RoomId = model.Id, PolicyId = policy.Id, Description = policy.Description });
+            }
+        }
     }
 
     private static RoomModel ToModel(Room room)

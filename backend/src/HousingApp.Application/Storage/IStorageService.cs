@@ -15,4 +15,9 @@ public interface IStorageService
         string key,
         TimeSpan? expiration = null
     );
+
+    Task DeleteAsync(
+        string key,
+        CancellationToken cancellationToken
+    );
 }

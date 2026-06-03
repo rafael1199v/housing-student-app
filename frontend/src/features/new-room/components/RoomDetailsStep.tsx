@@ -30,6 +30,8 @@ type RoomDetailsStepProps = {
 	imageFiles: File[];
 	previews: string[];
 	persistedImageNames: string[];
+	existingImages?: { id: number; url: string }[];
+	onRemoveExistingImage?: (id: number) => void;
 	fileInputRef: RefObject<HTMLInputElement | null>;
 	isDragging: boolean;
 	onDragOver: (e: DragEvent) => void;
@@ -49,6 +51,8 @@ export function RoomDetailsStep({
 	imageFiles,
 	previews,
 	persistedImageNames,
+	existingImages = [],
+	onRemoveExistingImage,
 	fileInputRef,
 	isDragging,
 	onDragOver,
@@ -59,6 +63,7 @@ export function RoomDetailsStep({
 }: RoomDetailsStepProps) {
 	const { t } = useTranslation();
 	const locationError = errors.latitude?.message ?? errors.longitude?.message;
+	const totalImageCount = existingImages.length + imageFiles.length;
 
 	const handleMapClick = (event: MapMouseEvent) => {
 		if (!event.detail.latLng) return;
@@ -199,7 +204,8 @@ export function RoomDetailsStep({
 						style={{ height: "360px", width: "100%" }}
 						defaultCenter={DEFAULT_MAP_CENTER}
 						defaultZoom={13}
-						gestureHandling="greedy"
+						gestureHandling="cooperative"
+						fullscreenControl={false}
 						onClick={handleMapClick}
 					>
 						{selectedPosition && (
@@ -218,8 +224,8 @@ export function RoomDetailsStep({
 					{selectedPosition ? (
 						<p>
 							{t("newRoom.locationSelected", {
-								lat: selectedPosition.lat.toFixed(6),
-								lng: selectedPosition.lng.toFixed(6),
+								latitude: selectedPosition.lat.toFixed(6),
+								longitude: selectedPosition.lng.toFixed(6),
 							})}
 						</p>
 					) : (
@@ -255,7 +261,7 @@ export function RoomDetailsStep({
 					</p>
 				</div>
 
-				{imageFiles.length < MAX_IMAGES && (
+				{totalImageCount < MAX_IMAGES && (
 					<button
 						type="button"
 						onClick={() => fileInputRef.current?.click()}
@@ -296,7 +302,7 @@ export function RoomDetailsStep({
 						</p>
 						<p className="mt-2 text-xs text-slate-400">
 							{t("newRoom.dropFormats", {
-								count: imageFiles.length,
+								count: totalImageCount,
 								max: MAX_IMAGES,
 							})}
 						</p>
@@ -314,6 +320,47 @@ export function RoomDetailsStep({
 						e.target.value = "";
 					}}
 				/>
+
+				{existingImages.length > 0 && (
+					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+						{existingImages.map((image, index) => (
+							<div
+								key={image.id}
+								className="group relative aspect-video overflow-hidden rounded-xl bg-surface-container-low"
+							>
+								<img
+									src={image.url}
+									alt={t("newRoom.imagePreviewAlt", { n: index + 1 })}
+									className="h-full w-full object-cover"
+								/>
+								<button
+									type="button"
+									onClick={() => onRemoveExistingImage?.(image.id)}
+									aria-label={t("newRoom.removeExistingImageAriaLabel", {
+										n: index + 1,
+									})}
+									className="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1 text-white opacity-0 transition group-hover:opacity-100 hover:bg-black/80 focus:opacity-100 focus:outline-none"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth="2.5"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										aria-hidden="true"
+									>
+										<path d="M18 6 6 18" />
+										<path d="m6 6 12 12" />
+									</svg>
+								</button>
+							</div>
+						))}
+					</div>
+				)}
 
 				{previews.length > 0 && (
 					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">

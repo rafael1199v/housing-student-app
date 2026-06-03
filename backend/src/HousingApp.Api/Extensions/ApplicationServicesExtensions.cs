@@ -40,6 +40,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();
         services.AddScoped<IGetHouseholderRoomsUseCase, GetHouseholderRoomsUseCase>();
         services.AddScoped<ICreateRoomUseCase, CreateRoomUseCase>();
+        services.AddScoped<IUpdateRoomUseCase, UpdateRoomUseCase>();
         services.AddScoped<IGetHouseholderRoomDetailUseCase, GetHouseholderRoomDetailUseCase>();
         services.AddScoped<IApproveBookingUseCase, ApproveBookingUseCase>();
         services.AddScoped<IRejectBookingUseCase, RejectBookingUseCase>();

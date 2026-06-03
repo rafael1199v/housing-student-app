@@ -4,6 +4,7 @@ using HousingApp.Application.Repositories;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace HousingApp.Application.Tests.Booking;
@@ -21,7 +22,7 @@ public class RejectBookingUseCaseTests
         _unitOfWork = Substitute.For<IBookingUnitOfWork>();
         _unitOfWork.BookingRepository.Returns(_bookingRepository);
 
-        _rejectBookingUseCase = new RejectBookingUseCase(_unitOfWork);
+        _rejectBookingUseCase = new RejectBookingUseCase(_unitOfWork, NullLogger<RejectBookingUseCase>.Instance);
     }
 
     [Fact]

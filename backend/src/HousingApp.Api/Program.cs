@@ -11,6 +11,8 @@ const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Host.AddSerilogConfiguration(builder.Configuration, builder.Environment);
+
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentityConfiguration();
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -27,6 +29,7 @@ builder.Services.AddFluentValidation();
 builder.Services.AddEmailConfiguration(builder.Configuration);
 
 builder.Services.AddAuthorization();
+builder.Services.AddOpenTelemetryMonitoringTools(builder.Configuration, builder.Environment);
 
 WebApplication app = builder.Build();
 
@@ -41,9 +44,13 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
 app.UseExceptionHandler(_ => { });
+
+app.UseSerilogRequestLoggingSetup();
 app.UseCors(myAllowSpecificOrigins);
 
+app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();

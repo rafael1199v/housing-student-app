@@ -37,12 +37,15 @@ jobs:
         run: npm ci
 
       - name: Lint check
+        id: lint
         run: npm run lint
 
       - name: Unit tests
+        id: unit-tests
         run: npx vitest --reporter=verbose --run
 
       - name: Build (validates Vite config)
+        id: build
         if: ${{ !inputs.skip-build }}
         run: npm run build
         env:
@@ -50,3 +53,16 @@ jobs:
           VITE_GOOGLE_MAPS_API_KEY: dummy-key-for-build
           VITE_GOOGLE_MAPS_ID: dummy-id-for-build
           VITE_GOOGLE_CLIENT_ID: dummy-client-for-build
+
+      - name: Write frontend validation summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "## Frontend Validation"
+            echo ""
+            echo "| Stage | Result |"
+            echo "| --- | --- |"
+            echo "| Lint | ${{ steps.lint.outcome }} |"
+            echo "| Vitest | ${{ steps.unit-tests.outcome }} |"
+            echo "| Build | ${{ inputs.skip-build && 'skipped' || steps.build.outcome }} |"
+          } >> "$GITHUB_STEP_SUMMARY"

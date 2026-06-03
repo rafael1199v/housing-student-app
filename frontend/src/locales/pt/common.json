@@ -9,7 +9,10 @@
 		"createRoom": "Criar quarto",
 		"profileSettings": "Configurações de perfil",
 		"logout": "Sair",
-		"loggedOut": "Sessão encerrada"
+		"loggedOut": "Sessão encerrada",
+		"menu": "Menu",
+		"language": "Idioma",
+		"close": "Fechar"
 	},
 	"footer": {
 		"contactInfo": "Informações de contato",
@@ -107,7 +110,7 @@
 		"searchPlaceholder": "Buscar quarto por nome",
 		"searchAriaLabel": "Buscar quartos",
 		"locationLabel": "Localização",
-		"locationSelected": "Localização selecionada: {{lat}}, {{lng}}",
+		"locationSelected": "Localização selecionada: {{latitude}}, {{longitude}}",
 		"noLocation": "Nenhuma localização selecionada.",
 		"removeMarker": "Remover marcador",
 		"priceRange": "Faixa de preço",
@@ -204,7 +207,8 @@
 		"approveSuccess": "Reserva aprovada com sucesso.",
 		"approveError": "Erro ao aprovar a reserva. {{message}}",
 		"rejectSuccess": "Reserva rejeitada com sucesso.",
-		"rejectError": "Erro ao rejeitar a reserva. {{message}}"
+		"rejectError": "Erro ao rejeitar a reserva. {{message}}",
+		"editAriaLabel": "Editar quarto"
 	},
 	"bookingDialog": {
 		"titleApprove": "Confirmar aprovação da reserva",
@@ -236,7 +240,7 @@
 		"statusUnavailable": "Indisponível",
 		"locationSection": "Localização",
 		"locationHint": "Clique no mapa para colocar um marcador na localização do quarto.",
-		"locationSelected": "Localização selecionada: {{lat}}, {{lng}}",
+		"locationSelected": "Localização selecionada: {{latitude}}, {{longitude}}",
 		"noLocation": "Nenhuma localização selecionada.",
 		"removeMarker": "Remover marcador",
 		"imagesSection": "Imagens",
@@ -341,7 +345,14 @@
 		"submitPending": "Criando...",
 		"submitButton": "Criar quarto",
 		"successToast": "Quarto criado com sucesso!",
-		"errorToast": "Erro ao criar o quarto. {{message}}"
+		"errorToast": "Erro ao criar o quarto. {{message}}",
+		"editTitle": "Editar quarto",
+		"editSubtitle": "Atualize os detalhes do seu quarto.",
+		"saveChangesButton": "Salvar alterações",
+		"editSubmitPending": "Salvando...",
+		"editSuccessToast": "Quarto atualizado com sucesso!",
+		"editErrorToast": "Erro ao atualizar o quarto. {{message}}",
+		"removeExistingImageAriaLabel": "Remover imagem atual {{n}}"
 	},
 	"notFound": {
 		"title": "Página não encontrada (404)",
