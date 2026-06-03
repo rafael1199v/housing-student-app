@@ -200,10 +200,10 @@ jobs:
             cat > "$ENV_FILE" << 'EOF'
             ASPNETCORE_ENVIRONMENT=Production
             ASPNETCORE_URLS=http://+:8080
-            Frontend__Origin=https://itersapiens.rafael-vargas.dev
+            Frontend__Origin=${{ vars.FRONTEND_DOMAIN }}
             Jwt__SecretKey=${{ secrets.JWT_SECRET_KEY }}
-            Jwt__Issuer=https://api.itersapiens.rafael-vargas.dev
-            Jwt__Audience=https://itersapiens.rafael-vargas.dev
+            Jwt__Issuer=${{ vars.BACKEND_DOMAIN }}
+            Jwt__Audience=${{ vars.FRONTEND_DOMAIN }}
             Jwt__ExpirationInMinutes=${{ secrets.JWT_EXPIRATION_MINUTES }}
             AWS__AccessKey=${{ secrets.AWS_ACCESS_KEY }}
             AWS__SecretKey=${{ secrets.AWS_SECRET_KEY }}
@@ -251,7 +251,7 @@ jobs:
         id: smoke-test
         run: |
           for attempt in {1..12}; do
-            response="$(curl -fsS --max-time 5 https://api.itersapiens.rafael-vargas.dev/api/ping || true)"
+            response="$(curl -fsS --max-time 5 ${{ vars.BACKEND_DOMAIN }}/api/ping || true)"
 
             if [ "$response" = "Pong" ]; then
               echo "API smoke test passed on attempt $attempt."
@@ -276,5 +276,5 @@ jobs:
             echo "| Image tag | \`${{ needs.build-push-scan.outputs.image-tag }}\` |"
             echo "| SSH deploy | ${{ steps.deploy-ssh.outcome }} |"
             echo "| Smoke test | ${{ steps.smoke-test.outcome }} |"
-            echo "| API health endpoint | \`https://api.itersapiens.rafael-vargas.dev/api/ping\` |"
+            echo "| API health endpoint | \`${{ vars.BACKEND_DOMAIN }}/api/ping\` |"
           } >> "$GITHUB_STEP_SUMMARY"
