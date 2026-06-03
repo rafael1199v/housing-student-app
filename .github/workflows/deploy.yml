@@ -213,6 +213,10 @@ jobs:
             Resend__ApiKey=${{ secrets.RESEND_API_KEY }}
             Resend__FromEmail=${{ vars.RESEND_FROM_EMAIL }}
             ConnectionStrings__DefaultConnection=${{ secrets.CONNECTION_STRING_DEFAULT_CONNECTION }}
+
+            OpenTelemetry__Endpoint=${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
+            OpenTelemetry__Headers=${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+
             EOF
 
             # Pull de la versión específica (SHA), no de :latest

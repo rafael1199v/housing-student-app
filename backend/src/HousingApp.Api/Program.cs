@@ -1,10 +1,7 @@
 using HousingApp.Api.Exception;
 using HousingApp.Api.Extensions;
 using Scalar.AspNetCore;
-using Serilog;
 using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 CultureInfo culture = new("en-US");
 CultureInfo.DefaultThreadCurrentCulture = culture;
