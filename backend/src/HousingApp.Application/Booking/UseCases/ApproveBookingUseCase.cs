@@ -1,10 +1,11 @@
 ﻿using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging;
 
 namespace HousingApp.Application.Booking.UseCases;
 
-public class ApproveBookingUseCase(IBookingUnitOfWork unitOfWork) : IApproveBookingUseCase
+public class ApproveBookingUseCase(IBookingUnitOfWork unitOfWork, ILogger<ApproveBookingUseCase> logger) : IApproveBookingUseCase
 {
     public async Task<Result<bool>> ExecuteAsync(int bookingId)
     {
@@ -38,6 +39,10 @@ public class ApproveBookingUseCase(IBookingUnitOfWork unitOfWork) : IApproveBook
 
             await unitOfWork.RoomRepository.TryMarkAsBookedAsync(booking.RoomId);
             await unitOfWork.CommitTransactionAsync();
+            logger.LogInformation(
+                "Booking approved BookingId={BookingId} RoomId={RoomId}",
+                booking.Id,
+                booking.RoomId);
 
             return Result<bool>.Success(result);
         }

@@ -1,7 +1,10 @@
 using HousingApp.Api.Exception;
 using HousingApp.Api.Extensions;
 using Scalar.AspNetCore;
+using Serilog;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 CultureInfo culture = new("en-US");
 CultureInfo.DefaultThreadCurrentCulture = culture;
@@ -10,6 +13,8 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Host.AddSerilogConfiguration(builder.Configuration, builder.Environment);
 
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentityConfiguration();
@@ -27,6 +32,7 @@ builder.Services.AddFluentValidation();
 builder.Services.AddEmailConfiguration(builder.Configuration);
 
 builder.Services.AddAuthorization();
+builder.Services.AddOpenTelemetryMonitoringTools(builder.Configuration, builder.Environment);
 
 WebApplication app = builder.Build();
 
@@ -41,9 +47,13 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
 app.UseExceptionHandler(_ => { });
+
+app.UseSerilogRequestLoggingSetup();
 app.UseCors(myAllowSpecificOrigins);
 
+app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();

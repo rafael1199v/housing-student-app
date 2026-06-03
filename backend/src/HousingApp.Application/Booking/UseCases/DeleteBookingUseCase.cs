@@ -1,10 +1,11 @@
-﻿using HousingApp.Application.Repositories;
+using HousingApp.Application.Repositories;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
+using Microsoft.Extensions.Logging;
 
 namespace HousingApp.Application.Booking.UseCases;
 
-public class DeleteBookingUseCase(IBookingRepository bookingRepository) : IDeleteBookingUseCase
+public class DeleteBookingUseCase(IBookingRepository bookingRepository, ILogger<DeleteBookingUseCase> logger) : IDeleteBookingUseCase
 {
     public async Task<Result<bool>> ExecuteAsync(int roomId, string studentId)
     {
@@ -25,6 +26,11 @@ public class DeleteBookingUseCase(IBookingRepository bookingRepository) : IDelet
                 return Result<bool>.Failure(BookingError.BookingAlreadyCompleted);
             case BookingStatus.Pending:
                 await bookingRepository.DeleteBookingAsync(booking.Id);
+                logger.LogInformation(
+                    "Booking cancelled BookingId={BookingId} RoomId={RoomId} StudentId={StudentId}",
+                    booking.Id,
+                    roomId,
+                    studentId);
                 return Result<bool>.Success(true);
             default:
                 throw new ArgumentOutOfRangeException();

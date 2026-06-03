@@ -1,5 +1,7 @@
-﻿using HousingApp.Domain.Error;
+using HousingApp.Domain.Error;
 using Microsoft.AspNetCore.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace HousingApp.Api.Exception;
 
@@ -8,9 +10,21 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, System.Exception exception,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
+        string? userId =
+            httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+            ?? httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        logger.LogError(
+            exception,
+            "Unhandled exception for HTTP {Method} {Path} TraceId={TraceId} UserId={UserId}: {Message}",
+            httpContext.Request.Method,
+            httpContext.Request.Path.Value,
+            httpContext.TraceIdentifier,
+            userId ?? "anonymous",
+            exception.Message);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        httpContext.Response.Headers.Append("X-Trace-Id", httpContext.TraceIdentifier);
 
         await httpContext.Response.WriteAsJsonAsync(ServerError.UnknownError, cancellationToken);
 
