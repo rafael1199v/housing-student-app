@@ -49,7 +49,7 @@ public static class TelemetryExtensions
 
         return services;
     }
-    
+
     private static void ConfigureOtlpExporter(OtlpExporterOptions options,
         OpenTelemetryOptions telemetryOptions, string signalPath)
     {
@@ -79,15 +79,15 @@ public static class TelemetryExtensions
 
                     int index = openTelemetryOptions.Headers!.IndexOf('=');
                     options.Headers.Add(openTelemetryOptions.Headers[..index], openTelemetryOptions.Headers[(index + 1)..]);
-                    
+
                     options.ResourceAttributes.Add("service.name", "HousingApp.Api");
                 });
             }
         });
 
         return host;
-    } 
-    
+    }
+
     public static void UseSerilogRequestLoggingSetup(this IApplicationBuilder app)
     {
         app.UseSerilogRequestLogging(options =>

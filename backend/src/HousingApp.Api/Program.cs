@@ -53,7 +53,7 @@ app.UseExceptionHandler(_ => { });
 app.UseSerilogRequestLoggingSetup();
 app.UseCors(myAllowSpecificOrigins);
 
-app.UseHttpsRedirection(); 
+app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
