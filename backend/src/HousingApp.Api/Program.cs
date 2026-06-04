@@ -22,7 +22,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddCorsPolicy(builder.Configuration, myAllowSpecificOrigins);
-builder.Services.AddAwsStorage(builder.Configuration);
+builder.Services.AddAwsConfiguration(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddRateLimiterPolicy();
 builder.Services.AddFluentValidation();
