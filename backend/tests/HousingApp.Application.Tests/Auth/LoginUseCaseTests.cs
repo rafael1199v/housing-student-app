@@ -90,6 +90,6 @@ public class LoginUseCaseTests
         Error error = result.Error;
 
         // Assert
-        error.Should().Be(false);
+        error.Should().Be(AuthError.InvalidCredentials);
     }
 }
