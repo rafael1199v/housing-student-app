@@ -1,3 +1,9 @@
 ﻿namespace HousingApp.Application.Email;
 
-public record ConfirmationEmailRequest();
+public record ConfirmationEmailEvent(
+    string Type,
+    string Subject,
+    string To,
+    string FirstName,
+    string ConfirmationLink
+);

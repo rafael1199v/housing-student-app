@@ -59,7 +59,7 @@ public static class ApplicationServicesExtensions
 
         //Services
         services.AddScoped<IGoogleAuthService, GoogleAuthService>();
-        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IEmailService, AmazonSqsEmailService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAccessTokenService, AccessTokenService>();
 
