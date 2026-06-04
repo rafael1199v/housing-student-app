@@ -1,6 +1,6 @@
 ﻿namespace HousingApp.Infrastructure.MessageQueue;
 
-public class QueueSettings
+public sealed class QueueSettings
 {
-    
+    public string EmailQueueUrl { get; init; } = string.Empty;
 }
