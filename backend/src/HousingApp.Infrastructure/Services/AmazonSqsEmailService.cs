@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace HousingApp.Infrastructure.Services;
 
-public class AmazonSqsEmailService(IAmazonSQS sqsClient, IOptions<QueueSettings> settings, ILogger<AmazonSqsEmailService> logger) : IEmailService 
+public class AmazonSqsEmailService(IAmazonSQS sqsClient, IOptions<QueueSettings> settings, ILogger<AmazonSqsEmailService> logger) : IEmailService
 {
     public async Task SendConfirmationEmailAsync(string to, string firstName, string confirmationLink)
     {
@@ -25,14 +25,14 @@ public class AmazonSqsEmailService(IAmazonSQS sqsClient, IOptions<QueueSettings>
         {
             SendMessageRequest request = new(settings.Value.EmailQueueUrl,
                 JsonSerializer.Serialize(confirmationEmailEvent, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
-            
+
             logger.LogInformation("Sending email confirmation: {@request}", request);
             await sqsClient.SendMessageAsync(request);
         }
         catch (AmazonSQSException e)
         {
-            logger.LogError(e, "There was an error sending the event to the queue with the data: {@confirmationEmailEvent}. Message: {Message}" ,confirmationEmailEvent, e.Message);
+            logger.LogError(e, "There was an error sending the event to the queue with the data: {@confirmationEmailEvent}. Message: {Message}", confirmationEmailEvent, e.Message);
         }
-        
+
     }
 }

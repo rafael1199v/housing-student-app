@@ -20,7 +20,7 @@ public static class AwsExtensions
         awsOptions.Credentials = credentials;
 
         services.AddDefaultAWSOptions(awsOptions);
-        
+
         services.AddAWSService<IAmazonS3>();
         services.AddAWSService<IAmazonSQS>();
 
