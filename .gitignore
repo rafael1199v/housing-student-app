@@ -4,3 +4,5 @@ frontend/nothing.json
 **/.env
 **/.env.prod
 *.lscache
+/specs
+todo.md

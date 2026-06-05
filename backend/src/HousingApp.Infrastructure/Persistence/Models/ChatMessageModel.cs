@@ -1,11 +1,13 @@
 ﻿using HousingApp.Infrastructure.Persistence.Models.Common;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HousingApp.Infrastructure.Persistence.Models;
 
 [Table("chat_messages")]
+[Index(nameof(ChatId), nameof(Id))]
 public class ChatMessageModel : AuditableModel
 {
     public int Id { get; set; }
