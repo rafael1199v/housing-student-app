@@ -217,6 +217,8 @@ jobs:
             OpenTelemetry__Endpoint=${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
             OpenTelemetry__Headers=${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
 
+            Queues__EmailQueueUrl=${{ secrets.QUEUES_EMAIL_URL }}
+
             EOF
 
             # Pull de la versión específica (SHA), no de :latest
