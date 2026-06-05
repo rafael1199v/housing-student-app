@@ -20,6 +20,9 @@ public static class ChatError
     public static readonly Error RecipientRequired =
         new("chat.recipient.required", "Debes especificar el destinatario del chat");
 
+    public static readonly Error RoomOrRecipientRequired =
+        new("chat.room.or.recipient.required", "Debes especificar un alojamiento o un destinatario para el chat");
+
     public static Error MessageTooLong(int maxLength)
     {
         return new Error("chat.message.too.long", $"El mensaje supera el máximo de {maxLength} caracteres");

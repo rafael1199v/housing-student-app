@@ -50,14 +50,14 @@ public class ChatController(
             return BadRequest(result.Error);
         }
 
-        await chatHub.Clients.User(userId).SendAsync("ChatCreated", result.Value);
+        ChatDto chat = result.Value!;
 
-        if (!string.IsNullOrWhiteSpace(request.ParticipantUserId))
+        foreach (string participantId in chat.ParticipantIds)
         {
-            await chatHub.Clients.User(request.ParticipantUserId).SendAsync("ChatCreated", result.Value);
+            await chatHub.Clients.User(participantId).SendAsync("ChatCreated", chat);
         }
 
-        return Ok(result.Value);
+        return Ok(chat);
     }
 
     [HttpGet]

@@ -1,5 +1,6 @@
 using HousingApp.Application.Chat.DTOs;
 using HousingApp.Application.UnitOfWork;
+using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
 using Microsoft.Extensions.Logging;
 
@@ -7,32 +8,29 @@ namespace HousingApp.Application.Chat.UseCases;
 
 public class StartChatUseCase(IChatUnitOfWork unitOfWork, ILogger<StartChatUseCase> logger) : IStartChatUseCase
 {
-    public async Task<Result<ChatDto>> ExecuteAsync(string callerId, int roomId, string? otherUserId)
+    public async Task<Result<ChatDto>> ExecuteAsync(string callerId, int? roomId, string? otherUserId)
     {
-        (string OwnerId, string RoomName)? room = await unitOfWork.ChatRepository.GetRoomOwnerAsync(roomId);
-
-        if (room is null)
-        {
-            return Result<ChatDto>.Failure(ChatError.RoomNotFound);
-        }
-
-        string ownerId = room.Value.OwnerId;
         string otherParticipantId;
 
-        if (callerId == ownerId)
+        if (!string.IsNullOrWhiteSpace(otherUserId))
         {
-            // The householder (room owner) initiates: they must name the student.
-            if (string.IsNullOrWhiteSpace(otherUserId))
+            otherParticipantId = otherUserId;
+        }
+        else if (roomId is not null)
+        {
+            // No explicit recipient: resolve the owner of the given room (student-initiated from a listing).
+            string? ownerId = await unitOfWork.ChatRepository.GetRoomOwnerIdAsync(roomId.Value);
+
+            if (ownerId is null)
             {
-                return Result<ChatDto>.Failure(ChatError.RecipientRequired);
+                return Result<ChatDto>.Failure(ChatError.RoomNotFound);
             }
 
-            otherParticipantId = otherUserId;
+            otherParticipantId = ownerId;
         }
         else
         {
-            // Anyone else (typically the student) initiates: the other side is the room owner.
-            otherParticipantId = ownerId;
+            return Result<ChatDto>.Failure(ChatError.RoomOrRecipientRequired);
         }
 
         if (callerId == otherParticipantId)
@@ -45,11 +43,13 @@ public class StartChatUseCase(IChatUnitOfWork unitOfWork, ILogger<StartChatUseCa
             return Result<ChatDto>.Failure(ChatError.RecipientNotFound);
         }
 
-        int? existingChatId = await unitOfWork.ChatRepository.FindRoomChatIdAsync(roomId, callerId, otherParticipantId);
+        string directKey = Domain.Entities.Chat.BuildDirectKey(callerId, otherParticipantId);
+
+        int? existingChatId = await unitOfWork.ChatRepository.FindDirectChatIdAsync(directKey);
 
         if (existingChatId is not null)
         {
-            return Result<ChatDto>.Success(new ChatDto(existingChatId.Value, roomId));
+            return Result<ChatDto>.Success(new ChatDto(existingChatId.Value, [callerId, otherParticipantId]));
         }
 
         await unitOfWork.BeginTransactionAsync();
@@ -57,16 +57,16 @@ public class StartChatUseCase(IChatUnitOfWork unitOfWork, ILogger<StartChatUseCa
         try
         {
             int chatId = await unitOfWork.ChatRepository.CreateChatAsync(
-                new Domain.Entities.Chat { Id = 0, RoomId = roomId },
+                new Domain.Entities.Chat { Id = 0, ChatType = ChatType.Direct, DirectKey = directKey },
                 [callerId, otherParticipantId]);
 
             await unitOfWork.CommitTransactionAsync();
 
             logger.LogInformation(
-                "Chat created ChatId={ChatId} RoomId={RoomId} Caller={CallerId} Other={OtherId}",
-                chatId, roomId, callerId, otherParticipantId);
+                "Chat created ChatId={ChatId} Caller={CallerId} Other={OtherId}",
+                chatId, callerId, otherParticipantId);
 
-            return Result<ChatDto>.Success(new ChatDto(chatId, roomId));
+            return Result<ChatDto>.Success(new ChatDto(chatId, [callerId, otherParticipantId]));
         }
         catch
         {

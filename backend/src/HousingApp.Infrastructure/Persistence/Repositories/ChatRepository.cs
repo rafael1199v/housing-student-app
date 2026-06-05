@@ -8,31 +8,27 @@ namespace HousingApp.Infrastructure.Persistence.Repositories;
 
 public class ChatRepository(HousingApplicationDbContext context) : IChatRepository
 {
-    public async Task<(string OwnerId, string RoomName)?> GetRoomOwnerAsync(int roomId)
+    public async Task<string?> GetRoomOwnerIdAsync(int roomId)
     {
-        var room = await context.Rooms
+        return await context.Rooms
             .AsNoTracking()
             .Where(r => r.Id == roomId && !r.IsDeleted)
-            .Select(r => new { r.PersonId, r.Name })
+            .Select(r => r.PersonId)
             .FirstOrDefaultAsync();
-
-        return room is null ? null : (room.PersonId, room.Name);
     }
 
-    public async Task<int?> FindRoomChatIdAsync(int roomId, string userA, string userB)
+    public async Task<int?> FindDirectChatIdAsync(string directKey)
     {
         return await context.Chats
             .AsNoTracking()
-            .Where(c => c.RoomId == roomId && !c.IsDeleted)
-            .Where(c => context.ChatParticipants.Any(p => p.ChatId == c.Id && p.UserId == userA && !p.IsDeleted)
-                        && context.ChatParticipants.Any(p => p.ChatId == c.Id && p.UserId == userB && !p.IsDeleted))
+            .Where(c => c.DirectKey == directKey && !c.IsDeleted)
             .Select(c => (int?)c.Id)
             .FirstOrDefaultAsync();
     }
 
     public async Task<int> CreateChatAsync(Domain.Entities.Chat chat, IEnumerable<string> participantIds)
     {
-        ChatModel chatModel = new() { RoomId = chat.RoomId };
+        ChatModel chatModel = new() { ChatType = chat.ChatType, DirectKey = chat.DirectKey };
         await context.Chats.AddAsync(chatModel);
         await context.SaveChangesAsync();
 
@@ -115,8 +111,6 @@ public class ChatRepository(HousingApplicationDbContext context) : IChatReposito
             .Select(cp => new
             {
                 cp.ChatId,
-                cp.Chat.RoomId,
-                RoomName = cp.Chat.Room != null ? cp.Chat.Room.Name : null,
                 cp.LastReadMessageId
             })
             .ToListAsync();
@@ -182,8 +176,6 @@ public class ChatRepository(HousingApplicationDbContext context) : IChatReposito
 
                 return new ChatSummaryDto(
                     m.ChatId,
-                    m.RoomId,
-                    m.RoomName,
                     other?.UserId ?? string.Empty,
                     other?.Name ?? string.Empty,
                     last?.Message,

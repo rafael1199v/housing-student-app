@@ -32,11 +32,12 @@ public class StartChatUseCaseTests
         _useCase = new StartChatUseCase(_unitOfWork, NullLogger<StartChatUseCase>.Instance);
     }
 
+    private static readonly string DirectKey = Domain.Entities.Chat.BuildDirectKey(StudentId, OwnerId);
+
     [Fact]
-    public async Task StartChat_WhenRoomDoesNotExist_ReturnsRoomNotFound()
+    public async Task StartChat_WhenRoomResolverFindsNoRoom_ReturnsRoomNotFound()
     {
-        (string OwnerId, string RoomName)? noRoom = null;
-        _chatRepository.GetRoomOwnerAsync(RoomId).Returns(noRoom);
+        _chatRepository.GetRoomOwnerIdAsync(RoomId).Returns((string?)null);
 
         Result<ChatDto> result = await _useCase.ExecuteAsync(StudentId, RoomId, null);
 
@@ -46,24 +47,21 @@ public class StartChatUseCaseTests
     }
 
     [Fact]
-    public async Task StartChat_WhenHouseholderInitiatesWithoutRecipient_ReturnsRecipientRequired()
+    public async Task StartChat_WhenNeitherRoomNorRecipientProvided_ReturnsRoomOrRecipientRequired()
     {
-        (string OwnerId, string RoomName)? room = (OwnerId, "Room A");
-        _chatRepository.GetRoomOwnerAsync(RoomId).Returns(room);
-
-        Result<ChatDto> result = await _useCase.ExecuteAsync(OwnerId, RoomId, otherUserId: null);
+        Result<ChatDto> result = await _useCase.ExecuteAsync(StudentId, roomId: null, otherUserId: null);
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().BeEquivalentTo(ChatError.RecipientRequired);
+        result.Error.Should().BeEquivalentTo(ChatError.RoomOrRecipientRequired);
+        await _unitOfWork.DidNotReceive().BeginTransactionAsync();
     }
 
     [Fact]
     public async Task StartChat_WhenCallerEqualsOther_ReturnsCannotChatWithSelf()
     {
-        (string OwnerId, string RoomName)? room = (OwnerId, "Room A");
-        _chatRepository.GetRoomOwnerAsync(RoomId).Returns(room);
+        _chatRepository.GetRoomOwnerIdAsync(RoomId).Returns(OwnerId);
 
-        Result<ChatDto> result = await _useCase.ExecuteAsync(OwnerId, RoomId, otherUserId: OwnerId);
+        Result<ChatDto> result = await _useCase.ExecuteAsync(OwnerId, RoomId, otherUserId: null);
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(ChatError.CannotChatWithSelf);
@@ -72,8 +70,7 @@ public class StartChatUseCaseTests
     [Fact]
     public async Task StartChat_WhenRecipientDoesNotExist_ReturnsRecipientNotFound()
     {
-        (string OwnerId, string RoomName)? room = (OwnerId, "Room A");
-        _chatRepository.GetRoomOwnerAsync(RoomId).Returns(room);
+        _chatRepository.GetRoomOwnerIdAsync(RoomId).Returns(OwnerId);
         _personRepository.ExistsByUserIdAsync(OwnerId).Returns(false);
 
         Result<ChatDto> result = await _useCase.ExecuteAsync(StudentId, RoomId, null);
@@ -85,15 +82,14 @@ public class StartChatUseCaseTests
     [Fact]
     public async Task StartChat_WhenChatAlreadyExists_ReturnsExistingChatWithoutCreating()
     {
-        (string OwnerId, string RoomName)? room = (OwnerId, "Room A");
-        _chatRepository.GetRoomOwnerAsync(RoomId).Returns(room);
+        _chatRepository.GetRoomOwnerIdAsync(RoomId).Returns(OwnerId);
         _personRepository.ExistsByUserIdAsync(OwnerId).Returns(true);
-        _chatRepository.FindRoomChatIdAsync(RoomId, StudentId, OwnerId).Returns(42);
+        _chatRepository.FindDirectChatIdAsync(DirectKey).Returns(42);
 
         Result<ChatDto> result = await _useCase.ExecuteAsync(StudentId, RoomId, null);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(new ChatDto(42, RoomId));
+        result.Value.Should().BeEquivalentTo(new ChatDto(42, new[] { StudentId, OwnerId }));
         await _chatRepository.DidNotReceive()
             .CreateChatAsync(Arg.Any<Domain.Entities.Chat>(), Arg.Any<IEnumerable<string>>());
         await _unitOfWork.DidNotReceive().BeginTransactionAsync();
@@ -102,17 +98,32 @@ public class StartChatUseCaseTests
     [Fact]
     public async Task StartChat_WhenNoExistingChat_CreatesChatAndCommits()
     {
-        (string OwnerId, string RoomName)? room = (OwnerId, "Room A");
-        _chatRepository.GetRoomOwnerAsync(RoomId).Returns(room);
+        _chatRepository.GetRoomOwnerIdAsync(RoomId).Returns(OwnerId);
         _personRepository.ExistsByUserIdAsync(OwnerId).Returns(true);
-        _chatRepository.FindRoomChatIdAsync(RoomId, StudentId, OwnerId).Returns((int?)null);
+        _chatRepository.FindDirectChatIdAsync(DirectKey).Returns((int?)null);
         _chatRepository.CreateChatAsync(Arg.Any<Domain.Entities.Chat>(), Arg.Any<IEnumerable<string>>())
             .Returns(7);
 
         Result<ChatDto> result = await _useCase.ExecuteAsync(StudentId, RoomId, null);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(new ChatDto(7, RoomId));
+        result.Value.Should().BeEquivalentTo(new ChatDto(7, new[] { StudentId, OwnerId }));
+        await _unitOfWork.Received(1).CommitTransactionAsync();
+    }
+
+    [Fact]
+    public async Task StartChat_WhenRecipientProvidedDirectly_SkipsRoomResolver()
+    {
+        _personRepository.ExistsByUserIdAsync(OwnerId).Returns(true);
+        _chatRepository.FindDirectChatIdAsync(DirectKey).Returns((int?)null);
+        _chatRepository.CreateChatAsync(Arg.Any<Domain.Entities.Chat>(), Arg.Any<IEnumerable<string>>())
+            .Returns(9);
+
+        Result<ChatDto> result = await _useCase.ExecuteAsync(StudentId, roomId: null, otherUserId: OwnerId);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(new ChatDto(9, new[] { StudentId, OwnerId }));
+        await _chatRepository.DidNotReceive().GetRoomOwnerIdAsync(Arg.Any<int>());
         await _unitOfWork.Received(1).CommitTransactionAsync();
     }
 }

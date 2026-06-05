@@ -4,9 +4,9 @@ namespace HousingApp.Application.Repositories;
 
 public interface IChatRepository
 {
-    Task<(string OwnerId, string RoomName)?> GetRoomOwnerAsync(int roomId);
+    Task<string?> GetRoomOwnerIdAsync(int roomId);
 
-    Task<int?> FindRoomChatIdAsync(int roomId, string userA, string userB);
+    Task<int?> FindDirectChatIdAsync(string directKey);
 
     Task<int> CreateChatAsync(Domain.Entities.Chat chat, IEnumerable<string> participantIds);
 
