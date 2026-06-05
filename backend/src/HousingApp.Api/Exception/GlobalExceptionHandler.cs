@@ -1,5 +1,6 @@
 using HousingApp.Domain.Error;
 using Microsoft.AspNetCore.Diagnostics;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -24,7 +25,8 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
             exception.Message);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        httpContext.Response.Headers.Append("X-Trace-Id", httpContext.TraceIdentifier);
+        string traceId = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
+        httpContext.Response.Headers.Append("X-Trace-Id", traceId);
 
         await httpContext.Response.WriteAsJsonAsync(ServerError.UnknownError, cancellationToken);
 
