@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
+        <PackageReference Include="AWSSDK.SQS" />
         <PackageReference Include="EFCore.NamingConventions"/>
         <PackageReference Include="Google.Apis.Auth" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>

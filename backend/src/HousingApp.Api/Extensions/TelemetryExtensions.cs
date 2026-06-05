@@ -101,7 +101,6 @@ public static class TelemetryExtensions
                     httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Sub)
                     ?? httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                diagnosticContext.Set("TraceId", httpContext.TraceIdentifier);
                 diagnosticContext.Set("UserId", userId ?? "anonymous");
             };
         });

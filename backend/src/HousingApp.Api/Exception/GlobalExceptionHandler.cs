@@ -1,5 +1,6 @@
 using HousingApp.Domain.Error;
 using Microsoft.AspNetCore.Diagnostics;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -13,18 +14,20 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         string? userId =
             httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Sub)
             ?? httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        string traceId = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
 
         logger.LogError(
             exception,
             "Unhandled exception for HTTP {Method} {Path} TraceId={TraceId} UserId={UserId}: {Message}",
             httpContext.Request.Method,
             httpContext.Request.Path.Value,
-            httpContext.TraceIdentifier,
+            traceId,
             userId ?? "anonymous",
             exception.Message);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        httpContext.Response.Headers.Append("X-Trace-Id", httpContext.TraceIdentifier);
+        httpContext.Response.Headers.Append("X-Trace-Id", traceId);
 
         await httpContext.Response.WriteAsJsonAsync(ServerError.UnknownError, cancellationToken);
 
