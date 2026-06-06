@@ -117,6 +117,24 @@ public class UserRepository(
         return ToDomain(user, roles);
     }
 
+    public async Task<bool> AddRoleToUserAsync(string userId, string role)
+    {
+        IdentityUser? user = await userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return false;
+        }
+
+        if (await userManager.IsInRoleAsync(user, role))
+        {
+            return true;
+        }
+
+        IdentityResult result = await userManager.AddToRoleAsync(user, role);
+        return result.Succeeded;
+    }
+
     public async Task<string> RegisterExternalUser(User newUser, Roles role)
     {
         IdentityUser user = ToModel(newUser);

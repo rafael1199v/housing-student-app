@@ -38,6 +38,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRegisterUseCase, RegisterUseCase>();
         services.AddScoped<IGetUserDataUseCase, GetUserDataUseCase>();
         services.AddScoped<IUpdateUserDataUseCase, UpdateUserDataUseCase>();
+        services.AddScoped<IAssignRoleToUserUseCase, AssignRoleToUserUseCase>();
         services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
         services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
         services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();

@@ -2,15 +2,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
-import {
-	useAccessToken,
-	useAuthActions,
-} from "../features/auth/store/authStore";
-import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
+import { useRoles } from "../features/auth/hooks/useRoles";
+import { useAuthActions } from "../features/auth/store/authStore";
 import { RoleEnum } from "../global/enum/role";
 import { authService } from "../services/authService";
 import { Footer } from "../shared/components/footer";
 import { LanguageSelector } from "../shared/components/LanguageSelector";
+import { RoleSwitcher } from "../shared/components/RoleSwitcher";
 import { closeIcon, menuIcon } from "../shared/icons/ui-icons-dictionary";
 
 interface NavItem {
@@ -24,12 +22,11 @@ export function MainLayout() {
 	const { clearAll } = useAuthActions();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const token = useAccessToken();
-	const role = getRoleFromAccessToken(token);
+	const { activeRole } = useRoles();
 	const [open, setOpen] = useState(false);
 
 	const navItems: NavItem[] = [
-		...(role == RoleEnum.Student
+		...(activeRole === RoleEnum.Student
 			? [
 					{ path: "/rooms", labelKey: "nav.rooms", match: "exact" as const },
 					{
@@ -114,6 +111,7 @@ export function MainLayout() {
 									{t(item.labelKey)}
 								</button>
 							))}
+							<RoleSwitcher />
 							<LanguageSelector />
 							<button
 								type="button"
@@ -169,6 +167,7 @@ export function MainLayout() {
 							</button>
 						))}
 
+						<RoleSwitcher variant="accordion" />
 						<LanguageSelector variant="accordion" />
 
 						<button

@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using HousingApp.Application;
+using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.User.DTOs;
 using HousingApp.Application.User.UseCases;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,9 @@ namespace HousingApp.Api.Controllers;
 [Route("api/user")]
 public class UserController(
     IGetUserDataUseCase getUserDataUseCase,
-    IUpdateUserDataUseCase updateUserDataUseCase
+    IUpdateUserDataUseCase updateUserDataUseCase,
+    IAssignRoleToUserUseCase assignRoleToUserUseCase,
+    IValidator<AssignRoleDto> assignRoleValidator
     ) : ControllerBase
 {
     [HttpGet]
@@ -63,5 +66,36 @@ public class UserController(
         }
 
         return NoContent();
+    }
+
+    [HttpPost("roles")]
+    [Authorize]
+    [ProducesResponseType(typeof(CredentialsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto dto)
+    {
+        string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        ValidationResult validationResult = await assignRoleValidator.ValidateAsync(dto);
+
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
+        Result<CredentialsDto> result = await assignRoleToUserUseCase.ExecuteAsync(userId, dto);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
     }
 }

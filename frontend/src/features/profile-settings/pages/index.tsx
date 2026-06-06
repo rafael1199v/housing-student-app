@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ROLE_PRIORITY, RoleEnum } from "../../../global/enum/role";
 import i18n from "../../../i18n";
 import { authService } from "../../../services/authService";
 import { NationalityDropdown } from "../../auth/components/NationalityDropdown";
-import { useAccessToken } from "../../auth/store/authStore";
-import { getRoleFromAccessToken } from "../../auth/utils/tokenClaims";
+import { useRoles } from "../../auth/hooks/useRoles";
+import { useAuthActions } from "../../auth/store/authStore";
 import type { UpdateUserDataDto } from "../types/updateUserDataDto";
 import formatToInputDate from "../utils/StringToDate";
 
@@ -47,14 +48,36 @@ type UpdateProfileFormValues = z.infer<typeof updateProfileSchema>;
 export function ProfileSettings() {
 	const { t } = useTranslation();
 	const queryClient = useQueryClient();
-	const accessToken = useAccessToken();
+	const { heldRoles, setActiveRole } = useRoles();
+	const { setAccessToken, setRefreshToken } = useAuthActions();
 
 	const { data: userData, isLoading } = useQuery({
 		queryKey: ["user-data"],
 		queryFn: () => authService.getData(),
 	});
 
-	const role = getRoleFromAccessToken(accessToken);
+	const highestHeldPriority = Math.max(
+		0,
+		...heldRoles.map((r) => ROLE_PRIORITY[r]),
+	);
+
+	const assignableRoles = (Object.values(RoleEnum) as RoleEnum[]).filter(
+		(r) => !heldRoles.includes(r) && ROLE_PRIORITY[r] < highestHeldPriority,
+	);
+
+	const assignRoleMutation = useMutation({
+		mutationFn: (role: RoleEnum) => authService.assignRole({ role }),
+		onSuccess: (credentials, role) => {
+			setAccessToken(credentials.accessToken);
+			setRefreshToken(credentials.refreshToken);
+			setActiveRole(role);
+			queryClient.invalidateQueries({ queryKey: ["user-data"] });
+			toast.success(t("profileSettings.roleAddedSuccess"));
+		},
+		onError: (error: Error) => {
+			toast.error(error.message);
+		},
+	});
 
 	const {
 		register,
@@ -148,11 +171,48 @@ export function ProfileSettings() {
 					</div>
 					<div className="space-y-1">
 						<p className="text-sm font-medium text-slate-700">
-							{t("profileSettings.roleLabel")}
+							{t("profileSettings.rolesLabel")}
 						</p>
-						<p className="text-sm text-slate-900">{t(`roles.${role}`)}</p>
+						<div className="flex flex-wrap gap-2">
+							{heldRoles.map((r) => (
+								<span
+									key={r}
+									className="rounded-full bg-surface-container-high px-3 py-1 text-sm text-slate-900"
+								>
+									{t(`roles.${r}`)}
+								</span>
+							))}
+						</div>
 					</div>
 				</div>
+
+				{assignableRoles.length > 0 && (
+					<div className="space-y-2 border-t border-slate-200 pt-4">
+						<p className="text-sm font-medium text-slate-700">
+							{t("profileSettings.addRoleLabel")}
+						</p>
+						<p className="text-xs text-slate-500">
+							{t("profileSettings.addRoleHint")}
+						</p>
+						<div className="flex flex-wrap gap-2">
+							{assignableRoles.map((r) => (
+								<button
+									key={r}
+									type="button"
+									disabled={assignRoleMutation.isPending}
+									onClick={() => assignRoleMutation.mutate(r)}
+									className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-on-primary transition hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-60"
+								>
+									{assignRoleMutation.isPending
+										? t("profileSettings.addRolePending")
+										: t("profileSettings.addRoleButton", {
+												role: t(`roles.${r}`),
+											})}
+								</button>
+							))}
+						</div>
+					</div>
+				)}
 			</section>
 
 			{/* Editable form */}

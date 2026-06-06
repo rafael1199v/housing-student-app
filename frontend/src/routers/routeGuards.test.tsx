@@ -1,25 +1,31 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { RoleEnum } from "../global/enum/role";
 import GuestRoute from "./GuestRoute";
 import { HouseholderProtectedRoute } from "./HouseholderProtectedRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import { StudentProtectedRoute } from "./StudentProtectedRoute";
 
 let accessToken = "";
-let role: "Student" | "Householder" | null = null;
+let heldRoles: RoleEnum[] = [];
 
 vi.mock("../features/auth/store/authStore", () => ({
 	useAccessToken: () => accessToken,
 }));
 
-vi.mock("../features/auth/utils/tokenClaims", () => ({
-	getRoleFromAccessToken: () => role,
+vi.mock("../features/auth/hooks/useRoles", () => ({
+	useRoles: () => ({
+		heldRoles,
+		activeRole: heldRoles[0] ?? null,
+		hasRole: (role: RoleEnum) => heldRoles.includes(role),
+		setActiveRole: vi.fn(),
+	}),
 }));
 
 beforeEach(() => {
 	accessToken = "";
-	role = null;
+	heldRoles = [];
 });
 
 describe("ProtectedRoute", () => {
@@ -91,9 +97,9 @@ describe("GuestRoute", () => {
 });
 
 describe("StudentProtectedRoute", () => {
-	it("renders children when role is Student", () => {
+	it("renders children when the user holds the Student role", () => {
 		accessToken = "token";
-		role = "Student";
+		heldRoles = [RoleEnum.Student];
 
 		render(
 			<MemoryRouter initialEntries={["/student"]}>
@@ -109,9 +115,9 @@ describe("StudentProtectedRoute", () => {
 		expect(screen.getByText("Student")).toBeInTheDocument();
 	});
 
-	it("redirects to /not-found when role is not Student", () => {
+	it("redirects to /forbidden when the user does not hold the Student role", () => {
 		accessToken = "token";
-		role = "Householder";
+		heldRoles = [RoleEnum.Householder];
 
 		render(
 			<MemoryRouter initialEntries={["/student"]}>
@@ -129,9 +135,9 @@ describe("StudentProtectedRoute", () => {
 });
 
 describe("HouseholderProtectedRoute", () => {
-	it("renders children when role is Householder", () => {
+	it("renders children when the user holds the Householder role", () => {
 		accessToken = "token";
-		role = "Householder";
+		heldRoles = [RoleEnum.Householder];
 
 		render(
 			<MemoryRouter initialEntries={["/owner"]}>
@@ -147,9 +153,9 @@ describe("HouseholderProtectedRoute", () => {
 		expect(screen.getByText("Owner")).toBeInTheDocument();
 	});
 
-	it("redirects to /not-found when role is not Householder", () => {
+	it("redirects to /forbidden when the user does not hold the Householder role", () => {
 		accessToken = "token";
-		role = "Student";
+		heldRoles = [RoleEnum.Student];
 
 		render(
 			<MemoryRouter initialEntries={["/owner"]}>
@@ -163,5 +169,28 @@ describe("HouseholderProtectedRoute", () => {
 		);
 
 		expect(screen.getAllByText("Forbidden")[0]).toBeInTheDocument();
+	});
+});
+
+describe("Multi-role access", () => {
+	it("a user holding both roles passes both guards", () => {
+		accessToken = "token";
+		heldRoles = [RoleEnum.Householder, RoleEnum.Student];
+
+		render(
+			<MemoryRouter initialEntries={["/student"]}>
+				<Routes>
+					<Route element={<StudentProtectedRoute />}>
+						<Route path="/student" element={<div>DualStudentArea</div>} />
+					</Route>
+					<Route element={<HouseholderProtectedRoute />}>
+						<Route path="/owner" element={<div>DualOwnerArea</div>} />
+					</Route>
+					<Route path="/forbidden" element={<div>Forbidden</div>} />
+				</Routes>
+			</MemoryRouter>,
+		);
+
+		expect(screen.getByText("DualStudentArea")).toBeInTheDocument();
 	});
 });
