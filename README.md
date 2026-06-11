@@ -2,6 +2,27 @@
 
 Full-stack platform that connects students looking for rooms with householders who publish rental spaces. The app includes role-based authentication, room search, bookings, image uploads, Google Maps, email flows, Dockerized local/prod environments, and GitHub Actions CI/CD.
 
+## Key Features
+
+- **Role-based experiences** — Separate flows for *students* who search and book rooms and *householders* who publish listings and manage requests, each gated by role-based authorization.
+- **Room discovery** — Full-text and filtered search over published rooms, with location context rendered through Google Maps.
+- **Booking lifecycle** — Students request stays and householders accept or reject them, with bookings moving through explicit status states (pending, confirmed, etc.).
+- **Householder dashboard** — Aggregated summary of listings and incoming booking activity so owners can manage their properties at a glance.
+- **Rich listings** — Multi-image room uploads backed by AWS S3, plus structured householder and policy details per room.
+- **Secure authentication** — ASP.NET Core Identity with JWT access tokens, refresh-token rotation, and Google OAuth sign-in.
+- **Transactional email** — Account confirmation emails delivered through Resend, published asynchronously so a slow or failing provider never blocks the request that triggered it.
+- **Internationalization** — UI available in English, Spanish, and Portuguese.
+
+## Engineering Highlights
+
+- **Clean Architecture backend** — The API is split into `Domain`, `Application`, `Infrastructure`, and `Api` layers, keeping business rules independent of frameworks and infrastructure concerns (EF Core, S3, email, identity).
+- **CQRS-style use cases** — Application logic is organized into focused use cases (auth, bookings, dashboard, rooms) returning a consistent `Result` type for explicit success/error handling.
+- **Modern, typed frontend** — React 19 + TypeScript with a feature-sliced structure, server state managed by TanStack Query and client state by Zustand.
+- **Event-driven email delivery** — The API publishes confirmation-email events to an AWS SQS queue instead of calling Resend inline; an AWS Lambda consumer (deployed separately) reads from the queue and sends the email, decoupling delivery from the request path and enabling automatic retries with a dead-letter queue.
+- **Tested across layers** — Application unit tests and integration tests run automatically in CI.
+- **Container-first** — Reproducible dev and production environments via Docker Compose, with an NGINX-served static frontend build and a published ASP.NET Core runtime image in production.
+- **Automated delivery** — GitHub Actions pipelines run linting, tests, and builds on every change and publish images plus deploy on merges to `main`.
+
 ## Architecture
 
 ```text
@@ -17,8 +38,8 @@ housing-student-app/
 | Area | Main technologies |
 | --- | --- |
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, TanStack Query, Zustand, React Router, Google Maps |
-| Backend | ASP.NET Core .NET 10, EF Core, PostgreSQL, ASP.NET Core Identity, JWT, AWS S3, Resend |
-| DevOps | Docker, Docker Compose, NGINX, GitHub Actions, Docker Hub |
+| Backend | ASP.NET Core .NET 10, EF Core, PostgreSQL, ASP.NET Core Identity, JWT, AWS S3, AWS SQS, Resend |
+| DevOps | Docker, Docker Compose, NGINX, GitHub Actions, Docker Hub, AWS Lambda |
 
 See the service-specific docs for deeper details:
 
@@ -59,9 +80,11 @@ The root `.env` is used by Docker Compose. Important values:
 | `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT` | Compose/Postgres | Database container configuration |
 | `FRONTEND_ORIGIN` | Backend | CORS allowed origin |
 | `JWT_SECRET_KEY`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_EXPIRATION_MINUTES` | Backend | JWT validation/signing settings |
-| `AWS_ACCESS_KEY`, `AWS_SECRET_KEY`, `AWS_REGION`, `STORAGE_BUCKET_NAME` | Backend | S3 storage settings |
+| `AWS_ACCESS_KEY`, `AWS_SECRET_KEY`, `AWS_REGION` | Backend | AWS credentials/region shared by the S3 and SQS clients |
+| `STORAGE_BUCKET_NAME` | Backend | S3 bucket used for room image uploads |
+| `Queues__EmailQueueUrl` | Backend | SQS queue URL the API publishes confirmation-email events to |
 | `GOOGLE_CLIENT_ID` | Backend | Google auth client ID validation/config |
-| `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Backend | Email delivery settings |
+| `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Backend | Email delivery settings (used by the Lambda consumer that calls Resend) |
 | `CONNECTION_STRING_DEFAULT_CONNECTION` | Backend | PostgreSQL connection string |
 | `VITE_API_URL`, `VITE_GOOGLE_MAPS_API_KEY`, `VITE_GOOGLE_MAPS_ID`, `VITE_GOOGLE_CLIENT_ID` | Frontend | Build/runtime configuration for Vite |
 
