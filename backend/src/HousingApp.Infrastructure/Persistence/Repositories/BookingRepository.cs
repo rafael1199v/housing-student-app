@@ -127,6 +127,21 @@ public class BookingRepository(HousingApplicationDbContext context) : IBookingRe
             )).ToListAsync();
     }
 
+    public async Task<List<HouseholderBookingDto>> GetBookingsForHouseholderAsync(string householderId)
+    {
+        return await context.Bookings
+            .AsNoTracking()
+            .Where(b => b.Room.PersonId == householderId && b.BookerId != householderId && !b.IsDeleted)
+            .Select(b => new HouseholderBookingDto(
+                Id: b.Id,
+                BookerId: b.BookerId,
+                BookerName: b.Booker.FirstName + " " + (b.Booker.LastName ?? ""),
+                RoomId: b.RoomId,
+                RoomName: b.Room.Name,
+                Status: (BookingStatus)b.BookingStatusId
+            )).ToListAsync();
+    }
+
     public async Task<int?> GetRoomIdByBookingIdAsync(int bookingId)
     {
         return await context.Bookings
