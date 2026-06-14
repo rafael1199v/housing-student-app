@@ -1,5 +1,6 @@
 using HousingApp.Api.Exception;
 using HousingApp.Api.Extensions;
+using HousingApp.Api.Hubs;
 using Scalar.AspNetCore;
 using System.Globalization;
 
@@ -27,6 +28,7 @@ builder.Services.AddApplicationServices();
 builder.Services.AddRateLimiterPolicy();
 builder.Services.AddFluentValidation();
 builder.Services.AddEmailConfiguration(builder.Configuration);
+builder.Services.AddRealtimeMessaging();
 
 builder.Services.AddAuthorization();
 builder.Services.AddOpenTelemetryMonitoringTools(builder.Configuration, builder.Environment);
@@ -56,5 +58,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

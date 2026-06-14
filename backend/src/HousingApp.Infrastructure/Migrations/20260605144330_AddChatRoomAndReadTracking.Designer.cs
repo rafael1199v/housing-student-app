@@ -3,6 +3,7 @@ using System;
 using HousingApp.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HousingApp.Infrastructure.Migrations
 {
     [DbContext(typeof(HousingApplicationDbContext))]
-    partial class HousingApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260605144330_AddChatRoomAndReadTracking")]
+    partial class AddChatRoomAndReadTracking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,10 +208,6 @@ namespace HousingApp.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ChatType")
-                        .HasColumnType("integer")
-                        .HasColumnName("chat_type");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -217,14 +216,13 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
-                    b.Property<string>("DirectKey")
-                        .HasMaxLength(911)
-                        .HasColumnType("character varying(911)")
-                        .HasColumnName("direct_key");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("integer")
+                        .HasColumnName("room_id");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -233,9 +231,8 @@ namespace HousingApp.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_chats");
 
-                    b.HasIndex("DirectKey")
-                        .IsUnique()
-                        .HasDatabaseName("ix_chats_direct_key");
+                    b.HasIndex("RoomId")
+                        .HasDatabaseName("ix_chats_room_id");
 
                     b.ToTable("chats", (string)null);
                 });
@@ -1026,6 +1023,16 @@ namespace HousingApp.Infrastructure.Migrations
                     b.Navigation("Chat");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ChatModel", b =>
+                {
+                    b.HasOne("HousingApp.Infrastructure.Persistence.Models.RoomModel", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .HasConstraintName("fk_chats_rooms_room_id");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("HousingApp.Infrastructure.Persistence.Models.ChatParticipantModel", b =>
