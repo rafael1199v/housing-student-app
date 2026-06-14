@@ -1,5 +1,6 @@
 using HousingApp.Application.Repositories;
 using HousingApp.Domain.Entities;
+using HousingApp.Domain.Enums;
 using HousingApp.Infrastructure.Persistence.Context;
 using HousingApp.Infrastructure.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,18 @@ public class PersonRepository(HousingApplicationDbContext context) : IPersonRepo
                 .SetProperty(person => person.Nationality, person => string.IsNullOrEmpty(nationality) ? person.Nationality : nationality)
                 .SetProperty(person => person.Gender, person => string.IsNullOrEmpty(gender) ? person.Gender : gender)
                 .SetProperty(person => person.BirthDate, person => birthDate)
+                .SetProperty(person => person.UpdatedAt, DateTime.UtcNow));
+
+        return affectedRows == 1;
+    }
+
+    public async Task<bool> UpdateAvatarAsync(string userId, string imageUrl, AvatarSource avatarSource)
+    {
+        int affectedRows = await context.Persons
+            .Where(person => person.UserId == userId && !person.IsDeleted)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(person => person.ImageUrl, imageUrl)
+                .SetProperty(person => person.ImageSource, avatarSource)
                 .SetProperty(person => person.UpdatedAt, DateTime.UtcNow));
 
         return affectedRows == 1;
