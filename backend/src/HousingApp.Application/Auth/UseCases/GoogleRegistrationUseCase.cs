@@ -3,6 +3,7 @@ using HousingApp.Application.Repositories;
 using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
+using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
 using Microsoft.Extensions.Logging;
 
@@ -37,14 +38,15 @@ public class GoogleRegistrationUseCase(IGoogleAuthService googleAuthService, IAu
             string userId = await authUnitOfWork.UserRepository.RegisterExternalUser(user, role);
 
             Person person = Person.CreatePerson(
-                userId,
-                payload.FullName,
-                null,
-                payload.Email,
-                null,
-                null,
+                id: userId,
+                firstName: payload.FullName,
+                lastName: null,
+                email: payload.Email,
+                avatarSource: AvatarSource.None,
+                phoneNumber: null,
+                nationality: null,
                 gender: null,
-                imageUrl: payload.Picture,
+                imageUrl: null,
                 birthDate: null,
                 user: user
             );
