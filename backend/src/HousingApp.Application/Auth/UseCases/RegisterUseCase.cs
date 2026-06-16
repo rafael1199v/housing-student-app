@@ -2,6 +2,7 @@ using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Services;
 using HousingApp.Application.UnitOfWork;
 using HousingApp.Domain.Entities;
+using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
@@ -41,12 +42,13 @@ public class RegisterUseCase(IAuthUnitOfWork unitOfWork, IEmailService emailServ
             userId = await unitOfWork.UserRepository.RegisterUser(user, role);
 
             person = Person.CreatePerson(
-                userId,
-                registerDto.FirstName,
-                registerDto.LastName,
-                registerDto.Email,
-                registerDto.PhoneNumber,
-                registerDto.Nationality,
+                id: userId,
+                firstName: registerDto.FirstName,
+                lastName: registerDto.LastName,
+                email: registerDto.Email,
+                avatarSource: AvatarSource.None,
+                phoneNumber: registerDto.PhoneNumber,
+                nationality: registerDto.Nationality,
                 gender: registerDto.Gender,
                 imageUrl: registerDto.ImageUrl,
                 birthDate: registerDto.BirthDate is null ? null : DateOnly.ParseExact(registerDto.BirthDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),

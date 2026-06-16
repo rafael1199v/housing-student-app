@@ -1,6 +1,5 @@
-using FluentValidation;
-using FluentValidation.Results;
 using HousingApp.Application;
+using HousingApp.Application.Auth.Upload;
 using HousingApp.Application.User.DTOs;
 using HousingApp.Application.User.UseCases;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,8 @@ namespace HousingApp.Api.Controllers;
 [Route("api/user")]
 public class UserController(
     IGetUserDataUseCase getUserDataUseCase,
-    IUpdateUserDataUseCase updateUserDataUseCase
+    IUpdateUserDataUseCase updateUserDataUseCase,
+    IUpdateAvatarUseCase updateAvatarUseCase
     ) : ControllerBase
 {
     [HttpGet]
@@ -63,5 +63,37 @@ public class UserController(
         }
 
         return NoContent();
+    }
+
+    [HttpPut("avatar")]
+    [Authorize]
+    [RequestSizeLimit(5 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateAvatar(IFormFile? file, CancellationToken cancellationToken)
+    {
+        string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        if (file is null || file.Length == 0)
+        {
+            return BadRequest(Domain.Error.AvatarError.FileMissing);
+        }
+
+        AvatarUpload upload = new(file.OpenReadStream, file.FileName, file.ContentType);
+
+        Result<string> result = await updateAvatarUseCase.ExecuteAsync(userId, upload, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(new { url = result.Value });
     }
 }

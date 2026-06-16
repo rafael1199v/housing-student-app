@@ -1,5 +1,6 @@
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Booking.UseCases;
+using HousingApp.Application.Chat.UseCases;
 using HousingApp.Application.Dashboard.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.UseCases;
@@ -25,17 +26,20 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IPolicyRepository, PolicyRepository>();
         services.AddScoped<IServiceRepository, ServiceRepository>();
+        services.AddScoped<IChatRepository, ChatRepository>();
 
         //Unit of work
         services.AddScoped<IAuthUnitOfWork, AuthUnitOfWork>();
         services.AddScoped<IBookingUnitOfWork, BookingUnitOfWork>();
         services.AddScoped<IRoomUnitOfWork, RoomUnitOfWork>();
+        services.AddScoped<IChatUnitOfWork, ChatUnitOfWork>();
 
         //Use cases
         services.AddScoped<ILoginUseCase, LoginUseCase>();
         services.AddScoped<IRegisterUseCase, RegisterUseCase>();
         services.AddScoped<IGetUserDataUseCase, GetUserDataUseCase>();
         services.AddScoped<IUpdateUserDataUseCase, UpdateUserDataUseCase>();
+        services.AddScoped<IUpdateAvatarUseCase, UpdateAvatarUseCase>();
         services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
         services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
         services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();
@@ -55,6 +59,12 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IGoogleRegistrationUseCase, GoogleRegistrationUseCase>();
         services.AddScoped<IConfirmEmailUseCase, ConfirmEmailUseCase>();
         services.AddScoped<ILogoutUseCase, LogoutUseCase>();
+        services.AddScoped<IStartChatUseCase, StartChatUseCase>();
+        services.AddScoped<ISendMessageUseCase, SendMessageUseCase>();
+        services.AddScoped<IGetUserChatsUseCase, GetUserChatsUseCase>();
+        services.AddScoped<IGetChatMessagesUseCase, GetChatMessagesUseCase>();
+        services.AddScoped<IMarkChatReadUseCase, MarkChatReadUseCase>();
+        services.AddScoped<IGetUserChatIdsUseCase, GetUserChatIdsUseCase>();
 
         //Seeders
         services.AddScoped<IHousingAppSeeder, HousingAppSeeder>();

@@ -187,11 +187,11 @@ namespace HousingApp.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_chat_messages");
 
-                    b.HasIndex("ChatId")
-                        .HasDatabaseName("ix_chat_messages_chat_id");
-
                     b.HasIndex("SenderId")
                         .HasDatabaseName("ix_chat_messages_sender_id");
+
+                    b.HasIndex("ChatId", "Id")
+                        .HasDatabaseName("ix_chat_messages_chat_id_id");
 
                     b.ToTable("chat_messages", (string)null);
                 });
@@ -205,6 +205,10 @@ namespace HousingApp.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ChatType")
+                        .HasColumnType("integer")
+                        .HasColumnName("chat_type");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -212,6 +216,11 @@ namespace HousingApp.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
+
+                    b.Property<string>("DirectKey")
+                        .HasMaxLength(911)
+                        .HasColumnType("character varying(911)")
+                        .HasColumnName("direct_key");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -223,6 +232,10 @@ namespace HousingApp.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_chats");
+
+                    b.HasIndex("DirectKey")
+                        .IsUnique()
+                        .HasDatabaseName("ix_chats_direct_key");
 
                     b.ToTable("chats", (string)null);
                 });
@@ -249,6 +262,10 @@ namespace HousingApp.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<int?>("LastReadMessageId")
+                        .HasColumnType("integer")
+                        .HasColumnName("last_read_message_id");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -298,6 +315,10 @@ namespace HousingApp.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("gender");
+
+                    b.Property<int>("ImageSource")
+                        .HasColumnType("integer")
+                        .HasColumnName("image_source");
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
