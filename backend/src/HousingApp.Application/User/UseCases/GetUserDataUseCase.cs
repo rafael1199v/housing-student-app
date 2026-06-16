@@ -32,7 +32,7 @@ public class GetUserDataUseCase : IGetUserDataUseCase
             user.PhoneNumber ?? string.Empty,
             user.Nationality ?? string.Empty,
             user.Gender ?? string.Empty,
-            user.ImageUrl ?? string.Empty,
+            user.ImageUrl is null ? string.Empty : _storageService.GeneratePresignedDownloadUrl(user.ImageUrl),
             user.BirthDate.ToString() ?? string.Empty
         );
         return Result<UserDataDto>.Success(userDataDto);
