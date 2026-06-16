@@ -1,3 +1,4 @@
+using HousingApp.Domain.Enums;
 using HousingApp.Infrastructure.Persistence.Models.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,5 +29,7 @@ public class PersonModel : AuditableModel
 
     [MaxLength(500)] public string? ImageUrl { get; set; }
 
+    public AvatarSource ImageSource { get; set; } = AvatarSource.None;
+    
     public DateOnly? BirthDate { get; set; }
 }

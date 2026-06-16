@@ -1,4 +1,5 @@
 using HousingApp.Domain.Entities;
+using HousingApp.Domain.Enums;
 
 namespace HousingApp.Application.Repositories;
 
@@ -14,4 +15,5 @@ public interface IPersonRepository
         string? nationality,
         string? gender,
         DateOnly? birthDate);
+    Task<bool> UpdateAvatarAsync(string userId, string imageUrl, AvatarSource avatarSource);
 }
