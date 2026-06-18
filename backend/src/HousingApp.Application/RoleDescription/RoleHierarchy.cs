@@ -6,7 +6,7 @@ public static class RoleHierarchy
         new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
             [RolesDescription.Student] = 1,
-            [RolesDescription.Householder] = 2,
+            [RolesDescription.Householder] = 1,
             [RolesDescription.Admin] = 3,
         };
 
@@ -33,11 +33,6 @@ public static class RoleHierarchy
 
         List<string> held = currentRoles?.ToList() ?? [];
 
-        if (held.Contains(targetRole, StringComparer.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        return RankOf(targetRole) < HighestRank(held);
+        return RankOf(targetRole) <= HighestRank(held);
     }
 }
