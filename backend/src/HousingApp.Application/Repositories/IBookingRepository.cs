@@ -16,5 +16,6 @@ public interface IBookingRepository
     Task DeleteBookingAsync(int bookingId);
 
     Task<List<BookingStudentDto>> GetStudentBookingsAsync(string studentId);
+    Task<List<HouseholderBookingDto>> GetBookingsForHouseholderAsync(string householderId);
     Task<int?> GetRoomIdByBookingIdAsync(int bookingId);
 }

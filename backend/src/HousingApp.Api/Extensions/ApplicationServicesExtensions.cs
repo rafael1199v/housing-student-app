@@ -1,6 +1,7 @@
 using HousingApp.Application.Auth.UseCases;
 using HousingApp.Application.Booking.UseCases;
 using HousingApp.Application.Chat.UseCases;
+using HousingApp.Application.Dashboard.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.UseCases;
 using HousingApp.Application.Services;
@@ -39,6 +40,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IGetUserDataUseCase, GetUserDataUseCase>();
         services.AddScoped<IUpdateUserDataUseCase, UpdateUserDataUseCase>();
         services.AddScoped<IAssignRoleToUserUseCase, AssignRoleToUserUseCase>();
+        services.AddScoped<IUpdateAvatarUseCase, UpdateAvatarUseCase>();
         services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
         services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
         services.AddScoped<ICreateBookingUseCase, CreateBookingUseCase>();
@@ -51,6 +53,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRoomAlreadyBookedUseCase, RoomAlreadyBookedUseCase>();
         services.AddScoped<IDeleteBookingUseCase, DeleteBookingUseCase>();
         services.AddScoped<IGetStudentBookingsUseCase, GetStudentBookingsUseCase>();
+        services.AddScoped<IGetDashboardSummaryUseCase, GetDashboardSummaryUseCase>();
         services.AddScoped<IGenerateRefreshTokenUseCase, GenerateRefreshTokenUseCase>();
         services.AddScoped<ILoginWithRefreshTokenUseCase, LoginWithRefreshTokenUseCase>();
         services.AddScoped<IGoogleLoginUseCase, GoogleLoginUseCase>();

@@ -54,16 +54,17 @@ public class UserRepository(
         User domainUser = ToDomain(identityUser, roles);
 
         Person person = Person.CreatePerson(
-            personModel.UserId,
-            personModel.FirstName,
-            personModel.LastName,
-            personModel.Email,
-            personModel.PhoneNumber,
-            personModel.Nationality,
-            personModel.Gender,
-            personModel.ImageUrl ?? string.Empty,
-            personModel.BirthDate,
-            domainUser
+            id: personModel.UserId,
+            firstName: personModel.FirstName,
+            lastName: personModel.LastName,
+            email: personModel.Email,
+            avatarSource: personModel.ImageSource,
+            phoneNumber: personModel.PhoneNumber,
+            nationality: personModel.Nationality,
+            gender: personModel.Gender,
+            imageUrl: personModel.ImageUrl ?? string.Empty,
+            birthDate: personModel.BirthDate,
+            user: domainUser
         );
 
         return person;

@@ -1,3 +1,5 @@
+using HousingApp.Domain.Enums;
+
 namespace HousingApp.Domain.Entities;
 
 public class Person
@@ -11,6 +13,8 @@ public class Person
     public string? Gender { get; init; } = string.Empty;
     public string? ImageUrl { get; init; } = string.Empty;
     public DateOnly? BirthDate { get; init; }
+    
+    public AvatarSource AvatarSource { get; init; } 
 
     public User? User { get; init; }
 
@@ -42,6 +46,7 @@ public class Person
         string firstName,
         string? lastName,
         string email,
+        AvatarSource avatarSource,
         string? phoneNumber,
         string? nationality,
         string? gender,
@@ -55,6 +60,7 @@ public class Person
             FirstName = firstName,
             LastName = lastName,
             Email = email,
+            AvatarSource = avatarSource,
             PhoneNumber = phoneNumber,
             Nationality = nationality,
             Gender = gender,

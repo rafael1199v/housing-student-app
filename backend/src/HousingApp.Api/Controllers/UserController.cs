@@ -1,7 +1,6 @@
-using FluentValidation;
-using FluentValidation.Results;
 using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
+using HousingApp.Application.Auth.Upload;
 using HousingApp.Application.User.DTOs;
 using HousingApp.Application.User.UseCases;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +16,8 @@ public class UserController(
     IGetUserDataUseCase getUserDataUseCase,
     IUpdateUserDataUseCase updateUserDataUseCase,
     IAssignRoleToUserUseCase assignRoleToUserUseCase,
-    IValidator<AssignRoleDto> assignRoleValidator
+    IValidator<AssignRoleDto> assignRoleValidator,
+    IUpdateAvatarUseCase updateAvatarUseCase
     ) : ControllerBase
 {
     [HttpGet]
@@ -76,12 +76,11 @@ public class UserController(
     public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto dto)
     {
         string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
+        
         if (string.IsNullOrWhiteSpace(userId))
         {
             return Unauthorized();
         }
-
         ValidationResult validationResult = await assignRoleValidator.ValidateAsync(dto);
 
         if (!validationResult.IsValid)
@@ -90,12 +89,44 @@ public class UserController(
         }
 
         Result<CredentialsDto> result = await assignRoleToUserUseCase.ExecuteAsync(userId, dto);
+        
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+        
+        return Ok(result.Value);
+    }
+    [HttpPut("avatar")]
+    [Authorize]
+    [RequestSizeLimit(5 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateAvatar(IFormFile? file, CancellationToken cancellationToken)
+    {
+        string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+        
+        if (file is null || file.Length == 0)
+        {
+            return BadRequest(Domain.Error.AvatarError.FileMissing);
+        }
+
+        AvatarUpload upload = new(file.OpenReadStream, file.FileName, file.ContentType);
+
+        Result<string> result = await updateAvatarUseCase.ExecuteAsync(userId, upload, cancellationToken);
 
         if (!result.IsSuccess)
         {
             return BadRequest(result.Error);
         }
-
-        return Ok(result.Value);
+        
+        return Ok(new { url = result.Value });
     }
 }
