@@ -380,7 +380,7 @@
 		"roleLabel": "Rol",
 		"rolesLabel": "Roles",
 		"addRoleLabel": "Agregar un rol",
-		"addRoleHint": "Puedes asumir un rol inferior al que tienes actualmente.",
+		"addRoleHint": "Puedes asumir un rol adicional.",
 		"addRoleButton": "Convertirme en {{role}}",
 		"addRolePending": "Agregando...",
 		"roleAddedSuccess": "Rol agregado correctamente.",

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
-import { ROLE_PRIORITY, RoleEnum } from "../../../global/enum/role";
+import { RoleEnum } from "../../../global/enum/role";
 import i18n from "../../../i18n";
 import { authService } from "../../../services/authService";
 import { NationalityDropdown } from "../../auth/components/NationalityDropdown";
@@ -56,13 +56,8 @@ export function ProfileSettings() {
 		queryFn: () => authService.getData(),
 	});
 
-	const highestHeldPriority = Math.max(
-		0,
-		...heldRoles.map((r) => ROLE_PRIORITY[r]),
-	);
-
 	const assignableRoles = (Object.values(RoleEnum) as RoleEnum[]).filter(
-		(r) => !heldRoles.includes(r) && ROLE_PRIORITY[r] < highestHeldPriority,
+		(r) => !heldRoles.includes(r),
 	);
 
 	const assignRoleMutation = useMutation({

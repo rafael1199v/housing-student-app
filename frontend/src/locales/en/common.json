@@ -380,7 +380,7 @@
 		"roleLabel": "Role",
 		"rolesLabel": "Roles",
 		"addRoleLabel": "Add a role",
-		"addRoleHint": "You can take on a role below your current one.",
+		"addRoleHint": "You can take on an additional role.",
 		"addRoleButton": "Become {{role}}",
 		"addRolePending": "Adding...",
 		"roleAddedSuccess": "Role added successfully.",

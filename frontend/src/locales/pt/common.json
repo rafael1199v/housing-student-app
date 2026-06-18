@@ -380,7 +380,7 @@
 		"roleLabel": "Papel",
 		"rolesLabel": "Papéis",
 		"addRoleLabel": "Adicionar um papel",
-		"addRoleHint": "Você pode assumir um papel inferior ao seu papel atual.",
+		"addRoleHint": "Você pode assumir um papel adicional.",
 		"addRoleButton": "Tornar-me {{role}}",
 		"addRolePending": "Adicionando...",
 		"roleAddedSuccess": "Papel adicionado com sucesso.",

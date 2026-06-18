@@ -51,14 +51,21 @@ public class AssignRoleToUserUseCaseTests
     }
 
     [Fact]
-    public async Task AssignRole_StudentAssignsHouseholder_ReturnsRoleNotAssignable()
+    public async Task AssignRole_StudentAssignsHouseholder_ReturnsCredentialsAndAddsRole()
     {
+        const string refreshToken = "refresh-token";
+        const string accessToken = "access-token";
+
         _userRepository.GetUserByIdAsync(UserId).Returns(UserWithRoles(RolesDescription.Student));
+        _userRepository.AddRoleToUserAsync(UserId, RolesDescription.Householder).Returns(true);
+        _generateRefreshTokenUseCase.ExecuteAsync(UserId).Returns(Result<string>.Success(refreshToken));
+        _accessTokenService.GenerateAccessToken(Arg.Any<UserDto>()).Returns(accessToken);
 
         Result<CredentialsDto> result = await _useCase.ExecuteAsync(UserId, new AssignRoleDto(RolesDescription.Householder));
 
-        result.Error.Should().Be(UserError.RoleNotAssignable);
-        await _userRepository.DidNotReceive().AddRoleToUserAsync(Arg.Any<string>(), Arg.Any<string>());
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(new CredentialsDto(accessToken, refreshToken));
+        await _userRepository.Received(1).AddRoleToUserAsync(UserId, RolesDescription.Householder);
     }
 
     [Fact]
