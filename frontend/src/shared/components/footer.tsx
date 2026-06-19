@@ -1,19 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import {
-	useAccessToken,
-	useAuthActions,
-} from "../../features/auth/store/authStore";
-import { getRoleFromAccessToken } from "../../features/auth/utils/tokenClaims";
+import { useRoles } from "../../features/auth/hooks/useRoles";
+import { useAuthActions } from "../../features/auth/store/authStore";
 import { RoleEnum } from "../../global/enum/role";
 
 export function Footer() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { clearAll } = useAuthActions();
-	const token = useAccessToken();
-	const role = getRoleFromAccessToken(token);
+	const { activeRole } = useRoles();
 	const handleLogout = () => {
 		clearAll();
 		toast.success(t("nav.loggedOut"));
@@ -43,7 +39,7 @@ export function Footer() {
 						>
 							{t("footer.home")}
 						</button>
-						{role === RoleEnum.Student ? (
+						{activeRole === RoleEnum.Student ? (
 							<>
 								<button
 									type="button"

@@ -1,3 +1,4 @@
+import type { AssignRoleRequest } from "../features/auth/types/assignRoleRequest";
 import type { AuthResponse } from "../features/auth/types/authResponse";
 import type { ConfirmEmailRequest } from "../features/auth/types/confirmEmailRequest";
 import type { GoogleAuthResponse } from "../features/auth/types/googleAuthResponse";
@@ -17,6 +18,8 @@ export const authService = {
 	getData: () => api.get<UserDataDto>("/api/user"),
 	updateData: (data: Partial<UpdateUserDataDto>) =>
 		api.put<void>("/api/user", data),
+	assignRole: (data: AssignRoleRequest) =>
+		api.post<AuthResponse>("/api/user/roles", data),
 	googleLogin: (data: LoginWithGoogleRequest) =>
 		api.post<GoogleAuthResponse>("/api/login/google", data, {
 			requiresAuth: false,

@@ -16,7 +16,6 @@ const POLICY_ID_BY_CODE = new Map<string, number>(
 	ROOM_POLICY_OPTIONS.map((policy) => [policy.code, policy.id]),
 );
 
-// Backend serializes RoomStatus enum names; the wizard uses the numeric ids.
 const ROOM_STATUS_VALUE_BY_NAME: Record<string, number> = {
 	Available: 1,
 	Unavailable: 2,

@@ -1,7 +1,8 @@
 {
 	"roles": {
 		"Student": "Student",
-		"Householder": "Landlord"
+		"Householder": "Landlord",
+		"Admin": "Administrator"
 	},
 	"nav": {
 		"rooms": "Rooms",
@@ -12,7 +13,8 @@
 		"loggedOut": "Logged out",
 		"menu": "Menu",
 		"language": "Language",
-		"close": "Close"
+		"close": "Close",
+		"roleSwitcher": "Acting as"
 	},
 	"footer": {
 		"contactInfo": "Contact Information",
@@ -376,6 +378,12 @@
 		"subtitle": "Update your personal information.",
 		"emailLabel": "Email",
 		"roleLabel": "Role",
+		"rolesLabel": "Roles",
+		"addRoleLabel": "Add a role",
+		"addRoleHint": "You can take on an additional role.",
+		"addRoleButton": "Become {{role}}",
+		"addRolePending": "Adding...",
+		"roleAddedSuccess": "Role added successfully.",
 		"firstNameLabel": "First name",
 		"lastNameLabel": "Last name",
 		"phoneNumberLabel": "Phone number",

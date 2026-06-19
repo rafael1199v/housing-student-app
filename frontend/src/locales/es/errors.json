@@ -27,6 +27,11 @@
 	"booking_not_found": "La reserva no fue encontrada",
 	"booking_invalid_status": "El estado de la reserva es inválido",
 	"booking_could_not_change_status": "No se pudo cambiar el estado de la reserva",
+	"user_not_found": "Usuario no encontrado",
+	"user_role_already_assigned": "Ya tienes ese rol",
+	"user_role_not_assignable": "No puedes asignarte este rol",
+	"user_role_invalid": "El rol especificado no es válido",
+	"user_role_assignment_failed": "No se pudo asignar el rol. Inténtalo de nuevo",
 	"unknown_error": "Ha ocurrido un error inesperado",
 	"no_internet_connection": "No tienes conexión a internet. Inténtalo de nuevo más tarde",
 	"fallback": "Hubo un error en la solicitud, intente nuevamente."

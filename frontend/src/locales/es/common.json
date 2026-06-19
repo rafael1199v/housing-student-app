@@ -1,7 +1,8 @@
 {
 	"roles": {
 		"Student": "Estudiante",
-		"Householder": "Arrendador"
+		"Householder": "Arrendador",
+		"Admin": "Administrador"
 	},
 	"nav": {
 		"rooms": "Habitaciones",
@@ -12,7 +13,8 @@
 		"loggedOut": "Sesión cerrada",
 		"menu": "Menú",
 		"language": "Idioma",
-		"close": "Cerrar"
+		"close": "Cerrar",
+		"roleSwitcher": "Actuando como"
 	},
 	"footer": {
 		"contactInfo": "Información de contacto",
@@ -376,6 +378,12 @@
 		"subtitle": "Actualiza tu información personal.",
 		"emailLabel": "Correo electrónico",
 		"roleLabel": "Rol",
+		"rolesLabel": "Roles",
+		"addRoleLabel": "Agregar un rol",
+		"addRoleHint": "Puedes asumir un rol adicional.",
+		"addRoleButton": "Convertirme en {{role}}",
+		"addRolePending": "Agregando...",
+		"roleAddedSuccess": "Rol agregado correctamente.",
 		"firstNameLabel": "Nombre",
 		"lastNameLabel": "Apellido",
 		"phoneNumberLabel": "Número de teléfono",

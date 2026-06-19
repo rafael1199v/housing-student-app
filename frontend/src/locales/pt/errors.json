@@ -27,6 +27,11 @@
 	"booking_not_found": "A reserva não foi encontrada",
 	"booking_invalid_status": "O status da reserva é inválido",
 	"booking_could_not_change_status": "Não foi possível alterar o status da reserva",
+	"user_not_found": "Usuário não encontrado",
+	"user_role_already_assigned": "Você já possui esse papel",
+	"user_role_not_assignable": "Você não pode atribuir este papel",
+	"user_role_invalid": "O papel especificado é inválido",
+	"user_role_assignment_failed": "Não foi possível atribuir o papel. Tente novamente",
 	"unknown_error": "Ocorreu um erro inesperado",
 	"no_internet_connection": "Você não tem conexão com a internet. Tente novamente mais tarde.",
 	"fallback": "Houve um erro na solicitação, tente novamente."
