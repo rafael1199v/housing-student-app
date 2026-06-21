@@ -5,6 +5,7 @@ using HousingApp.Application.Dashboard.UseCases;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.UseCases;
+using HousingApp.Application.Storage;
 using HousingApp.Domain.Entities;
 using HousingApp.Domain.Enums;
 using HousingApp.Domain.Error;
@@ -19,6 +20,7 @@ public class GetDashboardSummaryUseCaseTests
     private readonly IGetHouseholderRoomsUseCase _getHouseholderRoomsUseCase;
     private readonly IUserRepository _userRepository;
     private readonly IBookingRepository _bookingRepository;
+    private readonly IStorageService _storageService;
     private readonly GetDashboardSummaryUseCase _useCase;
 
     public GetDashboardSummaryUseCaseTests()
@@ -26,18 +28,20 @@ public class GetDashboardSummaryUseCaseTests
         _getHouseholderRoomsUseCase = Substitute.For<IGetHouseholderRoomsUseCase>();
         _userRepository = Substitute.For<IUserRepository>();
         _bookingRepository = Substitute.For<IBookingRepository>();
+        _storageService = Substitute.For<IStorageService>();
 
         _useCase = new GetDashboardSummaryUseCase(
             _getHouseholderRoomsUseCase,
             _userRepository,
-            _bookingRepository);
+            _bookingRepository,
+            _storageService);
     }
 
     private static RoomHouseholderDto Room(int id, string name) =>
         new(id, name, 0, 0, "desc", 100, "Available", 0, []);
 
-    private static HouseholderBookingDto Booking(int id, BookingStatus status, string booker = "Elena Rostova", string room = "Room A") =>
-        new(id, $"student-{id}", booker, 10, room, status);
+    private static HouseholderBookingDto Booking(int id, BookingStatus status, string booker = "Elena Rostova", string room = "Room A", string imageUrl = "imageUrl") =>
+        new(id, $"student-{id}", booker, 10, room, status, imageUrl);
 
     [Fact]
     public async Task ExecuteAsync_MapsConfirmedToActiveAndPendingToActionNeeded()
@@ -57,6 +61,7 @@ public class GetDashboardSummaryUseCaseTests
             Booking(5, BookingStatus.Completed),
         });
 
+        _storageService.GeneratePresignedDownloadUrl(Arg.Any<string>()).Returns("ImageUrl");
         // Act
         Result<DashboardSummaryDto> result = await _useCase.ExecuteAsync(HouseholderId);
 
