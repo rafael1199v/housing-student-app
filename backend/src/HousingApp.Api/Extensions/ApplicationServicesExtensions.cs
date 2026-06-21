@@ -75,6 +75,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEmailService, AmazonSqsEmailService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAccessTokenService, AccessTokenService>();
+        services.AddScoped<IRsaPasswordCipher, RsaPasswordCipher>();
 
         return services;
     }
