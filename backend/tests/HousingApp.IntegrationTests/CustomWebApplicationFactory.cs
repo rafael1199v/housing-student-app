@@ -1,10 +1,13 @@
-﻿using HousingApp.Infrastructure.Persistence.Context;
+﻿using HousingApp.Application.Services;
+using HousingApp.Infrastructure.Persistence.Context;
+using HousingApp.IntegrationTests.Fakes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HousingApp.IntegrationTests;
 
@@ -31,6 +34,8 @@ public class CustomWebApplicationFactory(string postgresConnectionString) : WebA
             {
                 options.UseNpgsql(postgresConnectionString);
             });
+
+            services.Replace(ServiceDescriptor.Scoped<IRsaPasswordCipher, PassThroughPasswordCipher>());
         });
     }
 }

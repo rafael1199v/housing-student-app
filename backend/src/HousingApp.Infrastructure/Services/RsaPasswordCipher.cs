@@ -9,8 +9,12 @@ public class RsaPasswordCipher(IConfiguration configuration) : IRsaPasswordCiphe
 {
     public string Decrypt(string cipherTextBase64)
     {
-        string privateKeyPem = configuration["PasswordEncryption:PrivateKey"]
+        string configuredKey = configuration["PasswordEncryption:PrivateKey"]
             ?? throw new InvalidOperationException("PasswordEncryption:PrivateKey is not configured.");
+
+        string privateKeyPem = configuredKey.Contains("-----BEGIN")
+            ? configuredKey.Replace("\\n", "\n")
+            : Encoding.UTF8.GetString(Convert.FromBase64String(configuredKey));
 
         using RSA rsa = RSA.Create();
         rsa.ImportFromPem(privateKeyPem);
