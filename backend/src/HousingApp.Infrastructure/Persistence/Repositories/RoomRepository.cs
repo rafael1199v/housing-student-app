@@ -201,6 +201,15 @@ public class RoomRepository(HousingApplicationDbContext context) : IRoomReposito
         return true;
     }
 
+    public async Task<string?> GetRoomOwnerIdAsync(int roomId)
+    {
+        return await context.Rooms
+            .AsNoTracking()
+            .Where(room => room.Id == roomId && !room.IsDeleted)
+            .Select(room => room.PersonId)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task AddImagesAsync(int roomId, List<string> imageKeys)
     {
         List<RoomImagesModel> roomImagesModels =
