@@ -6,6 +6,7 @@ export interface BookingDto {
 	bookerPhoneNumber: string;
 	bookingStatus: string;
 	roomId: number;
+	bookerImageUrl: string;
 }
 
 export interface RoomImageInfo {

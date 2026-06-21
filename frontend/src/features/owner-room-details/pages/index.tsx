@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
+import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
 import { BookingStatusEnum } from "../../../global/enum/booking-status";
 import bookingService from "../../../services/bookingService";
 import roomService from "../../../services/roomService";
@@ -355,6 +356,14 @@ export function OwnerRoomDetailsPage() {
 										key={booking.id}
 										className="flex items-start justify-between gap-4 rounded-lg bg-surface-container-low p-4 transition hover:bg-surface-container"
 									>
+										<img
+											src={booking.bookerImageUrl || UserPlaceholder}
+											alt={booking.bookerName}
+											onError={(e) => {
+												e.currentTarget.src = UserPlaceholder;
+											}}
+											className="h-10 w-10 shrink-0 rounded-full object-cover"
+										/>
 										<div className="flex-1 space-y-2">
 											<h3 className="font-semibold text-slate-900">
 												{booking.bookerName}

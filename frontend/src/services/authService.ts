@@ -27,6 +27,11 @@ export const authService = {
 	getData: () => api.get<UserDataDto>("/api/user"),
 	updateData: (data: Partial<UpdateUserDataDto>) =>
 		api.put<void>("/api/user", data),
+	uploadAvatar: (file: File) => {
+		const formData = new FormData();
+		formData.append("file", file);
+		return api.put<{ url: string }>("/api/user/avatar", formData);
+	},
 	assignRole: (data: AssignRoleRequest) =>
 		api.post<AuthResponse>("/api/user/roles", data),
 	googleLogin: (data: LoginWithGoogleRequest) =>

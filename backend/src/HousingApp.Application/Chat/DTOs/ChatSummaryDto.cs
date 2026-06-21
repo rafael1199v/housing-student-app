@@ -6,5 +6,6 @@ public record ChatSummaryDto(
     string OtherParticipantName,
     string? LastMessage,
     DateTime? LastMessageAt,
-    int UnreadCount
+    int UnreadCount,
+    string OtherParticipantImageUrl
 );

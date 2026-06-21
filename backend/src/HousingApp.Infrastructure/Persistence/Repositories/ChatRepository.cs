@@ -132,7 +132,8 @@ public class ChatRepository(HousingApplicationDbContext context) : IChatReposito
                 {
                     p.ChatId,
                     person.UserId,
-                    Name = person.LastName == null ? person.FirstName : person.FirstName + " " + person.LastName
+                    Name = person.LastName == null ? person.FirstName : person.FirstName + " " + person.LastName,
+                    person.ImageUrl
                 })
             .ToListAsync();
 
@@ -180,7 +181,8 @@ public class ChatRepository(HousingApplicationDbContext context) : IChatReposito
                     other?.Name ?? string.Empty,
                     last?.Message,
                     last?.CreatedAt,
-                    unread);
+                    unread,
+                    other?.ImageUrl ?? string.Empty);
             })
             .OrderByDescending(c => c.LastMessageAt ?? DateTime.MinValue)
             .ToList();

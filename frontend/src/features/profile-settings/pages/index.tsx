@@ -1,11 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { z } from "zod";
+import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
 import { RoleEnum } from "../../../global/enum/role";
+import { compressImages } from "../../../global/utils/image-compressor";
 import i18n from "../../../i18n";
 import { authService } from "../../../services/authService";
 import { NationalityDropdown } from "../../auth/components/NationalityDropdown";
@@ -56,6 +58,37 @@ export function ProfileSettings() {
 		queryFn: () => authService.getData(),
 	});
 
+	const [avatarFile, setAvatarFile] = useState<File | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const avatarPreview = useMemo(
+		() => (avatarFile ? URL.createObjectURL(avatarFile) : null),
+		[avatarFile],
+	);
+
+	useEffect(() => {
+		return () => {
+			if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+		};
+	}, [avatarPreview]);
+
+	const avatarSrc = avatarPreview || userData?.imageUrl || UserPlaceholder;
+
+	const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		event.target.value = "";
+		if (!file) return;
+		if (!file.type.startsWith("image/")) {
+			toast.error(t("profileSettings.avatarInvalidType"));
+			return;
+		}
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error(t("profileSettings.avatarTooLarge"));
+			return;
+		}
+		setAvatarFile(file);
+	};
+
 	const assignableRoles = (Object.values(RoleEnum) as RoleEnum[]).filter(
 		(r) => !heldRoles.includes(r),
 	);
@@ -99,10 +132,18 @@ export function ProfileSettings() {
 	}, [userData, reset]);
 
 	const mutation = useMutation({
-		mutationFn: (dto: Partial<UpdateUserDataDto>) =>
-			authService.updateData(dto),
+		mutationFn: async (dto: Partial<UpdateUserDataDto>) => {
+			if (avatarFile) {
+				const [compressed] = await compressImages([avatarFile]);
+				await authService.uploadAvatar(compressed);
+			}
+			if (Object.keys(dto).length > 0) {
+				await authService.updateData(dto);
+			}
+		},
 		onSuccess: () => {
 			toast.success(t("profileSettings.saveSuccess"));
+			setAvatarFile(null);
 			queryClient.invalidateQueries({ queryKey: ["user-data"] });
 		},
 		onError: (error: Error) => {
@@ -127,7 +168,7 @@ export function ProfileSettings() {
 			: null;
 		if (values.birthdate !== originalBirth) dto.birthdate = values.birthdate;
 
-		if (Object.keys(dto).length === 0) {
+		if (Object.keys(dto).length === 0 && !avatarFile) {
 			toast.success(t("profileSettings.saveSuccess"));
 			return;
 		}
@@ -213,6 +254,40 @@ export function ProfileSettings() {
 			{/* Editable form */}
 			<form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
 				<section className="surface-section space-y-5">
+					{/* Profile picture */}
+					<div className="flex items-center gap-4">
+						<img
+							src={avatarSrc}
+							alt={t("profileSettings.pictureLabel")}
+							onError={(e) => {
+								e.currentTarget.src = UserPlaceholder;
+							}}
+							className="h-20 w-20 rounded-full object-cover ring-1 ring-slate-200"
+						/>
+						<div className="space-y-1.5">
+							<p className="text-sm font-medium text-slate-700">
+								{t("profileSettings.pictureLabel")}
+							</p>
+							<input
+								ref={fileInputRef}
+								type="file"
+								accept="image/*"
+								onChange={handleAvatarChange}
+								className="hidden"
+							/>
+							<button
+								type="button"
+								onClick={() => fileInputRef.current?.click()}
+								className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/40"
+							>
+								{t("profileSettings.changePictureButton")}
+							</button>
+							<p className="text-xs text-slate-500">
+								{t("profileSettings.pictureHint")}
+							</p>
+						</div>
+					</div>
+
 					<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 						{/* First Name */}
 						<div className="space-y-1.5">

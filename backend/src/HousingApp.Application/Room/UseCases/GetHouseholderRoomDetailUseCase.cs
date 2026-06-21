@@ -41,7 +41,10 @@ public class GetHouseholderRoomDetailUseCase(IRoomRepository roomRepository, ISt
                     b.Booker!.Email,
                     b.Booker!.PhoneNumber ?? "",
                     b.BookingStatus.ToString(),
-                    b.RoomId
+                    b.RoomId,
+                    string.IsNullOrEmpty(b.Booker!.ImageUrl)
+                        ? ""
+                        : storageService.GeneratePresignedDownloadUrl(b.Booker!.ImageUrl)
                 ))
             ]
         );
