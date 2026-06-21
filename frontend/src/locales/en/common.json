@@ -376,6 +376,11 @@
 	"profileSettings": {
 		"title": "Profile Settings",
 		"subtitle": "Update your personal information.",
+		"pictureLabel": "Profile picture",
+		"changePictureButton": "Change picture",
+		"pictureHint": "JPG, PNG or WEBP, up to 5 MB.",
+		"avatarInvalidType": "The file must be an image.",
+		"avatarTooLarge": "The image must not exceed 5 MB.",
 		"emailLabel": "Email",
 		"roleLabel": "Role",
 		"rolesLabel": "Roles",
