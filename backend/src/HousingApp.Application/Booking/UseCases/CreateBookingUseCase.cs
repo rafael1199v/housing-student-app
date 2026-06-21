@@ -20,6 +20,13 @@ public class CreateBookingUseCase(IBookingUnitOfWork unitOfWork, ILogger<CreateB
             return Result<CreatedBookingDto>.Failure(BookingError.RoomAlreadyBooked);
         }
 
+        string? ownerId = await unitOfWork.RoomRepository.GetRoomOwnerIdAsync(createBookingDto.RoomId);
+
+        if (ownerId is not null && ownerId == bookerId)
+        {
+            return Result<CreatedBookingDto>.Failure(BookingError.CannotBookOwnRoom);
+        }
+
 
         await unitOfWork.BeginTransactionAsync();
 
