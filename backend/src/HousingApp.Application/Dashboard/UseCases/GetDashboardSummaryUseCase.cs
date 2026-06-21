@@ -3,6 +3,7 @@ using HousingApp.Application.Dashboard.DTOs;
 using HousingApp.Application.Repositories;
 using HousingApp.Application.Room.DTOs;
 using HousingApp.Application.Room.UseCases;
+using HousingApp.Application.Storage;
 using HousingApp.Domain.Enums;
 
 namespace HousingApp.Application.Dashboard.UseCases;
@@ -10,7 +11,8 @@ namespace HousingApp.Application.Dashboard.UseCases;
 public class GetDashboardSummaryUseCase(
     IGetHouseholderRoomsUseCase getHouseholderRoomsUseCase,
     IUserRepository userRepository,
-    IBookingRepository bookingRepository) : IGetDashboardSummaryUseCase
+    IBookingRepository bookingRepository,
+    IStorageService storageService) : IGetDashboardSummaryUseCase
 {
     public async Task<Result<DashboardSummaryDto>> ExecuteAsync(string userId)
     {
@@ -35,7 +37,8 @@ public class GetDashboardSummaryUseCase(
                 .Select(b => new DashboardBookingRequestDto(
                     b.Id.ToString(),
                     b.BookerName,
-                    b.RoomName))
+                    b.RoomName,
+                    b.BookerImageUrl == "" ? "" : storageService.GeneratePresignedDownloadUrl(b.BookerImageUrl)))
         ];
 
         DashboardSummaryDto summary = new(
