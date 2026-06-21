@@ -330,8 +330,11 @@ export function RoomDetails() {
 					<div className="pt-6">
 						<div className="flex items-center gap-4">
 							<img
-								src={UserPlaceholder}
+								src={room.imageUrl || UserPlaceholder}
 								alt={`${room.firstName} ${room.lastName}`}
+								onError={(e) => {
+									e.currentTarget.src = UserPlaceholder;
+								}}
 								className="h-14 w-14 rounded-full object-cover"
 							/>
 							<div>
