@@ -1,5 +1,3 @@
-using FluentValidation;
-using FluentValidation.Results;
 using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.Upload;
@@ -99,6 +97,7 @@ public class UserController(
         
         return Ok(result.Value);
     }
+    
     [HttpPut("avatar")]
     [Authorize]
     [RequestSizeLimit(5 * 1024 * 1024)]
@@ -109,12 +108,11 @@ public class UserController(
     public async Task<IActionResult> UpdateAvatar(IFormFile? file, CancellationToken cancellationToken)
     {
         string? userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        
         if (string.IsNullOrWhiteSpace(userId))
         {
             return Unauthorized();
         }
-        
+
         if (file is null || file.Length == 0)
         {
             return BadRequest(Domain.Error.AvatarError.FileMissing);
@@ -128,7 +126,7 @@ public class UserController(
         {
             return BadRequest(result.Error);
         }
-        
+
         return Ok(new { url = result.Value });
     }
 }
