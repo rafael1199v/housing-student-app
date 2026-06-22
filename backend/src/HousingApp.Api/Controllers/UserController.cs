@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.Results;
 using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.Upload;
