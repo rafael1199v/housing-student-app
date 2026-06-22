@@ -138,7 +138,8 @@ public class BookingRepository(HousingApplicationDbContext context) : IBookingRe
                 BookerName: b.Booker.FirstName + " " + (b.Booker.LastName ?? ""),
                 RoomId: b.RoomId,
                 RoomName: b.Room.Name,
-                Status: (BookingStatus)b.BookingStatusId
+                Status: (BookingStatus)b.BookingStatusId,
+                BookerImageUrl: string.IsNullOrEmpty(b.Booker.ImageUrl) ? "" : b.Booker.ImageUrl 
             )).ToListAsync();
     }
 

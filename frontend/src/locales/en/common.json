@@ -1,7 +1,8 @@
 {
 	"roles": {
 		"Student": "Student",
-		"Householder": "Landlord"
+		"Householder": "Landlord",
+		"Admin": "Administrator"
 	},
 	"nav": {
 		"rooms": "Rooms",
@@ -12,7 +13,8 @@
 		"loggedOut": "Logged out",
 		"menu": "Menu",
 		"language": "Language",
-		"close": "Close"
+		"close": "Close",
+		"roleSwitcher": "Acting as"
 	},
 	"footer": {
 		"contactInfo": "Contact Information",
@@ -374,8 +376,19 @@
 	"profileSettings": {
 		"title": "Profile Settings",
 		"subtitle": "Update your personal information.",
+		"pictureLabel": "Profile picture",
+		"changePictureButton": "Change picture",
+		"pictureHint": "JPG, PNG or WEBP, up to 5 MB.",
+		"avatarInvalidType": "The file must be an image.",
+		"avatarTooLarge": "The image must not exceed 5 MB.",
 		"emailLabel": "Email",
 		"roleLabel": "Role",
+		"rolesLabel": "Roles",
+		"addRoleLabel": "Add a role",
+		"addRoleHint": "You can take on an additional role.",
+		"addRoleButton": "Become {{role}}",
+		"addRolePending": "Adding...",
+		"roleAddedSuccess": "Role added successfully.",
 		"firstNameLabel": "First name",
 		"lastNameLabel": "Last name",
 		"phoneNumberLabel": "Phone number",

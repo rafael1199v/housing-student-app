@@ -1,13 +1,11 @@
 import { Navigate, Outlet } from "react-router";
-import { useAccessToken } from "../features/auth/store/authStore";
-import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
+import { useRoles } from "../features/auth/hooks/useRoles";
 import { RoleEnum } from "../global/enum/role";
 
 export function StudentProtectedRoute() {
-	const token = useAccessToken();
-	const role = getRoleFromAccessToken(token);
+	const { hasRole } = useRoles();
 
-	if (role !== RoleEnum.Student) {
+	if (!hasRole(RoleEnum.Student)) {
 		return <Navigate to="/forbidden" replace />;
 	}
 

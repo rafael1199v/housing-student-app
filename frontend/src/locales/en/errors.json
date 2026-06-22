@@ -27,6 +27,11 @@
 	"booking_not_found": "The booking was not found",
 	"booking_invalid_status": "The booking status is invalid",
 	"booking_could_not_change_status": "Could not change the booking status",
+	"user_not_found": "User not found",
+	"user_role_already_assigned": "You already have that role",
+	"user_role_not_assignable": "You cannot assign this role",
+	"user_role_invalid": "The specified role is invalid",
+	"user_role_assignment_failed": "The role could not be assigned. Please try again",
 	"unknown_error": "An unexpected error occurred",
 	"no_internet_connection": "You have no internet connection. Please try again later.",
 	"fallback": "There was an error with the request, please try again."

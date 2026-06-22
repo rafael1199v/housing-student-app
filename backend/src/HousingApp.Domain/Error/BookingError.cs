@@ -11,6 +11,9 @@ public static class BookingError
     public static readonly Error RoomAlreadyBooked =
         new("booking.room.already.booked", "Ya hiciste una reserva para este alojamiento");
 
+    public static readonly Error CannotBookOwnRoom =
+        new("booking.cannot.book.own.room", "No puedes reservar tu propio alojamiento");
+
     public static readonly Error BookingAlreadyApproved =
         new("booking.already.approved", "La reserva ya fue aprobada");
 

@@ -14,6 +14,8 @@ public interface IUserRepository
 
     Task<Domain.Entities.User?> GetUserByIdAsync(string userId);
 
+    Task<bool> AddRoleToUserAsync(string userId, string role);
+
     Task<string> RegisterExternalUser(Domain.Entities.User newUser, Domain.Enums.Roles role);
 
     Task<string> GenerateEmailConfirmationToken(string userId);

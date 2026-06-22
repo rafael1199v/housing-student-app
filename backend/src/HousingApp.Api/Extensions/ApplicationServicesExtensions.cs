@@ -39,6 +39,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRegisterUseCase, RegisterUseCase>();
         services.AddScoped<IGetUserDataUseCase, GetUserDataUseCase>();
         services.AddScoped<IUpdateUserDataUseCase, UpdateUserDataUseCase>();
+        services.AddScoped<IAssignRoleToUserUseCase, AssignRoleToUserUseCase>();
         services.AddScoped<IUpdateAvatarUseCase, UpdateAvatarUseCase>();
         services.AddScoped<IGetRoomsUseCase, GetRoomsUseCase>();
         services.AddScoped<IGetRoomDetailUseCase, GetRoomDetailUseCase>();
@@ -74,6 +75,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IEmailService, AmazonSqsEmailService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAccessTokenService, AccessTokenService>();
+        services.AddScoped<IRsaPasswordCipher, RsaPasswordCipher>();
 
         return services;
     }

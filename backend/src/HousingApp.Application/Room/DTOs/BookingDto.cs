@@ -7,5 +7,6 @@ public record BookingDto(
     string BookerEmail,
     string BookerPhoneNumber,
     string BookingStatus,
-    int RoomId
+    int RoomId,
+    string BookerImageUrl
 );

@@ -1,11 +1,10 @@
 import { createBrowserRouter } from "react-router";
 import App from "../App";
+import { useRoles } from "../features/auth/hooks/useRoles";
 import { confirmEmailLoader } from "../features/auth/loaders/ConfirmEmail.loader";
 import ConfirmEmail from "../features/auth/pages/confirm-email";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
-import { useAccessToken } from "../features/auth/store/authStore";
-import { getRoleFromAccessToken } from "../features/auth/utils/tokenClaims";
 import { BookingsPage } from "../features/bookings/pages";
 import { EditRoomPage } from "../features/edit-room/pages";
 import { ForbiddenPage } from "../features/forbidden/pages";
@@ -25,10 +24,9 @@ import ProtectedRoute from "./ProtectedRoute";
 import { StudentProtectedRoute } from "./StudentProtectedRoute";
 
 function HomeRoutePage() {
-	const accessToken = useAccessToken();
-	const role = getRoleFromAccessToken(accessToken);
+	const { activeRole } = useRoles();
 
-	if (role === RoleEnum.Householder) {
+	if (activeRole === RoleEnum.Householder) {
 		return <OwnerHomePage />;
 	}
 

@@ -50,6 +50,7 @@ public class CreateBookingUseCaseTests
 
         _personRepository.ExistsByUserIdAsync(bookerId).Returns(true);
         _bookingRepository.UserHasAlreadyBooked(bookerId, roomId).Returns(false);
+        _roomRepository.GetRoomOwnerIdAsync(roomId).Returns(Guid.NewGuid().ToString());
         _roomRepository.IsRoomAvailable(roomId).Returns(true);
 
         //Act
@@ -92,6 +93,7 @@ public class CreateBookingUseCaseTests
 
         _personRepository.ExistsByUserIdAsync(bookerId).Returns(true);
         _bookingRepository.UserHasAlreadyBooked(bookerId, roomId).Returns(false);
+        _roomRepository.GetRoomOwnerIdAsync(roomId).Returns(Guid.NewGuid().ToString());
         _roomRepository.IsRoomAvailable(roomId).Returns(false);
 
         //Act
@@ -100,6 +102,28 @@ public class CreateBookingUseCaseTests
 
         //Assert
         error.Should().BeEquivalentTo(BookingError.RoomNotAvailable);
+        await _unitOfWork.DidNotReceive().CommitTransactionAsync();
+    }
+
+    [Fact]
+    public async Task CreateBooking_WhenBookerOwnsRoom_ShouldReturnCannotBookOwnRoomError()
+    {
+        //Arrange
+        const int roomId = 50;
+        string bookerId = Guid.NewGuid().ToString();
+        CreateBookingDto createBookingDto = new(roomId);
+
+        _personRepository.ExistsByUserIdAsync(bookerId).Returns(true);
+        _bookingRepository.UserHasAlreadyBooked(bookerId, roomId).Returns(false);
+        _roomRepository.GetRoomOwnerIdAsync(roomId).Returns(bookerId);
+
+        //Act
+        Result<CreatedBookingDto> result = await _createBookingUseCase.ExecuteAsync(bookerId, createBookingDto);
+        Error error = result.Error;
+
+        //Assert
+        error.Should().BeEquivalentTo(BookingError.CannotBookOwnRoom);
+        await _unitOfWork.DidNotReceive().BeginTransactionAsync();
         await _unitOfWork.DidNotReceive().CommitTransactionAsync();
     }
 }

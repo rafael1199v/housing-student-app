@@ -11,6 +11,7 @@ public interface IRoomRepository
     Task<Domain.Entities.Room?> GetRoomByIdAsync(int roomId);
     Task<bool> TryMarkAsBookedAsync(int roomId);
     Task<bool> IsRoomAvailable(int roomId);
+    Task<string?> GetRoomOwnerIdAsync(int roomId);
 
     Task AddImagesAsync(int roomId, List<string> imageKeys);
 

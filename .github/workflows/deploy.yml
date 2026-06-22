@@ -82,6 +82,7 @@ jobs:
             VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
             VITE_GOOGLE_MAPS_ID=${{ secrets.VITE_GOOGLE_MAPS_ID }}
             VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+            VITE_PASSWORD_PUBLIC_KEY=${{ secrets.VITE_PASSWORD_PUBLIC_KEY }}
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
 
@@ -202,6 +203,7 @@ jobs:
             ASPNETCORE_URLS=http://+:8080
             Frontend__Origin=${{ vars.FRONTEND_DOMAIN }}
             Jwt__SecretKey=${{ secrets.JWT_SECRET_KEY }}
+            PasswordEncryption__PrivateKey=${{ secrets.PASSWORD_ENCRYPTION_PRIVATE_KEY }}
             Jwt__Issuer=${{ vars.BACKEND_DOMAIN }}
             Jwt__Audience=${{ vars.FRONTEND_DOMAIN }}
             Jwt__ExpirationInMinutes=${{ secrets.JWT_EXPIRATION_MINUTES }}

@@ -32,7 +32,9 @@ public class GetRoomDetailUseCase(IRoomRepository roomRepository, IStorageServic
             room.Person!.PhoneNumber ?? "",
             room.Person!.Nationality ?? "",
             room.Person!.Gender ?? "",
-            room.Person!.ImageUrl ?? "",
+            string.IsNullOrEmpty(room.Person!.ImageUrl)
+                ? ""
+                : storageService.GeneratePresignedDownloadUrl(room.Person!.ImageUrl),
             [.. room.ImageUrls.Select(imageKey => storageService.GeneratePresignedDownloadUrl(imageKey))],
             [.. room.ServiceCodes],
             [.. room.Policies.Select(policy => new RoomPolicyDto(policy.Code, policy.Description))]

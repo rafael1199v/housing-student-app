@@ -3,19 +3,30 @@ using FluentValidation.Results;
 using HousingApp.Application;
 using HousingApp.Application.Auth.DTOs;
 using HousingApp.Application.Auth.UseCases;
+using HousingApp.Application.Services;
+using HousingApp.Domain.Error;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HousingApp.Api.Controllers;
 
 [ApiController]
 [Route("api/login")]
-public class LoginController(ILoginUseCase loginUseCase, ILoginWithRefreshTokenUseCase loginWithRefreshTokenUseCase, IGoogleLoginUseCase googleLoginUseCase, IValidator<LoginDto> validator)
+public class LoginController(ILoginUseCase loginUseCase, ILoginWithRefreshTokenUseCase loginWithRefreshTokenUseCase, IGoogleLoginUseCase googleLoginUseCase, IValidator<LoginDto> validator, IRsaPasswordCipher passwordCipher)
     : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(typeof(CredentialsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> Login([FromBody] LoginDto user)
     {
+        try
+        {
+            user = user with { Password = passwordCipher.Decrypt(user.Password) };
+        }
+        catch
+        {
+            return BadRequest(AuthError.InvalidCredentials);
+        }
+
         ValidationResult? validationResult = await validator.ValidateAsync(user);
 
         if (!validationResult.IsValid)
