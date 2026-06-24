@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router";
 import { useAccessToken } from "../features/auth/store/authStore";
+import { ChatRealtimeProvider } from "../features/chat/realtime/ChatRealtimeProvider";
 
 /**
  * Wraps routes that require authentication.
@@ -12,5 +13,9 @@ export default function ProtectedRoute() {
 		return <Navigate to="/login" replace />;
 	}
 
-	return <Outlet />;
+	return (
+		<ChatRealtimeProvider>
+			<Outlet />
+		</ChatRealtimeProvider>
+	);
 }

@@ -6,11 +6,12 @@ import {
 } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import UserPlaceholder from "../../../assets/user_image_placeholder.jfif";
 import { RoomStatusEnum } from "../../../global/enum/room-status";
 import bookingService from "../../../services/bookingService";
+import chatService from "../../../services/chatService";
 import roomService from "../../../services/roomService";
 import {
 	ROOM_POLICY_OPTIONS,
@@ -31,6 +32,7 @@ const POLICY_OPTION_BY_CODE = new Map<string, PolicyOption>(
 export function RoomDetails() {
 	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 	const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
@@ -82,6 +84,14 @@ export function RoomDetails() {
 		},
 		onError: (error: Error) => {
 			toast.error(t("roomDetails.deleteError", { message: error.message }));
+		},
+	});
+
+	const contactMutation = useMutation({
+		mutationFn: () => chatService.startChat({ roomId: room!.id }),
+		onSuccess: (chat) => navigate(`/messages/${chat.chatId}`),
+		onError: (error: Error) => {
+			toast.error(t("roomDetails.contactError", { message: error.message }));
 		},
 	});
 
@@ -381,6 +391,16 @@ export function RoomDetails() {
 									: t("roomDetails.bookButton")}
 							</button>
 						)}
+						<button
+							type="button"
+							onClick={() => contactMutation.mutate()}
+							disabled={contactMutation.isPending}
+							className="flex-1 rounded-full bg-secondary-fixed py-3 font-semibold text-on-secondary-fixed transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+						>
+							{contactMutation.isPending
+								? t("roomDetails.contactPending")
+								: t("roomDetails.contactButton")}
+						</button>
 					</div>
 				</div>
 			</section>
