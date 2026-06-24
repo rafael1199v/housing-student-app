@@ -6,6 +6,7 @@ import ConfirmEmail from "../features/auth/pages/confirm-email";
 import Login from "../features/auth/pages/login";
 import Register from "../features/auth/pages/register";
 import { BookingsPage } from "../features/bookings/pages";
+import { ChatPage } from "../features/chat/pages";
 import { EditRoomPage } from "../features/edit-room/pages";
 import { ForbiddenPage } from "../features/forbidden/pages";
 import { HomePage } from "../features/home/pages";
@@ -68,6 +69,14 @@ export const router = createBrowserRouter([
 							{
 								path: "profile-settings",
 								Component: ProfileSettings,
+							},
+							{
+								path: "messages",
+								Component: ChatPage,
+							},
+							{
+								path: "messages/:chatId",
+								Component: ChatPage,
 							},
 							{
 								path: "",

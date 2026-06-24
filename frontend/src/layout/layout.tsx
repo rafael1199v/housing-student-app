@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useRoles } from "../features/auth/hooks/useRoles";
 import { useAuthActions } from "../features/auth/store/authStore";
+import { useUnreadTotal } from "../features/chat/hooks/useUnreadTotal";
 import { RoleEnum } from "../global/enum/role";
 import { authService } from "../services/authService";
 import { Footer } from "../shared/components/footer";
@@ -23,6 +24,7 @@ export function MainLayout() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { activeRole } = useRoles();
+	const unreadTotal = useUnreadTotal();
 	const [open, setOpen] = useState(false);
 
 	const navItems: NavItem[] = [
@@ -43,11 +45,23 @@ export function MainLayout() {
 					},
 				]),
 		{
+			path: "/messages",
+			labelKey: "nav.messages",
+			match: "prefix" as const,
+		},
+		{
 			path: "/profile-settings",
 			labelKey: "nav.profileSettings",
 			match: "prefix" as const,
 		},
 	];
+
+	const renderBadge = (item: NavItem) =>
+		item.path === "/messages" && unreadTotal > 0 ? (
+			<span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-tertiary px-1.5 text-xs font-semibold text-white">
+				{unreadTotal > 99 ? "99+" : unreadTotal}
+			</span>
+		) : null;
 
 	const isActive = (item: NavItem) =>
 		item.match === "prefix"
@@ -102,13 +116,14 @@ export function MainLayout() {
 									key={item.path}
 									type="button"
 									onClick={() => navigate(item.path)}
-									className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+									className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition ${
 										isActive(item)
 											? "bg-primary text-on-primary"
 											: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
 									}`}
 								>
 									{t(item.labelKey)}
+									{renderBadge(item)}
 								</button>
 							))}
 							<RoleSwitcher />
@@ -157,13 +172,14 @@ export function MainLayout() {
 									navigate(item.path);
 									setOpen(false);
 								}}
-								className={`w-full rounded-2xl px-5 py-4 text-left text-base font-medium transition ${
+								className={`flex w-full items-center rounded-2xl px-5 py-4 text-left text-base font-medium transition ${
 									isActive(item)
 										? "bg-primary text-on-primary"
 										: "bg-surface-container-high text-slate-700 hover:bg-surface-container"
 								}`}
 							>
 								{t(item.labelKey)}
+								{renderBadge(item)}
 							</button>
 						))}
 
