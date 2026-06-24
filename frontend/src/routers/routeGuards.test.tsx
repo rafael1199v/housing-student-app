@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RoleEnum } from "../global/enum/role";
@@ -21,6 +22,10 @@ vi.mock("../features/auth/hooks/useRoles", () => ({
 		hasRole: (role: RoleEnum) => heldRoles.includes(role),
 		setActiveRole: vi.fn(),
 	}),
+}));
+
+vi.mock("../features/chat/realtime/ChatRealtimeProvider", () => ({
+	ChatRealtimeProvider: ({ children }: { children: ReactNode }) => children,
 }));
 
 beforeEach(() => {
