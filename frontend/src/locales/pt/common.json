@@ -9,6 +9,7 @@
 		"bookings": "Reservas",
 		"createRoom": "Criar quarto",
 		"profileSettings": "Configurações de perfil",
+		"messages": "Mensagens",
 		"logout": "Sair",
 		"loggedOut": "Sessão encerrada",
 		"menu": "Menu",
@@ -172,7 +173,24 @@
 		"bookSuccess": "Reserva realizada com sucesso.",
 		"bookError": "Erro ao realizar a reserva. {{message}}",
 		"deleteSuccess": "Reserva excluída com sucesso.",
-		"deleteError": "Erro ao excluir a reserva. {{message}}"
+		"deleteError": "Erro ao excluir a reserva. {{message}}",
+		"contactButton": "Contatar",
+		"contactPending": "Abrindo chat...",
+		"contactError": "Não foi possível iniciar o chat. {{message}}"
+	},
+	"chat": {
+		"title": "Mensagens",
+		"loading": "Carregando...",
+		"loadError": "Não foi possível carregar suas conversas. Tente novamente mais tarde.",
+		"empty": "Você ainda não tem conversas.",
+		"selectConversation": "Selecione uma conversa para começar a conversar.",
+		"conversation": "Conversa",
+		"noMessages": "Ainda não há mensagens. Diga olá!",
+		"loadingOlder": "Carregando mensagens anteriores...",
+		"inputPlaceholder": "Digite uma mensagem...",
+		"send": "Enviar",
+		"sendError": "Não foi possível enviar a mensagem. Tente novamente.",
+		"back": "Voltar para as conversas"
 	},
 	"ownerHome": {
 		"welcome": "Bem-vindo, {{name}}!",
