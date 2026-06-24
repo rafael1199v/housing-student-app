@@ -2,6 +2,7 @@ import { ROLE_PRIORITY, RoleEnum } from "../../../global/enum/role";
 
 interface JwtPayload {
 	role?: string | string[];
+	sub?: string;
 }
 
 const KNOWN_ROLES = Object.values(RoleEnum) as RoleEnum[];
@@ -61,4 +62,22 @@ export function getActiveRole(
 
 export function getRoleFromAccessToken(accessToken: string): RoleEnum | null {
 	return getActiveRole(accessToken, null);
+}
+
+export function getUserIdFromAccessToken(accessToken: string): string | null {
+	if (!accessToken) {
+		return null;
+	}
+
+	const parts = accessToken.split(".");
+	if (parts.length < 2) {
+		return null;
+	}
+
+	try {
+		const payload = JSON.parse(decodeBase64Url(parts[1])) as JwtPayload;
+		return payload.sub ?? null;
+	} catch {
+		return null;
+	}
 }
