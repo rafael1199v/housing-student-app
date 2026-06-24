@@ -9,6 +9,7 @@
 		"bookings": "Bookings",
 		"createRoom": "Create Room",
 		"profileSettings": "Profile Settings",
+		"messages": "Messages",
 		"logout": "Log out",
 		"loggedOut": "Logged out",
 		"menu": "Menu",
@@ -172,7 +173,24 @@
 		"bookSuccess": "Booking made successfully.",
 		"bookError": "Error making the booking. {{message}}",
 		"deleteSuccess": "Booking deleted successfully.",
-		"deleteError": "Error deleting the booking. {{message}}"
+		"deleteError": "Error deleting the booking. {{message}}",
+		"contactButton": "Contact",
+		"contactPending": "Opening chat...",
+		"contactError": "Could not start the chat. {{message}}"
+	},
+	"chat": {
+		"title": "Messages",
+		"loading": "Loading...",
+		"loadError": "Could not load your chats. Please try again later.",
+		"empty": "You have no conversations yet.",
+		"selectConversation": "Select a conversation to start messaging.",
+		"conversation": "Conversation",
+		"noMessages": "No messages yet. Say hello!",
+		"loadingOlder": "Loading earlier messages...",
+		"inputPlaceholder": "Type a message...",
+		"send": "Send",
+		"sendError": "Could not send the message. Please try again.",
+		"back": "Back to conversations"
 	},
 	"ownerHome": {
 		"welcome": "Welcome, {{name}}!",
